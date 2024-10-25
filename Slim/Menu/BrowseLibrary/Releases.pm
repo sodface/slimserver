@@ -75,8 +75,6 @@ sub _releases {
 		# map to role's name for readability
 		$_->{role_ids} = join(',', map { Slim::Schema::Contributor->roleToType($_) } split(',', $_->{role_ids} || ''));
 		my ($defaultRoles, $userDefinedRoles) = Slim::Schema::Contributor->splitDefaultAndCustomRoles($_->{role_ids});
-$log->error("DK \$defaultRoles=" . Data::Dump::dump($defaultRoles));
-$log->error("DK \$userDefinedRoles=" . Data::Dump::dump($userDefinedRoles));
 
 		my $genreMatch = undef;
 		if ( $checkComposerGenres ) {
