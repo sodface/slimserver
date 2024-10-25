@@ -98,16 +98,27 @@ sub _releases {
 			push @{$albumList{$_->{release_type}}}, $_->{id};
 		};
 
+		my $addUserDefinedRoles = sub {
+			foreach my $role ( split(',', $userDefinedRoles || '') ) {
+				$contributions{$role} ||= [];
+				push @{$contributions{$role}}, $_->{id};
+			}
+		};
+
 		if ($_->{compilation}) {
 			$_->{release_type} = 'COMPILATION';
 			$addToMainReleases->();
-			# only list outside the compilations if Composer/Conductor
-			next unless ( $defaultRoles =~ /COMPOSER|CONDUCTOR/ || $userDefinedRoles ) && $defaultRoles !~ /ARTIST|BAND/;
+			# only list default roles outside the compilations if Composer/Conductor
+			if ( $defaultRoles !~ /COMPOSER|CONDUCTOR/ || $defaultRoles =~ /ARTIST|BAND/ ) {
+				$addUserDefinedRoles->();
+				next;
+			}
 		}
 		# Release Types if album artist
 		elsif ( $defaultRoles =~ /ALBUMARTIST/ ) {
 			$addToMainReleases->();
-			next unless $userDefinedRoles;
+			$addUserDefinedRoles->();
+			next;
 		}
 		# Consider this artist the main (album) artist if there's no other, defined album artist
 		elsif ( $defaultRoles =~ /ARTIST/ ) {
@@ -119,12 +130,13 @@ sub _releases {
 
 			if (!$albumArtist) {
 				$addToMainReleases->();
-				next unless $userDefinedRoles;
+				$addUserDefinedRoles->();
+				next;
 			}
 		}
 
-		# Roles on other releases
-		foreach my $role ( grep { $_ ne 'ALBUMARTIST' && $_ ne 'ARTIST' } split(',', $_->{role_ids} || '') ) {
+		# Default roles on other releases
+		foreach my $role ( grep { $_ ne 'ALBUMARTIST' } split(',', $defaultRoles || '') ) {
 			# don't list as trackartist, if the artist is albumartist, too
 			next if $role eq 'TRACKARTIST' && $isPrimaryArtist{$_->{id}};
 
@@ -135,6 +147,9 @@ sub _releases {
 			$contributions{$role} ||= [];
 			push @{$contributions{$role}}, $_->{id};
 		}
+
+		# User-defined roles
+		$addUserDefinedRoles->();
 	}
 
 	my @items;

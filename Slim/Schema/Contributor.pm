@@ -86,10 +86,10 @@ sub contributorRoles {
 }
 
 sub isDefaultContributorRole {
-	my $self = shift;
+	my $class = shift;
 	my $role = shift;
 	
-	return __PACKAGE__->typeToRole($role) < MIN_CUSTOM_ROLE_ID;
+	return $class->typeToRole($role) < MIN_CUSTOM_ROLE_ID;
 }
 
 sub defaultContributorRoles {
