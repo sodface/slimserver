@@ -88,7 +88,7 @@ sub contributorRoles {
 sub isDefaultContributorRole {
 	my $class = shift;
 	my $role = shift;
-	
+
 	return $class->typeToRole($role) < MIN_CUSTOM_ROLE_ID;
 }
 
@@ -97,7 +97,7 @@ sub defaultContributorRoles {
 }
 
 sub splitDefaultAndCustomRoles {
-	my $self = shift;
+	my $class = shift;
 	my $roles = shift;
 
 	my @roles = split(',', $roles || '');
@@ -115,7 +115,7 @@ sub splitDefaultAndCustomRoles {
 }
 
 sub userDefinedRoles {
-	my $self  = shift;
+	my $class = shift;
 	my $activeOnly = shift;
 
 	# de-reference the pref so we don't accidentally change it below
@@ -124,7 +124,7 @@ sub userDefinedRoles {
 }
 
 sub activeContributorRoles {
-	my $self  = shift;
+	my $class = shift;
 	my $includeTrackArtist = shift;
 
 	my @roles = ( 'ARTIST', 'ALBUMARTIST' );
