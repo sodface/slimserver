@@ -75,6 +75,8 @@ sub _releases {
 		# map to role's name for readability
 		$_->{role_ids} = join(',', map { Slim::Schema::Contributor->roleToType($_) } split(',', $_->{role_ids} || ''));
 		my ($defaultRoles, $userDefinedRoles) = Slim::Schema::Contributor->splitDefaultAndCustomRoles($_->{role_ids});
+$log->error("DK \$defaultRoles=" . Data::Dump::dump($defaultRoles));
+$log->error("DK \$userDefinedRoles=" . Data::Dump::dump($userDefinedRoles));
 
 		my $genreMatch = undef;
 		if ( $checkComposerGenres ) {
@@ -105,24 +107,21 @@ sub _releases {
 			next unless ( $defaultRoles =~ /COMPOSER|CONDUCTOR/ || $userDefinedRoles ) && $defaultRoles !~ /ARTIST|BAND/;
 		}
 		# Release Types if album artist
-		elsif ( $_->{role_ids} =~ /ALBUMARTIST/ ) {
-			$addToMainReleases->() if $defaultRoles;
+		elsif ( $defaultRoles =~ /ALBUMARTIST/ ) {
+			$addToMainReleases->();
 			next unless $userDefinedRoles;
 		}
 		# Consider this artist the main (album) artist if there's no other, defined album artist
-		elsif ( $_->{role_ids} =~ /ARTIST/ ) {
-			if ( $defaultRoles ) {
-				my $albumArtist = Slim::Schema->first('ContributorAlbum', {
-					album => $_->{id},
-					role  => Slim::Schema::Contributor->typeToRole('ALBUMARTIST'),
-					contributor => { '!=' => $_->{artist_id} }
-				});
+		elsif ( $defaultRoles =~ /ARTIST/ ) {
+			my $albumArtist = Slim::Schema->first('ContributorAlbum', {
+				album => $_->{id},
+				role  => Slim::Schema::Contributor->typeToRole('ALBUMARTIST'),
+				contributor => { '!=' => $_->{artist_id} }
+			});
 
-				if (!$albumArtist) {
-					$addToMainReleases->();
-					next unless $userDefinedRoles;
-
-				}
+			if (!$albumArtist) {
+				$addToMainReleases->();
+				next unless $userDefinedRoles;
 			}
 		}
 
