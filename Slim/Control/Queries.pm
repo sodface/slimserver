@@ -1978,33 +1978,12 @@ sub rolesQuery {
 	my $dbh = Slim::Schema->dbh;
 
 	if (defined $trackID) {
-#		$sql = sprintf($sql, 'DISTINCT contributor_track.role');
 		$sql = sprintf($sql, 'GROUP_CONCAT(DISTINCT contributor_track.role)');
 	} else {
-#		$sql = sprintf($sql, 'DISTINCT contributor_album.role');
 		$sql = sprintf($sql, 'GROUP_CONCAT(DISTINCT contributor_album.role)');
 	}
-$sqllog->error( "Roles query: $sql / " . Data::Dump::dump($p) );
 
 	my $stillScanning = Slim::Music::Import->stillScanning();
-
-	# Get count of all results, the count is cached until the next rescan done event
-	my $cacheKey = md5_hex($sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
-
-	my $count = $cache->{$cacheKey};
-	if ( !$count ) {
-		my $total_sth = $dbh->prepare_cached( qq{
-			SELECT COUNT(1) FROM ( $sql ) AS t1
-		} );
-
-		$total_sth->execute( @{$p} );
-		($count) = $total_sth->fetchrow_array();
-		$total_sth->finish;
-
-		if ( !$stillScanning ) {
-			$cache->{$cacheKey} = $count;
-		}
-	}
 
 	# now build the result
 
@@ -2012,15 +1991,11 @@ $sqllog->error( "Roles query: $sql / " . Data::Dump::dump($p) );
 		$request->addResult('rescan', 1);
 	}
 
-	$count += 0;
+	my $cacheKey = md5_hex($sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
 
-	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+	my $roles = $cache->{$cacheKey};
 
-	if ($valid && $tags ne 'CC') {
-
-		my $loopname = 'roles_loop';
-		my $chunkCount = 0;
-
+	if ( !$roles ) {
 		# Limit the real query
 		if ( $index =~ /^\d+$/ && $quantity =~ /^\d+$/ ) {
 			$sql .= "LIMIT $index, $quantity ";
@@ -2033,21 +2008,18 @@ $sqllog->error( "Roles query: $sql / " . Data::Dump::dump($p) );
 		my $sth = $dbh->prepare_cached($sql);
 		$sth->execute( @{$p} );
 
-#		my ($role);
-#		$sth->bind_columns( \$role );
-
-#		while ( $sth->fetch ) {
-#			$request->addResultLoop($loopname, $chunkCount, 'role_id', $role);
-#			$chunkCount++;
-
-#			main::idleStreams() if !($chunkCount % 5);
-#		}
-
-		my $roles = $sth->fetchrow_array();
+		$roles = $sth->fetchrow_array();
 		$sth->finish;
-		$request->addResult( 'role_ids', [ split(',',$roles) ] );
-		$request->setStatusDone();
+
+		if ( !$stillScanning ) {
+			$cache->{$cacheKey} = $roles;
+		}
 	}
+
+	$request->addResult( 'role_ids', [ split(',',$roles) ] );
+
+	$request->setStatusDone();
+
 }
 
 
