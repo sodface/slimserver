@@ -1882,147 +1882,6 @@ sub genresQuery {
 }
 
 
-sub rolesQuery {
-	my $request = shift;
-
-	# check this is the correct query.
-	if ($request->isNotQuery([['roles']])) {
-		$request->setStatusBadDispatch();
-		return;
-	}
-
-	if (!Slim::Schema::hasLibrary()) {
-		$request->setStatusNotDispatchable();
-		return;
-	}
-
-	my $sqllog = main::DEBUGLOG && logger('database.sql');
-
-	# get our parameters
-	my $client        = $request->client();
-	my $index         = $request->getParam('_index');
-	my $quantity      = $request->getParam('_quantity');
-	my $year          = $request->getParam('year');
-	my $contributorID = $request->getParam('artist_id');
-	my $albumID       = $request->getParam('album_id');
-	my $trackID       = $request->getParam('track_id');
-	my $workID        = $request->getParam('work_id');
-	my $libraryID     = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
-	my $tags          = $request->getParam('tags') || '';
-
-	my $sql  = 'SELECT %s FROM contributors ';
-	my $w    = [];
-	my $p    = [];
-
-	# Manage joins
-	if (defined $trackID) {
-		$sql .= 'JOIN contributor_track ON contributors.id = contributor_track.contributor ';
-		push @{$w}, 'contributor_track.track = ?';
-		push @{$p}, $trackID;
-	}
-	else {
-		# ignore these if we have a track.
-		$sql .= 'JOIN contributor_album ON contributors.id = contributor_album.contributor ';
-
-		if (defined $contributorID) {
-
-			# handle the case where we're asked for the VA id => return compilations
-			if ($contributorID == Slim::Schema->variousArtistsObject->id) {
-				$sql .= 'JOIN albums ON contributor_album.album = albums.id ';
-				push @{$w}, 'albums.compilation = ?';
-				push @{$p}, 1;
-			}
-			else {
-				push @{$w}, 'contributor_album.contributor = ?';
-				push @{$p}, $contributorID;
-			}
-		}
-
-		if ( $libraryID ) {
-			$sql .= 'JOIN library_contributor ON library_contributor.contributor = contributors.id ';
-			push @{$w}, 'library_contributor.library = ?';
-			push @{$p}, $libraryID;
-		}
-
-		if (defined $albumID) {
-			push @{$w}, 'contributor_album.album = ?';
-			push @{$p}, $albumID;
-		}
-
-		if (defined $year || defined $workID) {
-			$sql .= 'JOIN contributor_track ON contributors.id = contributor_track.contributor ';
-			$sql .= 'JOIN tracks ON tracks.id = contributor_track.track ';
-
-			if (defined $year) {
-				push @{$w}, 'tracks.year = ?';
-				push @{$p}, $year;
-			}
-			if (defined $workID) {
-				if ( $workID eq "-1" ) {
-					push @{$w}, 'tracks.work IS NOT NULL';
-				} else {
-					push @{$w}, 'tracks.work = ?';
-					push @{$p}, $workID;
-				}
-			}
-		}
-	}
-
-	if ( @{$w} ) {
-		$sql .= 'WHERE ';
-		my $s = join( ' AND ', @{$w} );
-		$s =~ s/\%/\%\%/g;
-		$sql .= $s . ' ';
-	}
-
-	my $dbh = Slim::Schema->dbh;
-
-	if (defined $trackID) {
-		$sql = sprintf($sql, 'GROUP_CONCAT(DISTINCT contributor_track.role)');
-	} else {
-		$sql = sprintf($sql, 'GROUP_CONCAT(DISTINCT contributor_album.role)');
-	}
-
-	my $stillScanning = Slim::Music::Import->stillScanning();
-
-	# now build the result
-
-	if ($stillScanning) {
-		$request->addResult('rescan', 1);
-	}
-
-	my $cacheKey = md5_hex($sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
-
-	my $roles = $cache->{$cacheKey};
-
-	if ( !$roles ) {
-		# Limit the real query
-		if ( $index =~ /^\d+$/ && $quantity =~ /^\d+$/ ) {
-			$sql .= "LIMIT $index, $quantity ";
-		}
-
-		if ( main::DEBUGLOG && $sqllog->is_debug ) {
-			$sqllog->debug( "Roles query: $sql / " . Data::Dump::dump($p) );
-		}
-
-		my $sth = $dbh->prepare_cached($sql);
-		$sth->execute( @{$p} );
-
-		$roles = $sth->fetchrow_array();
-		$sth->finish;
-
-		if ( !$stillScanning ) {
-			$cache->{$cacheKey} = $roles;
-		}
-	}
-
-	$request->addResult( 'role_ids', [ split(',',$roles) ] );
-
-	$request->setStatusDone();
-
-}
-
-
 sub getStringQuery {
 	my $request = shift;
 
@@ -3270,6 +3129,177 @@ sub rescanprogressQuery {
 			}
 		}
 	}
+
+	$request->setStatusDone();
+}
+
+sub rolesQuery {
+	my $request = shift;
+
+	# check this is the correct query.
+	if ($request->isNotQuery([['roles']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	if (!Slim::Schema::hasLibrary()) {
+		$request->setStatusNotDispatchable();
+		return;
+	}
+
+	my $sqllog = main::DEBUGLOG && logger('database.sql');
+
+	# get our parameters
+	my $client        = $request->client();
+	my $index         = $request->getParam('_index');
+	my $quantity      = $request->getParam('_quantity');
+	my $year          = $request->getParam('year');
+	my $contributorID = $request->getParam('artist_id');
+	my $albumID       = $request->getParam('album_id');
+	my $trackID       = $request->getParam('track_id');
+	my $workID        = $request->getParam('work_id');
+	my $libraryID     = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
+	my $tags          = $request->getParam('tags') || '';
+
+	my $sql  = 'SELECT %s FROM contributors ';
+	my $w    = [];
+	my $p    = [];
+
+	# Manage joins
+	if (defined $trackID) {
+		$sql .= 'JOIN contributor_track ON contributors.id = contributor_track.contributor ';
+		push @{$w}, 'contributor_track.track = ?';
+		push @{$p}, $trackID;
+	}
+	else {
+		# ignore these if we have a track.
+		$sql .= 'JOIN contributor_album ON contributors.id = contributor_album.contributor ';
+
+		if (defined $contributorID) {
+
+			# handle the case where we're asked for the VA id => return compilations
+			if ($contributorID == Slim::Schema->variousArtistsObject->id) {
+				$sql .= 'JOIN albums ON contributor_album.album = albums.id ';
+				push @{$w}, 'albums.compilation = ?';
+				push @{$p}, 1;
+			}
+			else {
+				push @{$w}, 'contributor_album.contributor = ?';
+				push @{$p}, $contributorID;
+			}
+		}
+
+		if ( $libraryID ) {
+			$sql .= 'JOIN library_contributor ON library_contributor.contributor = contributors.id ';
+			push @{$w}, 'library_contributor.library = ?';
+			push @{$p}, $libraryID;
+		}
+
+		if (defined $albumID) {
+			push @{$w}, 'contributor_album.album = ?';
+			push @{$p}, $albumID;
+		}
+
+		if (defined $year || defined $workID) {
+			$sql .= 'JOIN contributor_track ON contributors.id = contributor_track.contributor ';
+			$sql .= 'JOIN tracks ON tracks.id = contributor_track.track ';
+
+			if (defined $year) {
+				push @{$w}, 'tracks.year = ?';
+				push @{$p}, $year;
+			}
+			if (defined $workID) {
+				if ( $workID eq "-1" ) {
+					push @{$w}, 'tracks.work IS NOT NULL';
+				} else {
+					push @{$w}, 'tracks.work = ?';
+					push @{$p}, $workID;
+				}
+			}
+		}
+	}
+
+	if ( @{$w} ) {
+		$sql .= 'WHERE ';
+		my $s = join( ' AND ', @{$w} );
+		$s =~ s/\%/\%\%/g;
+		$sql .= $s . ' ';
+	}
+
+	my $dbh = Slim::Schema->dbh;
+
+	if (defined $trackID) {
+		$sql = sprintf($sql, 'DISTINCT contributor_track.role');
+	} else {
+		$sql = sprintf($sql, 'DISTINCT contributor_album.role');
+	}
+
+	my $stillScanning = Slim::Music::Import->stillScanning();
+
+	# Get count of all results, the count is cached until the next rescan done event
+	my $cacheKey = md5_hex($sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
+
+	my $count = $cache->{$cacheKey};
+	if ( !$count ) {
+		my $total_sth = $dbh->prepare_cached( qq{
+			SELECT COUNT(1) FROM ( $sql ) AS t1
+		} );
+
+		$total_sth->execute( @{$p} );
+		($count) = $total_sth->fetchrow_array();
+		$total_sth->finish;
+
+		if ( !$stillScanning ) {
+			$cache->{$cacheKey} = $count;
+		}
+	}
+
+	# now build the result
+
+	if ($stillScanning) {
+		$request->addResult('rescan', 1);
+	}
+
+	$count += 0;
+
+	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+
+	if ($valid && $tags ne 'CC') {
+
+		my $loopname = 'roles_loop';
+		my $chunkCount = 0;
+
+		# Limit the real query
+		if ( $index =~ /^\d+$/ && $quantity =~ /^\d+$/ ) {
+			$sql .= "LIMIT $index, $quantity ";
+		}
+
+		if ( main::DEBUGLOG && $sqllog->is_debug ) {
+			$sqllog->debug( "Roles query: $sql / " . Data::Dump::dump($p) );
+		}
+
+		my $sth = $dbh->prepare_cached($sql);
+		$sth->execute( @{$p} );
+
+		my ($role);
+		$sth->bind_columns( \$role );
+
+		while ( $sth->fetch ) {
+
+			$request->addResultLoop($loopname, $chunkCount, 'role_id', $role);
+			if ($tags =~ /2/) {
+				my $roleName = Slim::Schema::Contributor->roleToType($role);
+				utf8::decode($roleName);
+				$request->addResultLoop($loopname, $chunkCount, 'role_name', $roleName);
+			}
+
+			$chunkCount++;
+
+			main::idleStreams() if !($chunkCount % 5);
+		}
+	}
+
+	$request->addResult('count', $count);
 
 	$request->setStatusDone();
 }
