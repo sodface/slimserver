@@ -132,7 +132,7 @@ sub advancedSearch {
 		delete $params->{savedSearch};
 	}
 
-	my $type = ($params->{'searchType'} || '') =~ /^(Track|Album)$/ ? $1 : 'Track';
+	my $type = ($params->{'searchType'} || '') =~ /^(Track|Album|Work)$/ ? $1 : 'Track';
 
 	# keep a copy of the search params to be stored in a saved search
 	my %searchParams;
@@ -418,6 +418,11 @@ sub advancedSearch {
 		push @joins, 'album';
 	}
 
+	if ($query{'work.titlesearch'}) {
+
+		push @joins, 'work';
+	}
+
 	if ($query{'comments.value'} || $joins{'comments'}) {
 
 		push @joins, 'comments';
@@ -457,7 +462,14 @@ sub advancedSearch {
 		},{
 			'order_by' => "me.disc, me.titlesort $collate",
 		});
+	} elsif ( $type eq 'Work' ) {
+		$rs = Slim::Schema->search('Work', {
+			'id' => { 'in' => $tracksRs->get_column('work')->as_query },
+		},{
+			'order_by' => "me.titlesort $collate",
+		});
 	}
+
 
 	if ( $params->{'action'} && $params->{'action'} eq 'saveLibraryView' && (my $saveSearch = $params->{saveSearch}) ) {
 		# build our own resultset, as we don't want the result to be sorted

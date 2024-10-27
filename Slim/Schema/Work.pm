@@ -56,6 +56,10 @@ sub displayAsHTML {
 	my ($self, $form, $descend, $sort) = @_;
 
 	$form->{'text'} = $self->title;
+	$form->{'workId'}    = $self->id;
+	$form->{'item'}       = $form->{'text'};
+	$form->{'workTitle'} = $form->{'text'};
+	$form->{'attributes'} = "&work.id=" . $form->{'workId'};
 }
 
 # Rescan this work.  Make sure at least 1 track for the work exists, otherwise
