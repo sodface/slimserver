@@ -132,7 +132,7 @@ sub advancedSearch {
 		delete $params->{savedSearch};
 	}
 
-	my $type = ($params->{'searchType'} || '') =~ /^(Track|Album)$/ ? $1 : 'Track';
+	my $type = ($params->{'searchType'} || '') =~ /^(Track|Album|Work)$/ ? $1 : 'Track';
 
 	# keep a copy of the search params to be stored in a saved search
 	my %searchParams;
@@ -418,6 +418,11 @@ sub advancedSearch {
 		push @joins, 'album';
 	}
 
+	if ($query{'work.titlesearch'}) {
+
+		push @joins, 'work';
+	}
+
 	if ($query{'comments.value'} || $joins{'comments'}) {
 
 		push @joins, 'comments';
@@ -446,6 +451,7 @@ sub advancedSearch {
 	);
 
 	$attrs{'order_by'} = "me.disc, me.titlesort $collate" if $type eq 'Track';
+	$attrs{'prefetch'} = "work" if $type eq 'Track';
 
 	# Create a resultset - have fillInSearchResults do the actual search.
 	my $tracksRs = Slim::Schema->search('Track', \%query, \%attrs)->distinct;
@@ -457,7 +463,16 @@ sub advancedSearch {
 		},{
 			'order_by' => "me.disc, me.titlesort $collate",
 		});
+	} elsif ( $type eq 'Work' ) {
+		$rs = Slim::Schema->search('Work', {
+			'me.id' => { 'in' => $tracksRs->get_column('work')->as_query },
+		},{
+			'order_by' => "composer.namesort, me.titlesort $collate",
+		},{
+			'join' => 'composer',
+		});
 	}
+
 
 	if ( $params->{'action'} && $params->{'action'} eq 'saveLibraryView' && (my $saveSearch = $params->{saveSearch}) ) {
 		# build our own resultset, as we don't want the result to be sorted
@@ -576,6 +591,8 @@ sub fillInSearchResults {
 
 	# This is very similar to a loop in Slim::Web::Pages::BrowseDB....
 	while (my $obj = $rs->next) {
+
+		$obj->store_column('work' => $obj->work->get_column('title')) if $type eq 'track' && $obj->work->get_column('title');
 
 		my %form = (
 			'levelName'    => $type,

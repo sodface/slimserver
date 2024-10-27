@@ -14492,15 +14492,27 @@ BROWSE_WORKS
 	CS	Procházet díla
 	DE	Werke durchsuchen
 	EN	Browse Works
+	ES	Explorar obras
 	FR	Parcourir les œuvres
 	HU	Tallózás a művek között
 	NL	Door composities bladeren
 	PT	Examinar obras
 
+WORK
+	CS	Díla
+	DE	Werke
+	EN	Work
+	ES	Obra
+	FR	Œuvre
+	HU	Művek
+	NL	Compositie
+	PT	Obra
+
 WORKS
 	CS	Díla
 	DE	Werke
 	EN	Works
+	ES	Obras
 	FR	Œuvres
 	HU	Művek
 	NL	Composities
@@ -14510,6 +14522,7 @@ WORKS_CLASSICAL
 	CS	Klasická díla
 	DE	Klassische Werke
 	EN	Classical Works
+	ES	Obras clásicas
 	FR	Œuvres Classiques
 	HU	Klasszikus művek
 	NL	Klassieke composities
