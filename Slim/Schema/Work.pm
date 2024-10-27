@@ -22,6 +22,8 @@ use Slim::Utils::Strings qw(string);
 	$class->has_many('track' => 'Slim::Schema::Track' => 'work');
 	$class->belongs_to('composer' => 'Slim::Schema::Composer');
 
+	$class->utf8_columns(qw/title titlesort/);
+
 	$class->resultset_class('Slim::Schema::ResultSet::Work');
 }
 
@@ -55,10 +57,11 @@ sub contributors {
 sub displayAsHTML {
 	my ($self, $form, $descend, $sort) = @_;
 
-	$form->{'text'} = $self->title;
-	$form->{'workId'}    = $self->id;
-	$form->{'item'}       = $form->{'text'};
-	$form->{'workTitle'} = $form->{'text'};
+	$form->{'workId'}     = $self->id;
+	$form->{'workTitle'}  = $self->title;
+	$form->{'composer'}   = $self->composer->name;
+	$form->{'text'}       = $form->{'composer'} . string('COLON') . ' ' .$form->{'workTitle'};
+	$form->{'item'}       = $form->{'workTitle'};
 	$form->{'attributes'} = "&work.id=" . $form->{'workId'};
 }
 

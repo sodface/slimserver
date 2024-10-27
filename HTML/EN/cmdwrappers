@@ -295,7 +295,7 @@ END %]
 [% END %]
 
 [% BLOCK albuminfo %]
-	[% IF item.albumTitle %]
+	[% IF item.albumId || item.itemobj.album.id %]
 		<a [% PROCESS albumItemHRef %] target="browser" class="browseItemLink">[% item.text | html %]</a>
 	[% ELSE %]
 		[% item.text | html %]
@@ -309,7 +309,7 @@ END %]
 [% END %]
 
 [% BLOCK workinfo %]
-	[% IF item.workTitle %]
+	[% IF item.workId || item.itemobj.work.id %]
 		<a [% PROCESS workItemHRef %] target="browser" class="browseItemLink">[% item.text | html %]</a>
 	[% ELSE %]
 		[% item.text | html %]

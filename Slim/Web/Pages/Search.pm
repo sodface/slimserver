@@ -451,6 +451,7 @@ sub advancedSearch {
 	);
 
 	$attrs{'order_by'} = "me.disc, me.titlesort $collate" if $type eq 'Track';
+	$attrs{'prefetch'} = "work" if $type eq 'Track';
 
 	# Create a resultset - have fillInSearchResults do the actual search.
 	my $tracksRs = Slim::Schema->search('Track', \%query, \%attrs)->distinct;
@@ -464,9 +465,11 @@ sub advancedSearch {
 		});
 	} elsif ( $type eq 'Work' ) {
 		$rs = Slim::Schema->search('Work', {
-			'id' => { 'in' => $tracksRs->get_column('work')->as_query },
+			'me.id' => { 'in' => $tracksRs->get_column('work')->as_query },
 		},{
-			'order_by' => "me.titlesort $collate",
+			'order_by' => "composer.namesort, me.titlesort $collate",
+		},{
+			'join' => 'composer',
 		});
 	}
 
@@ -588,6 +591,8 @@ sub fillInSearchResults {
 
 	# This is very similar to a loop in Slim::Web::Pages::BrowseDB....
 	while (my $obj = $rs->next) {
+
+		$obj->store_column('work' => $obj->work->get_column('title')) if $type eq 'track' && $obj->work->get_column('title');
 
 		my %form = (
 			'levelName'    => $type,
