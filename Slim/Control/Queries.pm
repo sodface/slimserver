@@ -3287,7 +3287,7 @@ sub rolesQuery {
 		while ( $sth->fetch ) {
 
 			$request->addResultLoop($loopname, $chunkCount, 'role_id', $role);
-			if ($tags =~ /2/) {
+			if ($tags =~ /t/) {
 				my $roleName = Slim::Schema::Contributor->roleToType($role);
 				utf8::decode($roleName);
 				$request->addResultLoop($loopname, $chunkCount, 'role_name', $roleName);
