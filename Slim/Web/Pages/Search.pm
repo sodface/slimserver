@@ -132,7 +132,7 @@ sub advancedSearch {
 		delete $params->{savedSearch};
 	}
 
-	my $type = ($params->{'searchType'} || '') =~ /^(Track|Album|Work)$/ ? $1 : 'Track';
+	my $type = ($params->{'searchType'} || '') =~ /^(Track|Album|Work|AlbumWork)$/ ? $1 : 'Track';
 
 	# keep a copy of the search params to be stored in a saved search
 	my %searchParams;
@@ -432,8 +432,8 @@ sub advancedSearch {
 		push @joins, 'persistent';
 	}
 
-	if ( my $library_id = Slim::Music::VirtualLibraries->getLibraryIdForClient($client) ) {
-
+	my $library_id = $params->{'library_id'} || Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
+	if ( my $library_id ) {
 		push @joins, 'libraryTracks';
 		$query{'libraryTracks.library'} = $library_id;
 	}
@@ -456,15 +456,17 @@ sub advancedSearch {
 	# Create a resultset - have fillInSearchResults do the actual search.
 	my $tracksRs = Slim::Schema->search('Track', \%query, \%attrs)->distinct;
 
-	my $rs;
-	if ( $type eq 'Album' ) {
-		$rs = Slim::Schema->search('Album', {
+	my $albumRs;
+	my $workRs;
+	if ( $type =~ /Album/ ) {
+		$albumRs = Slim::Schema->search('Album', {
 			'id' => { 'in' => $tracksRs->get_column('album')->as_query },
 		},{
 			'order_by' => "me.disc, me.titlesort $collate",
 		});
-	} elsif ( $type eq 'Work' ) {
-		$rs = Slim::Schema->search('Work', {
+	}
+	if ( $type =~ /Work/ ) {
+		$workRs = Slim::Schema->search('Work', {
 			'me.id' => { 'in' => $tracksRs->get_column('work')->as_query },
 		},{
 			'order_by' => "composer.namesort, me.titlesort $collate",
@@ -495,7 +497,11 @@ sub advancedSearch {
 		Slim::Music::VirtualLibraries->rebuild($vlid);
 	}
 
-	return ($tracksRs, $rs) if $dontRenderPage;
+	if ( $dontRenderPage ) {
+		return ($tracksRs, $albumRs) if $type eq 'Album';
+		return ($tracksRs, $workRs) if $type eq 'Work';
+		return ($tracksRs, $albumRs, $workRs) if $type eq 'AlbumWork';
+	}
 
 	if (defined $client && !$params->{'start'}) {
 
@@ -505,7 +511,7 @@ sub advancedSearch {
 		$client->modeParam("search${type}Results", { 'cond' => \%query, 'attr' => \%attrs });
 	}
 
-	fillInSearchResults($params, $rs || $tracksRs, \@qstring, $client);
+	fillInSearchResults($params, $albumRs || $workRs || $tracksRs, \@qstring, $client);
 
 	return Slim::Web::HTTP::filltemplatefile("advanced_search.html", $params);
 }
