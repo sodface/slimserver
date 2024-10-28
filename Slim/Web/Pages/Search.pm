@@ -450,7 +450,10 @@ sub advancedSearch {
 		'joins' => \@joins,
 	);
 
-	$attrs{'order_by'} = "me.disc, me.titlesort $collate" if $type eq 'Track';
+	if ( $type eq 'Track' ) {
+		$attrs{'order_by'} = "me.disc, me.titlesort $collate";
+		$attrs{'prefetch'} = "work";
+	}
 
 	# Create a resultset - have fillInSearchResults do the actual search.
 	my $tracksRs = Slim::Schema->search('Track', \%query, \%attrs)->distinct;
@@ -592,7 +595,9 @@ sub fillInSearchResults {
 	while (my $obj = $rs->next) {
 
 		# ensure work name is in the place expected by TitleFormatter so that it uses name and not id
-		$obj->store_column('work' => $obj->work->get_column('title')) if $type eq 'track' && $obj->work && $obj->work->get_column('title');
+		if ( $type eq 'track' && $obj->workid && $obj->work && $obj->work->title ) {
+			$obj->store_column('work' => $obj->work->title);
+		}
 
 		my %form = (
 			'levelName'    => $type,
