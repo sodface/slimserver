@@ -4877,8 +4877,11 @@ sub worksQuery {
 		push @{$w}, "tracks.work IS NOT NULL";
 
 		if ( defined $workID && $workID != -1 ) {
-			push @{$w}, "works.id = ?";
-			push @{$p}, $workID;
+			my @works = split(',', $workID);
+			if (scalar @works) {
+				push @{$p}, @works;
+				push @{$w}, 'works.id IN (' . join(', ', map {'?'} @works) . ')';
+			}
 		}
 
 		if ( defined $year ) {

@@ -433,7 +433,7 @@ sub advancedSearch {
 	}
 
 	my $library_id = $params->{'library_id'} || Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
-	if ( my $library_id ) {
+	if ( $library_id && $library_id ne '-1' ) {
 		push @joins, 'libraryTracks';
 		$query{'libraryTracks.library'} = $library_id;
 	}
@@ -466,13 +466,14 @@ sub advancedSearch {
 		});
 	}
 	if ( $type =~ /Work/ ) {
+		my %workAttrs = (
+			'order_by' => "composer.namesort, me.titlesort $collate",
+			'join' => 'composer',
+		) if !$dontRenderPage;
+
 		$workRs = Slim::Schema->search('Work', {
 			'me.id' => { 'in' => $tracksRs->get_column('work')->as_query },
-		},{
-			'order_by' => "composer.namesort, me.titlesort $collate",
-		},{
-			'join' => 'composer',
-		});
+		}, \%workAttrs);
 	}
 
 
@@ -598,6 +599,7 @@ sub fillInSearchResults {
 	# This is very similar to a loop in Slim::Web::Pages::BrowseDB....
 	while (my $obj = $rs->next) {
 
+		# This is to make sure the work name rather than id is in the right place for TitleFormatter
 		$obj->store_column('work' => $obj->work->get_column('title')) if $type eq 'track' && $obj->work->get_column('title');
 
 		my %form = (
