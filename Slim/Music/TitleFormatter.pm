@@ -702,6 +702,7 @@ sub infoFormat {
 				'create' => 1,
 			});
 		}
+
 		if (!blessed($track) || !$track->can('id')) {
 
 			return '';

@@ -450,7 +450,7 @@ sub advancedSearch {
 		'joins' => \@joins,
 	);
 
-	$attrs{'order_by'} = "me.disc, me.titlesort $collate" if $type = 'Track';;
+	$attrs{'order_by'} = "me.disc, me.titlesort $collate" if $type eq 'Track';
 
 	# Create a resultset - have fillInSearchResults do the actual search.
 	my $tracksRs = Slim::Schema->search('Track', \%query, \%attrs)->distinct;
