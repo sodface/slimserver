@@ -766,6 +766,7 @@ sub albumsQuery {
 						AND ( (:performance IS NULL AND tracks.performance IS NULL) OR tracks.performance = :performance )
 						AND contributor_track.role IN (%s)
 					GROUP BY contributor_track.role, contributors.name, contributors.id
+					ORDER BY contributor_track.role, contributors.namesort
 				},
 				join(',', map { Slim::Schema::Contributor->typeToRole($_) } @linkRoles));
 			} else {
@@ -793,6 +794,7 @@ sub albumsQuery {
 					JOIN contributors ON contributors.id = contributor_album.contributor
 					WHERE contributor_album.album = :album
 					AND contributor_album.role IN (%s)
+					ORDER BY contributor_album.role, contributors.namesort
 				}, join(',', map { Slim::Schema::Contributor->typeToRole($_) } @linkRoles) );
 			}
 		}
