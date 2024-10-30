@@ -1525,7 +1525,7 @@ sub _albums {
 				}
 				else {
 					$_->{'artists'}    = [ $_->{'artist'} ];
-					$_->{'artist_ids'} = [ $_->{'id'} ];
+					$_->{'artist_ids'} = [ $_->{'artist_id'} ];
 				}
 
 				# If an artist was not used in the selection criteria or if one was
