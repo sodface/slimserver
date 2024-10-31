@@ -34,7 +34,7 @@ use File::Basename qw(basename);
 use Storable ();
 use JSON::XS::VersionOneAndTwo;
 use Digest::MD5 qw(md5_hex);
-use List::Util qw(first);
+use List::Util qw(first uniq);
 use MIME::Base64 ();
 use Scalar::Util qw(blessed);
 use URI::Escape ();
@@ -752,11 +752,11 @@ sub albumsQuery {
 			);
 		};
 
-		my ($contributorSql, $contributorSth, $contributorNameSth, $contributorRoleSth, @linkRoles);
+		my ($contributorSql, $contributorSth, $contributorNameSth, $contributorRoleSth, @linkRoleIds);
 		if ( $tags =~ /(?:aa|SS)/ ) {
 			# Override $contributorSql if we're dealing with a Work: output Artist, Orchestra, Conductor in that order.
 			if ( defined $work ) {
-				@linkRoles = ( 'ARTIST', 'BAND', 'CONDUCTOR' );
+				@linkRoleIds = map { Slim::Schema::Contributor->typeToRole($_) } ( 'ARTIST', 'BAND', 'CONDUCTOR' );
 				$contributorSql = sprintf( qq{
 					SELECT contributor_track.role AS role, contributors.name AS name, contributors.id AS id
 					FROM tracks
@@ -768,9 +768,9 @@ sub albumsQuery {
 					GROUP BY contributor_track.role, contributors.name, contributors.id
 					ORDER BY contributor_track.role, contributors.namesort
 				},
-				join(',', map { Slim::Schema::Contributor->typeToRole($_) } @linkRoles));
+				join(',', @linkRoleIds));
 			} else {
-				@linkRoles = ( 'ARTIST', 'ALBUMARTIST' );
+				my @linkRoles = ( 'ARTIST', 'ALBUMARTIST' );
 
 				if ($prefs->get('useUnifiedArtistsList')) {
 					my %roleMap = %{Slim::Schema::Contributor::roleToContributorMap()};
@@ -784,10 +784,10 @@ sub albumsQuery {
 				# when filtering by role, put that role at the head of the list if it wasn't in there yet
 				if ($roleID) {
 					unshift @linkRoles, map { Slim::Schema::Contributor->roleToType($_) || $_ } split(/,/, $roleID);
-					my %seen;
-					@linkRoles = grep !($seen{$_}++), @linkRoles;
+					@linkRoles = List::Util::uniq(@linkRoles);
 				}
 
+				@linkRoleIds = map { Slim::Schema::Contributor->typeToRole($_) } @linkRoles;
 				$contributorSql = sprintf( qq{
 					SELECT contributor_album.role AS role, contributors.name AS name, contributors.id AS id
 					FROM contributor_album
@@ -795,7 +795,7 @@ sub albumsQuery {
 					WHERE contributor_album.album = :album
 					AND contributor_album.role IN (%s)
 					ORDER BY contributor_album.role, contributors.namesort
-				}, join(',', map { Slim::Schema::Contributor->typeToRole($_) } @linkRoles) );
+				}, join(',', @linkRoleIds) );
 			}
 		}
 
@@ -894,14 +894,14 @@ sub albumsQuery {
 
 				my @artists;
 				my @artistIds;
-				foreach my $role ( map { Slim::Schema::Contributor->typeToRole($_) } @linkRoles ) {
-					foreach my $name ( @{$contributorHash->{$role}->{'name'}} ) {
-						push @artists, $name unless grep(/$name/, @artists);
-					}
-					foreach my $id ( @{$contributorHash->{$role}->{'id'}} ) {
-						push @artistIds, $id unless grep(/$id/, @artistIds);
+				foreach my $role ( @linkRoleIds ) {
+					if ($contributorHash->{$role}) {
+						push @artists, @{$contributorHash->{$role}->{'name'}};
+						push @artistIds, @{$contributorHash->{$role}->{'id'}};
 					}
 				}
+				@artists = List::Util::uniq(@artists);
+				@artistIds = List::Util::uniq(@artistIds);
 
 				# XXX - what if the artist name itself contains ','?
 				if ( $tags =~ /aa/ && scalar @artists ) {
