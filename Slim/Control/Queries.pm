@@ -610,26 +610,14 @@ sub albumsQuery {
 		$c->{'albums.replay_gain'} = 1;
 	}
 
-	if ( $tags =~ /R|S/ ) {
+	if ( $tags =~ /R|S|a/ ) {
 		$c->{'albums.contributor'} = 1;
 	}
 
 	if ( $tags =~ /a/ ) {
 		# If requesting artist data, join contributor
-		if ( $sql !~ /JOIN contributors ON/ ) {
-			if ( $sql =~ /JOIN contributor_album/ ) {
-				# Bug 17364, if looking for an artist_id value, we need to join contributors via contributor_album
-				# or No Album will not be found properly
-				$sql .= 'JOIN contributors ON contributors.id = contributor_album.contributor ';
-			}
-			else {
-				$sql .= 'JOIN contributors ON contributors.id = albums.contributor ';
-			}
-		}
-		$c->{'contributors.name'} = 1;
-
-		# if albums for a specific contributor are requested, then we need the album's contributor, too
-		$c->{'albums.contributor'} = $contributorID;
+		$sql .= 'JOIN contributors AS albumContributor ON albumContributor.id = albums.contributor ';
+		$c->{'albumContributor.name'} = 1;
 	}
 
 	if ( $tags =~ /s/ ) {
@@ -807,6 +795,7 @@ sub albumsQuery {
 			utf8::decode( $c->{'works.title'} ) if exists $c->{'works.title'};
 			utf8::decode( $c->{'composer.name'} ) if exists $c->{'composer.name'};
 			utf8::decode( $c->{'tracks.performance'} ) if exists $c->{'tracks.performance'};
+			utf8::decode( $c->{'albumContributor.name'} ) if exists $c->{'albumContributor.name'};
 			$request->addResultLoop($loopname, $chunkCount, 'id', $c->{'albums.id'});
 			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'work_id', $c->{'tracks.work'});
 			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'work_name', $c->{'works.title'});
@@ -815,9 +804,9 @@ sub albumsQuery {
 
 			my $favoritesUrl = $work
 				? sprintf('db:album.title=%s&contributor.name=%s&work.title=%s&composer.name=%s&track.performance=%s',
-					URI::Escape::uri_escape_utf8($c->{'albums.title'}), URI::Escape::uri_escape_utf8($c->{'contributors.name'}),
+					URI::Escape::uri_escape_utf8($c->{'albums.title'}), URI::Escape::uri_escape_utf8($c->{'albumContributor.name'}),
 					URI::Escape::uri_escape_utf8($c->{'works.title'}), URI::Escape::uri_escape_utf8($c->{'composer.name'}), URI::Escape::uri_escape_utf8($c->{'tracks.performance'}))
-				: sprintf('db:album.title=%s&contributor.name=%s', URI::Escape::uri_escape_utf8($c->{'albums.title'}), URI::Escape::uri_escape_utf8($c->{'contributors.name'}));
+				: sprintf('db:album.title=%s&contributor.name=%s', URI::Escape::uri_escape_utf8($c->{'albums.title'}), URI::Escape::uri_escape_utf8($c->{'albumContributor.name'}));
 			# even if we have an extid, it cannot be used when we're dealing here with a work, which is a subset of the album.
 			$request->addResultLoop($loopname, $chunkCount, 'favorites_url', $c->{'albums.extid'} && !$c->{'tracks.work'} ? $c->{'albums.extid'} : $favoritesUrl);
 			my $favoritesTitle = $c->{'albums.title'};
@@ -843,19 +832,10 @@ sub albumsQuery {
 
 			#Don't use albums.contributor to set artist_id/artist for Works, it may well be completely wrong!
 			if ( !$work ) {
-				if ($tags =~ /a|S/) {
-					if ($tags =~ /a/) {
-						# if album contributor is different to input contributor, use album contributor name instead of input contributor name
-						if ($contributorID && $c->{'albums.contributor'} && $contributorID != $c->{'albums.contributor'}) {
-							$contributorNameSth ||= $dbh->prepare_cached('SELECT name FROM contributors WHERE id = ?');
-							my ($name) = @{ $dbh->selectcol_arrayref($contributorNameSth, undef, $c->{'albums.contributor'}) };
-							$c->{'contributors.name'} = $name if $name;
-						}
-						utf8::decode( $c->{'contributors.name'} ) if exists $c->{'contributors.name'};
-						$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist', $c->{'contributors.name'});
-					}
-
-					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_id', $c->{'albums.contributor'});
+				$tags =~ /S/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_id', $c->{'albums.contributor'});
+				if ($tags =~ /a/) {
+					utf8::decode( $c->{'albumContributor.name'} ) if exists $c->{'albumContributor.name'};
+					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist', $c->{'albumContributor.name'});
 				}
 			}
 
