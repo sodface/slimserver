@@ -843,23 +843,19 @@ sub albumsQuery {
 
 			#Don't use albums.contributor to set artist_id/artist for Works, it may well be completely wrong!
 			if ( !$work ) {
-				$tags =~ /S/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_id', $contributorID || $c->{'albums.contributor'});
-
-				if ($tags =~ /a/) {
-					# Bug 15313, this used to use $eachitem->artists which
-					# contains a lot of extra logic.
-
-					# Bug 17542: If the album artist is different from the current track's artist,
-					# use the album artist instead of the track artist (if available)
-					if ($contributorID && $c->{'albums.contributor'} && $contributorID != $c->{'albums.contributor'}) {
-						$contributorNameSth ||= $dbh->prepare_cached('SELECT name FROM contributors WHERE id = ?');
-						my ($name) = @{ $dbh->selectcol_arrayref($contributorNameSth, undef, $c->{'albums.contributor'}) };
-						$c->{'contributors.name'} = $name if $name;
+				if ($tags =~ /a|S/) {
+					if ($tags =~ /a/) {
+						# if album contributor is different to input contributor, use album contributor name instead of input contributor name
+						if ($contributorID && $c->{'albums.contributor'} && $contributorID != $c->{'albums.contributor'}) {
+							$contributorNameSth ||= $dbh->prepare_cached('SELECT name FROM contributors WHERE id = ?');
+							my ($name) = @{ $dbh->selectcol_arrayref($contributorNameSth, undef, $c->{'albums.contributor'}) };
+							$c->{'contributors.name'} = $name if $name;
+						}
+						utf8::decode( $c->{'contributors.name'} ) if exists $c->{'contributors.name'};
+						$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist', $c->{'contributors.name'});
 					}
 
-					utf8::decode( $c->{'contributors.name'} ) if exists $c->{'contributors.name'};
-
-					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist', $c->{'contributors.name'});
+					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_id', $c->{'albums.contributor'});
 				}
 			}
 
