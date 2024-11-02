@@ -760,13 +760,14 @@ sub albumsQuery {
 			} else {
 				my @linkRoles = ( 'ARTIST', 'ALBUMARTIST' );
 
-				if ($prefs->get('useUnifiedArtistsList')) {
-					my %roleMap = %{Slim::Schema::Contributor::roleToContributorMap()};
-					# Loop through roles in role number sequence to see if the user wants to show that contributor role.
-					foreach my $role (sort {$a <=> $b} keys %roleMap) {
-						if ($prefs->get(lc($roleMap{$role}) . 'InArtists')) {
-							push @linkRoles, $roleMap{$role};
-						}
+				my %roleMap = %{Slim::Schema::Contributor::roleToContributorMap()};
+				my $userDefinedRoles = $prefs->get('userDefinedRoles');
+				my $unifiedList = $prefs->get('useUnifiedArtistsList');
+				# Loop through roles in role number sequence to see if the user wants to show that contributor role.
+				foreach my $role (sort {$a <=> $b} keys %roleMap) {
+					if (  $unifiedList && $prefs->get(lc($roleMap{$role}) . 'InArtists')
+						|| $userDefinedRoles->{$roleMap{$role}} && $userDefinedRoles->{$roleMap{$role}}->{'albumLink'} ) {
+						push @linkRoles, $roleMap{$role};
 					}
 				}
 				# when filtering by role, put that role at the head of the list if it wasn't in there yet

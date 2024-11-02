@@ -355,3 +355,11 @@ PLUGIN_EXTENDED_BROWSEMODES_ROLE_INCLUDE
 	HU	Tartalmazza az előadók listáját
 	NL	Opnemen bij artiestenlijsten
 
+PLUGIN_EXTENDED_BROWSEMODES_ROLE_ALBUMLINK
+	EN	Include album list links
+	DE	Fügen Sie Links zur Albumliste hinzu
+	FR	Ajouter des liens à la liste des albums
+	ES	Agregar enlaces a la lista de álbumes
+	HU	Hivatkozások hozzáadása az albumlistához
+	NL	Voeg links toe aan de albumlijst
+
