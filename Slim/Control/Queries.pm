@@ -614,8 +614,8 @@ sub albumsQuery {
 		$c->{'albums.contributor'} = 1;
 	}
 
-	if ( $tags =~ /a/ ) {
-		# If requesting artist data, join contributor
+	if ( $tags ne 'CC' ) {
+		# We need the main albums.contributor name for favorites, so always do this join unless getting count only.
 		$sql .= 'JOIN contributors AS albumContributor ON albumContributor.id = albums.contributor ';
 		$c->{'albumContributor.name'} = 1;
 	}
@@ -875,6 +875,11 @@ sub albumsQuery {
 						push @artists, @{$contributorHash->{$role}->{'name'}};
 						push @artistIds, @{$contributorHash->{$role}->{'id'}};
 					}
+				}
+				# if not dealing with a work, put the main album artist at the top of the list
+				if (!$work) {
+					unshift @artists, $c->{'albumContributor.name'} if $c->{'albumContributor.name'};
+					unshift @artistIds, $c->{'albums.contributor'} if $c->{'albums.contributor'};
 				}
 				@artists = List::Util::uniq(@artists);
 				@artistIds = List::Util::uniq(@artistIds);
