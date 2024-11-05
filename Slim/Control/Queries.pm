@@ -613,7 +613,7 @@ sub albumsQuery {
 
 	if ( $tags ne 'CC' ) {
 		# We need the main albums.contributor name for favorites, so always do this join unless getting count only.
-		$sql .= 'JOIN contributors ON contributors.id = albums.contributor ' unless $sql =~ /JOIN contributors ON/;
+		$sql .= 'JOIN contributors ON contributors.id = albums.contributor ';
 		$c->{'contributors.name'} = 1;
 	}
 
@@ -831,7 +831,6 @@ sub albumsQuery {
 			if ( !$work ) {
 				$tags =~ /S/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_id', $c->{'albums.contributor'});
 				if ($tags =~ /a/) {
-#					utf8::decode( $c->{'contributors.name'} ) if exists $c->{'contributors.name'};
 					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist', $c->{'contributors.name'});
 				}
 			}
@@ -875,7 +874,7 @@ sub albumsQuery {
 				}
 				# if not dealing with a work, put the main album artist at the top of the list
 				if (!$work) {
-					unshift @artists, $c->{'contributor.name'} if $c->{'contributor.name'};
+					unshift @artists, $c->{'contributors.name'} if $c->{'contributors.name'};
 					unshift @artistIds, $c->{'albums.contributor'} if $c->{'albums.contributor'};
 				}
 				@artists = List::Util::uniq(@artists);
