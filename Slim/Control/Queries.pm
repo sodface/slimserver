@@ -868,7 +868,7 @@ sub albumsQuery {
 				my @artistIds;
 				foreach my $role ( @linkRoleIds ) {
 					if ($contributorHash->{$role}) {
-						push @artists, @{$contributorHash->{$role}->{'name'}};
+						push @artists, map { utf8::decode($_); $_ } @{$contributorHash->{$role}->{'name'}};
 						push @artistIds, @{$contributorHash->{$role}->{'id'}};
 					}
 				}
