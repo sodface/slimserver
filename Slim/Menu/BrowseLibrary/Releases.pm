@@ -42,7 +42,6 @@ sub _releases {
 		$artistIds[0] =~ /artist_id:(\d+)/;
 		$artistId = $1;
 	}
-$log->error("DK \$artistId=" . Data::Dump::dump($artistId));
 
 	my $index = $args->{index};
 	my $quantity = $args->{quantity};
@@ -130,7 +129,6 @@ $log->error("DK \$artistId=" . Data::Dump::dump($artistId));
 			});
 
 			if (!$albumArtist) {
-$log->error("DK not albumArtist");
 				$addToMainReleases->();
 				$addUserDefinedRoles->();
 				next;
