@@ -27,7 +27,7 @@ if ( my $installer = Slim::Utils::Light->checkForUpdate() ) {
 
 	# new Menubar Item would pass localized strings for a notification
 	if ($ENV{LMS_NOTIFICATION_TITLE} && $ENV{LMS_NOTIFICATION_CONTENT}) {
-		`open $pwd/lms-notify.app`;
+		`open "$pwd/lms-notify.app"`;
 	}
 	# legacy: run the preference pane
 	else {
