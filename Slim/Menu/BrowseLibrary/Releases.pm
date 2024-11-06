@@ -42,6 +42,7 @@ sub _releases {
 		$artistIds[0] =~ /artist_id:(\d+)/;
 		$artistId = $1;
 	}
+$log->error("DK \$artistId=" . Data::Dump::dump($artistId));
 
 	my $index = $args->{index};
 	my $quantity = $args->{quantity};
@@ -125,10 +126,11 @@ sub _releases {
 			my $albumArtist = Slim::Schema->first('ContributorAlbum', {
 				album => $_->{id},
 				role  => Slim::Schema::Contributor->typeToRole('ALBUMARTIST'),
-				contributor => { '!=' => $_->{artist_id} }
+				contributor => { '!=' => $artistId }
 			});
 
 			if (!$albumArtist) {
+$log->error("DK not albumArtist");
 				$addToMainReleases->();
 				$addUserDefinedRoles->();
 				next;
