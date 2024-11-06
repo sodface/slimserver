@@ -123,14 +123,9 @@ sub handler {
 				my $dirs = $serverPrefs->get($pref);
 				unshift @$dirs, $paramRef->{$pref};
 
-				my %seen;
 				my $scanOnChange = $serverPrefs->get('dontTriggerScanOnPrefChange');
 				$serverPrefs->set('dontTriggerScanOnPrefChange', 0);
-
-				$serverPrefs->set($pref, [ grep {
-					!$seen{$_}++
-				} @$dirs ]);
-
+				$serverPrefs->set($pref, [ Slim::Utils::Misc::uniq(@$dirs) ]);
 				$serverPrefs->set('dontTriggerScanOnPrefChange', $scanOnChange) if $scanOnChange;
 			}
 			else {

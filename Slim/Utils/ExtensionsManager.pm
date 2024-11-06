@@ -121,12 +121,9 @@ $prefs->setChange(\&initUnsupportedRepo, 'useUnsupported');
 
 $prefs->migrate(4, sub {
 	# remove invalid characters from the end of the URL. These seem to sometimes be added by the forum software
-	my %seen;
-	$prefs->set('repos', [ grep {
-		!$seen{$_}++
-	} map {
+	$prefs->set('repos', [ Slim::Utils::Misc::uniq(map {
 		s/\W*$//r;
-	} @{$prefs->get('repos')} ]);
+	} @{$prefs->get('repos')}) ]);
 	1;
 });
 

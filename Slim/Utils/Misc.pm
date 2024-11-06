@@ -39,6 +39,7 @@ use File::Path qw(mkpath rmtree);
 use File::Temp qw(tempdir);
 use File::Slurp;
 use FindBin qw($Bin);
+use List::Util qw();
 use POSIX qw(strftime);
 use Scalar::Util qw(blessed);
 use Time::HiRes;
@@ -733,10 +734,9 @@ sub getMediaDirs {
 
 		$mediadirs = [ grep { !$ignoreList->{$_} } @$mediadirs ];
 
-		my %seen;
-		$mediadirs = [ grep { $_ && !$seen{$filter}++ } map {
+		$mediadirs = [ uniq( map {
 			($filter eq $_ || $filter =~ /^\Q$_\E/) && $filter
-		} @$mediadirs] if $filter;
+		} @$mediadirs ) ] if $filter;
 	}
 
 	$mediadirsCache{$type} = [ map { $_ } @$mediadirs ] unless $filter;
@@ -1398,6 +1398,12 @@ sub arrayDiff {
 
 	return \%diff;
 }
+
+# List::Util::uniq only became available in Perl 5.26 - provide fallback
+*uniq = List::Util->can('uniq') || sub {
+	my %seen;
+	return grep { !$seen{$_}++ } @_;
+};
 
 =head2 shouldCacheURL( $url)
 
