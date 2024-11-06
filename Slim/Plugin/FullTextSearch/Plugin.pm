@@ -504,7 +504,7 @@ sub _uniqueTokens {
 		$text = Slim::Utils::Text::ignoreCaseArticles($text, 0, 1);
 	}
 
-	return join(' ', Slim::Slim::Utils::Misc::uniq(split(/\s/, $text)));
+	return join(' ', Slim::Utils::Misc::uniq(split(/\s/, $text)));
 }
 
 sub _rebuildIndex {
