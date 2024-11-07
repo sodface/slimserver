@@ -395,7 +395,7 @@ sub init {
 
 	$prefs->setChange(
 		sub { Slim::Control::Request::executeRequest(undef, ['wipecache', $prefs->get('dontTriggerScanOnPrefChange') ? 'queue' : undef]) },
-		qw(splitList groupdiscs useTPE2AsAlbumArtist)
+		qw(splitList groupdiscs useTPE2AsAlbumArtist cleanupReleaseTypes)
 	);
 
 	$prefs->setChange( sub {
