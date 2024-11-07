@@ -372,8 +372,7 @@ sub init {
 			return 0 if ref $new ne 'ARRAY';
 
 			# don't accept duplicate entries
-			my %seen;
-			return 0 if scalar ( grep { !$seen{$_}++ } @{$new} ) != scalar @$new;
+			return 0 if scalar Slim::Utils::Misc::uniq(@$new) != scalar @$new;
 
 			foreach (@{ $new }) {
 				if (Slim::Utils::Misc::isWinDrive($_)) {

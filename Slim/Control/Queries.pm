@@ -34,7 +34,7 @@ use File::Basename qw(basename);
 use Storable ();
 use JSON::XS::VersionOneAndTwo;
 use Digest::MD5 qw(md5_hex);
-use List::Util qw(first uniq);
+use List::Util qw(first);
 use MIME::Base64 ();
 use Scalar::Util qw(blessed);
 use URI::Escape ();
@@ -383,108 +383,105 @@ sub albumsQuery {
 		if (scalar @roles) {
 			push @{$p}, map { Slim::Schema::Contributor->typeToRole($_) } @roles;
 			push @{$w}, 'contributor_album.role IN (' . join(', ', map {'?'} @roles) . ')';
-
-			$sql .= 'JOIN contributors ON contributors.id = contributor_album.contributor ';
-		}
-		elsif ( $sort =~ /artflow|artistalbum/) {
-			$sql .= 'JOIN contributors ON contributors.id = albums.contributor ';
 		}
 
-		if ( $sort =~ /^(?:new|changed)$/ ) {
-			$sql .= 'JOIN tracks ON tracks.album = albums.id ';
-			$limit = $prefs->get('browseagelimit') || 100;
-			$order_by = "MAX(tracks.timestamp) DESC";
+		if ($tags ne 'CC') {
+			if ( $sort =~ /^(?:new|changed)$/ ) {
+				$sql .= 'JOIN tracks ON tracks.album = albums.id ';
+				$limit = $prefs->get('browseagelimit') || 100;
+				$order_by = "MAX(tracks.timestamp) DESC";
 
-			# Force quantity to not exceed max
-			if ( $quantity && $quantity > $limit ) {
-				$quantity = $limit;
-			}
-
-			if (main::STATISTICS && $sort eq 'new') {
-				$sql .= 'LEFT JOIN tracks_persistent ON tracks_persistent.urlmd5 = tracks.urlmd5 ';
-				$order_by = 'MIN(tracks_persistent.added) DESC';
-			}
-
-			# cache the most recent album IDs - need to query the tracks table, which is expensive
-			if ( !$ignoreNewAlbumsCache ) {
-				my $ids = $cache->{$newAlbumsCacheKey} || [];
-
-				if (!scalar @$ids) {
-					my $_cache = Slim::Utils::Cache->new;
-					$ids = $_cache->get($newAlbumsCacheKey) || [];
-
-					# get rid of stale cache entries
-					my @oldCacheKeys = grep /newAlbumIds/, keys %$cache;
-					foreach (@oldCacheKeys) {
-						next if $_ eq $newAlbumsCacheKey;
-						$_cache->remove($_);
-						delete $cache->{$_};
-					}
-
-					my $join = '';
-					$join .= "JOIN library_track ON library_track.library = '$libraryID' AND tracks.id = library_track.track " if $libraryID;
-
-					if (main::STATISTICS && $sort eq 'new') {
-						$join .= 'LEFT JOIN tracks_persistent ON tracks_persistent.urlmd5 = tracks.urlmd5 ';
-					}
-
-					my $countSQL = qq{
-						SELECT tracks.album
-						FROM tracks
-						$join
-						WHERE tracks.album > 0
-						GROUP BY tracks.album
-						ORDER BY $order_by
-					};
-
-					# get the list of album IDs ordered by timestamp
-					$ids = Slim::Schema->dbh->selectcol_arrayref( $countSQL, { Slice => {} } ) unless scalar @$ids;
-
-					$cache->{$newAlbumsCacheKey} = $ids;
-					$_cache->set($newAlbumsCacheKey, $ids, 86400 * 7) if scalar @$ids;
+				# Force quantity to not exceed max
+				if ( $quantity && $quantity > $limit ) {
+					$quantity = $limit;
 				}
 
-				my $start = scalar($index);
-				my $end   = $start + scalar($quantity || scalar($limit)-1);
-				if ($end >= scalar @$ids) {
-					$end = scalar(@$ids) - 1;
+				if (main::STATISTICS && $sort eq 'new') {
+					$sql .= 'LEFT JOIN tracks_persistent ON tracks_persistent.urlmd5 = tracks.urlmd5 ';
+					$order_by = 'MIN(tracks_persistent.added) DESC';
 				}
-				push @{$w}, 'albums.id IN (' . join(',', @$ids[$start..$end]) . ')';
 
-				# reset $index, as we're already limiting results using the id list
-				$index = 0;
+				# cache the most recent album IDs - need to query the tracks table, which is expensive
+				if ( !$ignoreNewAlbumsCache ) {
+					my $ids = $cache->{$newAlbumsCacheKey} || [];
+
+					if (!scalar @$ids) {
+						my $_cache = Slim::Utils::Cache->new;
+						$ids = $_cache->get($newAlbumsCacheKey) || [];
+
+						# get rid of stale cache entries
+						my @oldCacheKeys = grep /newAlbumIds/, keys %$cache;
+						foreach (@oldCacheKeys) {
+							next if $_ eq $newAlbumsCacheKey;
+							$_cache->remove($_);
+							delete $cache->{$_};
+						}
+
+						my $join = '';
+						$join .= "JOIN library_track ON library_track.library = '$libraryID' AND tracks.id = library_track.track " if $libraryID;
+
+						if (main::STATISTICS && $sort eq 'new') {
+							$join .= 'LEFT JOIN tracks_persistent ON tracks_persistent.urlmd5 = tracks.urlmd5 ';
+						}
+
+						my $countSQL = qq{
+							SELECT tracks.album
+							FROM tracks
+							$join
+							WHERE tracks.album > 0
+							GROUP BY tracks.album
+							ORDER BY $order_by
+						};
+
+						# get the list of album IDs ordered by timestamp
+						$ids = Slim::Schema->dbh->selectcol_arrayref( $countSQL, { Slice => {} } ) unless scalar @$ids;
+
+						$cache->{$newAlbumsCacheKey} = $ids;
+						$_cache->set($newAlbumsCacheKey, $ids, 86400 * 7) if scalar @$ids;
+					}
+
+					my $start = scalar($index);
+					my $end   = $start + scalar($quantity || scalar($limit)-1);
+					if ($end >= scalar @$ids) {
+						$end = scalar(@$ids) - 1;
+					}
+					push @{$w}, 'albums.id IN (' . join(',', @$ids[$start..$end]) . ')';
+
+					# reset $index, as we're already limiting results using the id list
+					$index = 0;
+				}
+
+				$page_key = undef;
 			}
-
-			$page_key = undef;
-		}
-		elsif ( $sort eq 'artflow' ) {
-			$order_by = "contributors.namesort $collate, albums.year, albums.titlesort $collate";
-			$c->{'contributors.namesort'} = 1;
-			$page_key = "SUBSTR(contributors.namesort,1,1)";
-		}
-		elsif ( $sort eq 'artistalbum' ) {
-			$order_by = "contributors.namesort $collate, albums.titlesort $collate";
-			$c->{'contributors.namesort'} = 1;
-			$page_key = "SUBSTR(contributors.namesort,1,1)";
-		}
-		elsif ( $sort eq 'yearartistalbum' ) {
-			$order_by = "albums.year, contributors.namesort $collate, albums.titlesort $collate";
-			$page_key = "albums.year";
-		}
-		elsif ( $sort eq 'yearalbum' ) {
-			$order_by = "albums.year, albums.titlesort $collate";
-			$page_key = "albums.year";
-		}
-		elsif ( $sort eq 'random' ) {
-			$limit = $prefs->get('itemsPerPage');
-
-			# Force quantity to not exceed max
-			if ( $quantity && $quantity > $limit ) {
-				$quantity = $limit;
+			elsif ( $sort eq 'artflow' ) {
+				$order_by = "contributors.namesort $collate, albums.year, albums.titlesort $collate";
+				$c->{'contributors.namesort'} = 1;
+				$page_key = "SUBSTR(contributors.namesort,1,1)";
 			}
+			elsif ( $sort eq 'artistalbum' ) {
+				$order_by = "contributors.namesort $collate, albums.titlesort $collate";
+				$c->{'contributors.namesort'} = 1;
+				$page_key = "SUBSTR(contributors.namesort,1,1)";
+			}
+			elsif ( $sort eq 'yearartistalbum' ) {
+				$order_by = "albums.year, contributors.namesort $collate, albums.titlesort $collate";
+				$page_key = "albums.year";
+			}
+			elsif ( $sort eq 'yearalbum' ) {
+				$order_by = "albums.year, albums.titlesort $collate";
+				$page_key = "albums.year";
+			}
+			elsif ( $sort eq 'random' ) {
+				$limit = $prefs->get('itemsPerPage');
 
-			$order_by = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->randomFunction();
-			$page_key = undef;
+				# Force quantity to not exceed max
+				if ( $quantity && $quantity > $limit ) {
+					$quantity = $limit;
+				}
+
+				$order_by = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->randomFunction();
+				$page_key = undef;
+			}
 		}
 
 		if (defined $libraryID) {
@@ -614,10 +611,10 @@ sub albumsQuery {
 		$c->{'albums.contributor'} = 1;
 	}
 
-	if ( $tags =~ /a/ ) {
-		# If requesting artist data, join contributor
-		$sql .= 'JOIN contributors AS albumContributor ON albumContributor.id = albums.contributor ';
-		$c->{'albumContributor.name'} = 1;
+	if ( $tags ne 'CC' ) {
+		# We need the main albums.contributor name for favorites, so always do this join unless getting count only.
+		$sql .= 'JOIN contributors ON contributors.id = albums.contributor ';
+		$c->{'contributors.name'} = 1;
 	}
 
 	if ( $tags =~ /s/ ) {
@@ -773,7 +770,7 @@ sub albumsQuery {
 				# when filtering by role, put that role at the head of the list if it wasn't in there yet
 				if ($roleID) {
 					unshift @linkRoles, map { Slim::Schema::Contributor->roleToType($_) || $_ } split(/,/, $roleID);
-					@linkRoles = List::Util::uniq(@linkRoles);
+					@linkRoles = Slim::Utils::Misc::uniq(@linkRoles);
 				}
 
 				@linkRoleIds = map { Slim::Schema::Contributor->typeToRole($_) } @linkRoles;
@@ -796,7 +793,7 @@ sub albumsQuery {
 			utf8::decode( $c->{'works.title'} ) if exists $c->{'works.title'};
 			utf8::decode( $c->{'composer.name'} ) if exists $c->{'composer.name'};
 			utf8::decode( $c->{'tracks.performance'} ) if exists $c->{'tracks.performance'};
-			utf8::decode( $c->{'albumContributor.name'} ) if exists $c->{'albumContributor.name'};
+			utf8::decode( $c->{'contributors.name'} ) if exists $c->{'contributors.name'};
 			$request->addResultLoop($loopname, $chunkCount, 'id', $c->{'albums.id'});
 			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'work_id', $c->{'tracks.work'});
 			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'work_name', $c->{'works.title'});
@@ -805,9 +802,9 @@ sub albumsQuery {
 
 			my $favoritesUrl = $work
 				? sprintf('db:album.title=%s&contributor.name=%s&work.title=%s&composer.name=%s&track.performance=%s',
-					URI::Escape::uri_escape_utf8($c->{'albums.title'}), URI::Escape::uri_escape_utf8($c->{'albumContributor.name'}),
+					URI::Escape::uri_escape_utf8($c->{'albums.title'}), URI::Escape::uri_escape_utf8($c->{'contributors.name'}),
 					URI::Escape::uri_escape_utf8($c->{'works.title'}), URI::Escape::uri_escape_utf8($c->{'composer.name'}), URI::Escape::uri_escape_utf8($c->{'tracks.performance'}))
-				: sprintf('db:album.title=%s&contributor.name=%s', URI::Escape::uri_escape_utf8($c->{'albums.title'}), URI::Escape::uri_escape_utf8($c->{'albumContributor.name'}));
+				: sprintf('db:album.title=%s&contributor.name=%s', URI::Escape::uri_escape_utf8($c->{'albums.title'}), URI::Escape::uri_escape_utf8($c->{'contributors.name'}));
 			# even if we have an extid, it cannot be used when we're dealing here with a work, which is a subset of the album.
 			$request->addResultLoop($loopname, $chunkCount, 'favorites_url', $c->{'albums.extid'} && !$c->{'tracks.work'} ? $c->{'albums.extid'} : $favoritesUrl);
 			my $favoritesTitle = $c->{'albums.title'};
@@ -835,8 +832,7 @@ sub albumsQuery {
 			if ( !$work ) {
 				$tags =~ /S/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_id', $c->{'albums.contributor'});
 				if ($tags =~ /a/) {
-					utf8::decode( $c->{'albumContributor.name'} ) if exists $c->{'albumContributor.name'};
-					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist', $c->{'albumContributor.name'});
+					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist', $c->{'contributors.name'});
 				}
 			}
 
@@ -873,12 +869,17 @@ sub albumsQuery {
 				my @artistIds;
 				foreach my $role ( @linkRoleIds ) {
 					if ($contributorHash->{$role}) {
-						push @artists, @{$contributorHash->{$role}->{'name'}};
+						push @artists, map { utf8::decode($_); $_ } @{$contributorHash->{$role}->{'name'}};
 						push @artistIds, @{$contributorHash->{$role}->{'id'}};
 					}
 				}
-				@artists = List::Util::uniq(@artists);
-				@artistIds = List::Util::uniq(@artistIds);
+				# if not dealing with a work, put the main album artist at the top of the list
+				if (!$work) {
+					unshift @artists, $c->{'contributors.name'} if $c->{'contributors.name'};
+					unshift @artistIds, $c->{'albums.contributor'} if $c->{'albums.contributor'};
+				}
+				@artists = Slim::Utils::Misc::uniq(@artists);
+				@artistIds = Slim::Utils::Misc::uniq(@artistIds);
 
 				# XXX - what if the artist name itself contains ','?
 				if ( $tags =~ /aa/ && scalar @artists ) {

@@ -70,7 +70,7 @@ use constant SQL_CREATE_WORKTEMP => q{
 
 use constant SQL_CREATE_WORK_ITEM => q{
 	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
-		
+
 		SELECT 'YXLWORKSYYYYYYYYYYYYYYYYYYYYYYYY' || works.id, 'work',
 		-- weight 10
 		UNIQUE_TOKENS(LOWER(IFNULL(works.title, '')) || ' ' || IFNULL(works.titlesearch, '') || ' ' || IFNULL(contributors.namesearch, '')),
@@ -95,7 +95,7 @@ use constant SQL_CREATE_ALBUM_ITEM => q{
 	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
 		SELECT 'YXLALBUMSYYYYYYYYYYYYYYYYYYYYYYY' || albums.id, 'album',
 		-- weight 10
-		UNIQUE_TOKENS(LOWER(IFNULL(albums.title, '')) || ' ' || IFNULL(albums.titlesearch, '') || ' ' || IFNULL(albums.customsearch, '') || ' ' 
+		UNIQUE_TOKENS(LOWER(IFNULL(albums.title, '')) || ' ' || IFNULL(albums.titlesearch, '') || ' ' || IFNULL(albums.customsearch, '') || ' '
 		|| IFNULL((SELECT GROUP_CONCAT(wt,' ') FROM (SELECT DISTINCT works.titlesearch wt FROM tracks JOIN works ON tracks.work = works.id WHERE tracks.album = albums.id) ), ' ') ),
 		-- weight 5
 		IFNULL(albums.year, ''),
@@ -504,10 +504,7 @@ sub _uniqueTokens {
 		$text = Slim::Utils::Text::ignoreCaseArticles($text, 0, 1);
 	}
 
-	my %seen;
-	return join(' ', grep {
-		!$seen{$_}++
-	} split(/\s/, $text));
+	return join(' ', Slim::Utils::Misc::uniq(split(/\s/, $text)));
 }
 
 sub _rebuildIndex {

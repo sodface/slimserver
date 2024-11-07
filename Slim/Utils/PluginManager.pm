@@ -309,8 +309,7 @@ sub load {
 				}
 			}
 
-			my %seen;
-			@INC = grep { ! $seen{$_} ++ } @INC;
+			@INC = Slim::Utils::Misc::uniq(@INC);
 		}
 
 		if (-f catdir($baseDir, 'Plugin.pm')) {

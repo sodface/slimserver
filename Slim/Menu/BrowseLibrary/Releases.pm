@@ -125,7 +125,7 @@ sub _releases {
 			my $albumArtist = Slim::Schema->first('ContributorAlbum', {
 				album => $_->{id},
 				role  => Slim::Schema::Contributor->typeToRole('ALBUMARTIST'),
-				contributor => { '!=' => $_->{artist_id} }
+				contributor => { '!=' => $artistId }
 			});
 
 			if (!$albumArtist) {
