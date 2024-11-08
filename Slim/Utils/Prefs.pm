@@ -404,8 +404,8 @@ sub init {
 
 		if ( %$oldRoles - %$newRoles || (scalar grep {!exists $newRoles->{$_}} keys %$oldRoles) ) {
 			Slim::Control::Request::executeRequest(undef, ['wipecache', $prefs->get('dontTriggerScanOnPrefChange') ? 'queue' : undef]);
-			Slim::Schema::Contributor->initializeRoles()
 		}
+		Slim::Schema::Contributor->initializeRoles();
 	}, 'userDefinedRoles' );
 
 	$prefs->setChange( sub { Slim::Utils::Misc::setPriority($_[1]) }, 'serverPriority');

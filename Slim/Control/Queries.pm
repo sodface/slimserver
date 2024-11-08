@@ -755,25 +755,23 @@ sub albumsQuery {
 				},
 				join(',', @linkRoleIds));
 			} else {
-				my @linkRoles = ( 'ARTIST', 'ALBUMARTIST' );
-
-				my %roleMap = %{Slim::Schema::Contributor::roleToContributorMap()};
-				my $userDefinedRoles = $prefs->get('userDefinedRoles');
-				my $unifiedList = $prefs->get('useUnifiedArtistsList');
-				# Loop through roles in role number sequence to see if the user wants to show that contributor role.
-				foreach my $role (sort {$a <=> $b} keys %roleMap) {
-					if (  $unifiedList && $prefs->get(lc($roleMap{$role}) . 'InArtists')
-						|| $userDefinedRoles->{$roleMap{$role}} && $userDefinedRoles->{$roleMap{$role}}->{'albumLink'} ) {
-						push @linkRoles, $roleMap{$role};
-					}
+				my @linkRoles;
+				if ( my $albumLinkRoles = $prefs->get('albumLinkRoles') ) {
+					@linkRoles = split(/[,\s]+/, $albumLinkRoles);
+				} elsif ( $prefs->get('useUnifiedArtistsList') ) {
+					@linkRoles = Slim::Schema::Contributor->activeContributorRoles(undef,1);
+				} else {
+					@linkRoles = ('ARTIST', 'ALBUMARTIST');
 				}
+				push @linkRoles, Slim::Schema::Contributor->userDefinedRoles(undef,1);
 				# when filtering by role, put that role at the head of the list if it wasn't in there yet
 				if ($roleID) {
 					unshift @linkRoles, map { Slim::Schema::Contributor->roleToType($_) || $_ } split(/,/, $roleID);
 					@linkRoles = Slim::Utils::Misc::uniq(@linkRoles);
 				}
 
-				@linkRoleIds = map { Slim::Schema::Contributor->typeToRole($_) } @linkRoles;
+				@linkRoleIds = grep(/^\d+$/, map { Slim::Schema::Contributor->typeToRole($_) } @linkRoles);
+
 				$contributorSql = sprintf( qq{
 					SELECT contributor_album.role AS role, contributors.name AS name, contributors.id AS id
 					FROM contributor_album

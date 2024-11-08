@@ -26635,3 +26635,21 @@ SETUP_YEARMENU_1
 	NL	Toon jaartal van album en nummer
 	PT	Mostrar o ano do album e de cada pista
 
+SETUP_ALBUMLINKROLES_DESC
+	DE	Die oben genannten Auswahlmöglichkeiten beeinflussen, welche Künstlerrollen in Albumlisten angezeigt werden. Sie können dies überschreiben, indem Sie hier Ihre eigenen Auswahlmöglichkeiten angeben,
+	EN	The choices above affect which artist roles are shown in album lists. You can override this by providing your own choices here,
+	ES	Las opciones anteriores afectan los roles de los artistas que se muestran en las listas de álbumes. Puedes anular esto proporcionando tus propias opciones aquí,
+	FR	Les choix ci-dessus affectent les rôles d'artiste affichés dans les listes d'albums. Vous pouvez contourner cela en fournissant vos propres choix ici,
+	HU	A fenti lehetőségek befolyásolják, hogy mely előadói szerepek jelenjenek meg az albumlistákon. Ezt felülírhatja, ha itt megadja saját választási lehetőségeit,
+	NL	De keuzes hierboven hebben invloed op welke artiestenrollen worden weergegeven in albumlijsten. U kunt dit overschrijven door hier uw eigen keuzes te geven,
+	PT	As escolhas acima referidas afetam os papéis dos artistas que são mostrados nas listas de álbuns. Pode substituir isso fornecendo as suas próprias escolhas aqui,
+
+SETUP_ALBUMLINKROLES_DESC2
+	DE	durch Kommas getrennt. Wählen Sie aus ARTIST, ALBUMARTIST, COMPOSER, CONDUCTOR, BAND and TRACKARTIST.
+	EN	separated by commas. Choose from ARTIST, ALBUMARTIST, COMPOSER, CONDUCTOR, BAND and TRACKARTIST.
+	ES	separados por comas. Elige entre ARTIST, ALBUMARTIST, COMPOSER, CONDUCTOR, BAND and TRACKARTIST.
+	FR	séparés par des virgules. Choisissez parmi ARTIST, ALBUMARTIST, COMPOSER, CONDUCTOR, BAND and TRACKARTIST.
+	HU	vesszővel elválasztva. Válasszon közülük ARTIST, ALBUMARTIST, COMPOSER, CONDUCTOR, BAND and TRACKARTIST.
+	NL	gescheiden door komma's. Kies uit ARTIST, ALBUMARTIST, COMPOSER, CONDUCTOR, BAND and TRACKARTIST.
+	PT	separados por vírgulas. Escolha entre ARTIST, ALBUMARTIST, COMPOSER, CONDUCTOR, BAND and TRACKARTIST.
+

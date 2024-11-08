@@ -43,6 +43,11 @@
 			[% END %]
 		[% END %]
 
+		[% WRAPPER settingGroup title="" desc=""%]
+			<div class="prefDesc">[% "SETUP_ALBUMLINKROLES_DESC" | string %]<br />[% "SETUP_ALBUMLINKROLES_DESC2" | string %]</div>
+			<input type="text"class="stdedit" name="pref_albumLinkRoles" id="albumLinkRoles" value="[% prefs.pref_albumLinkRoles | html %]" size="40" >
+		[% END %]
+
 		[% WRAPPER settingGroup title="" desc="SETUP_USETPE2ASALBUMARTIST_DESC"%]
 			<input type="radio" name="pref_useTPE2AsAlbumArtist" id="pref_useTPE2AsAlbumArtist0" value="0" [% IF NOT prefs.pref_useTPE2AsAlbumArtist %]checked="checked"[% END %] />
 			<label for="pref_useTPE2AsAlbumArtist0" class="stdlabel">[% 'SETUP_USETPE2ASALBUMARTIST_0' | getstring %]</label><br/>
