@@ -1100,7 +1100,11 @@ sub newSongPlaylistCallback {
 
 	my $client = $request->client() || return;
 
-	newSongPlaylist($client)
+	my $reset = $request->isCommand([['playlist'], ['stop']])
+		&& (Slim::Player::Source::playingSongIndex($client) + 1) ==  count($client)
+		&& !Slim::Player::Source::progress($client);
+
+	newSongPlaylist($client, $reset);
 }
 
 
