@@ -31,7 +31,7 @@ sub prefs {
 				ignoreReleaseTypes cleanupReleaseTypes groupArtistAlbumsByReleaseType
 				useTPE2AsAlbumArtist variousArtistsString ratingImplementation useUnifiedArtistsList
 				skipsentinel showComposerReleasesbyAlbum showComposerReleasesbyAlbumGenres onlyAlbumYears
-				albumLinkRoles)
+				artistAlbumLink albumartistAlbumLink trackartistAlbumLink composerAlbumLink conductorAlbumLink bandAlbumLink)
 		   );
 }
 

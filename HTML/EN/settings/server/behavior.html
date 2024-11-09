@@ -43,11 +43,6 @@
 			[% END %]
 		[% END %]
 
-		[% WRAPPER settingGroup title="" desc=""%]
-			<div class="prefDesc">[% "SETUP_ALBUMLINKROLES_DESC" | string %]<br />[% "SETUP_ALBUMLINKROLES_DESC2" | string %]</div>
-			<input type="text"class="stdedit" name="pref_albumLinkRoles" id="albumLinkRoles" value="[% prefs.pref_albumLinkRoles | html %]" size="40" >
-		[% END %]
-
 		[% WRAPPER settingGroup title="" desc="SETUP_USETPE2ASALBUMARTIST_DESC"%]
 			<input type="radio" name="pref_useTPE2AsAlbumArtist" id="pref_useTPE2AsAlbumArtist0" value="0" [% IF NOT prefs.pref_useTPE2AsAlbumArtist %]checked="checked"[% END %] />
 			<label for="pref_useTPE2AsAlbumArtist0" class="stdlabel">[% 'SETUP_USETPE2ASALBUMARTIST_0' | getstring %]</label><br/>
@@ -58,6 +53,34 @@
 		[% WRAPPER settingGroup title="" desc=""%]
 			<div class="prefDesc">[% "SETUP_VARIOUSARTISTSSTRING_DESC" | string %]</div>
 			<input type="text"class="stdedit" name="pref_variousArtistsString" id="variousArtistsString" value="[% prefs.pref_variousArtistsString | html %]" size="40" placeholder="[% "VARIOUSARTISTS" | string | html %]">
+		[% END %]
+	[% END %]
+
+	[% WRAPPER settingSection %]
+		[% WRAPPER settingGroup title="SETUP_ALBUMLINKROLES" desc="SETUP_ALBUMLINKROLES_DESC" %]
+			<table>
+				<tr>
+					<td><input type="checkbox" [% IF prefs.pref_artistAlbumLink %]checked="1" [% END %] class="stdedit" name="pref_artistAlbumLink" id="artistAlbumLink" value="1" />
+					<label for="artistAlbumLink" class="stdlabel">[% "ARTIST" | string %]</label></td>
+					<td />
+					<td><input type="checkbox" [% IF prefs.pref_albumartistAlbumLink %]checked="1" [% END %] class="stdedit" name="pref_albumartistAlbumLink" id="albumartistAlbumLink" value="1" />
+					<label for="albumartistAlbumLink" class="stdlabel">[% "ALBUMARTIST" | string %]</label></td>
+				</tr>
+				<tr>
+					<td><input type="checkbox" [% IF prefs.pref_trackartistAlbumLink %]checked="1" [% END %] class="stdedit" name="pref_trackartistAlbumLink" id="trackartistAlbumLink" value="1" />
+					<label for="trackartistAlbumLink" class="stdlabel">[% "TRACKARTIST" | string %]</label></td>
+					<td />
+					<td><input type="checkbox" [% IF prefs.pref_composerAlbumLink %]checked="1" [% END %] class="stdedit" name="pref_composerAlbumLink" id="composerAlbumLink" value="1" />
+					<label for="composerAlbumLink" class="stdlabel">[% "COMPOSER" | string %]</label></td>
+				</tr>
+				<tr>
+					<td><input type="checkbox" [% IF prefs.pref_conductorAlbumLink %]checked="1" [% END %] class="stdedit" name="pref_conductorAlbumLink" id="conductorAlbumLink" value="1" />
+					<label for="conductorAlbumLink" class="stdlabel">[% "CONDUCTOR" | string %]</label></td>
+					<td />
+					<td><input type="checkbox" [% IF prefs.pref_bandAlbumLink %]checked="1" [% END %] class="stdedit" name="pref_bandAlbumLink" id="bandAlbumLink" value="1" />
+					<label for="bandAlbumLink" class="stdlabel">[% "BAND" | string %]</label></td>
+				</tr>
+			</table>
 		[% END %]
 	[% END %]
 

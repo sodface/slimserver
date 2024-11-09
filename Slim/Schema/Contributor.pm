@@ -24,6 +24,8 @@ my @userDefinedRoles;
 my @activeUserDefinedRoles;
 my @albumLinkUserDefinedRoles;
 my @activeAndAlbumLinkUserDefinedRoles;
+my @allAlbumLinkRoles;
+my @inArtistsRoles;
 
 my $prefs = preferences('server');
 
@@ -88,6 +90,7 @@ sub initializeRoles {
 
 	# de-reference the pref so we don't accidentally change it below
 	my %udr = %{$prefs->get('userDefinedRoles')};
+	(@userDefinedRoles, @activeUserDefinedRoles, @albumLinkUserDefinedRoles, @activeAndAlbumLinkUserDefinedRoles) = undef;
 	foreach my $role ( @contributorRoles ) {
 		if ( __PACKAGE__->typeToRole($role) >= MIN_CUSTOM_ROLE_ID ) {
 			push @userDefinedRoles, $role;
@@ -96,6 +99,9 @@ sub initializeRoles {
 			push @activeAndAlbumLinkUserDefinedRoles, $role if $udr{$role}->{include} && $udr{$role}->{albumLink};
 		}
 	}
+
+	@allAlbumLinkRoles = ( grep( { $prefs->get(lc($_) . 'AlbumLink') } contributorRoles() ), @albumLinkUserDefinedRoles );
+	@inArtistsRoles = grep { $prefs->get(lc($_) . 'InArtists') } contributorRoles();
 }
 
 sub contributorRoles {
@@ -150,11 +156,15 @@ sub activeContributorRoles {
 	my @roles = ( 'ARTIST', 'ALBUMARTIST' );
 	push @roles, 'TRACKARTIST' if $includeTrackArtist && !$prefs->get('trackartistInArtists');
 
-	# Loop through each pref to see if the user wants to show that contributor role. Also include user-defined roles.
-	push @roles, grep { $prefs->get(lc($_) . 'InArtists') } contributorRoles();
+	# Return roles that the user wants to show. Also include user-defined roles.
+	push @roles, @inArtistsRoles;
 	push @roles, __PACKAGE__->userDefinedRoles(1) unless $noUserRoles;
 
 	return grep { $_ } @roles;
+}
+
+sub allAlbumLinkRoles {
+	return @allAlbumLinkRoles;
 }
 
 sub contributorRoleIds {

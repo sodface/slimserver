@@ -755,22 +755,14 @@ sub albumsQuery {
 				},
 				join(',', @linkRoleIds));
 			} else {
-				my @linkRoles;
-				if ( my $albumLinkRoles = $prefs->get('albumLinkRoles') ) {
-					@linkRoles = split(/[,\s]+/, $albumLinkRoles);
-				} elsif ( $prefs->get('useUnifiedArtistsList') ) {
-					@linkRoles = Slim::Schema::Contributor->activeContributorRoles(undef,1);
-				} else {
-					@linkRoles = ('ARTIST', 'ALBUMARTIST');
-				}
-				push @linkRoles, Slim::Schema::Contributor->userDefinedRoles(undef,1);
+				my @linkRoles = Slim::Schema::Contributor->allAlbumLinkRoles();
 				# when filtering by role, put that role at the head of the list if it wasn't in there yet
 				if ($roleID) {
 					unshift @linkRoles, map { Slim::Schema::Contributor->roleToType($_) || $_ } split(/,/, $roleID);
 					@linkRoles = Slim::Utils::Misc::uniq(@linkRoles);
 				}
 
-				@linkRoleIds = grep(/^\d+$/, map { Slim::Schema::Contributor->typeToRole($_) } @linkRoles);
+				@linkRoleIds = map { Slim::Schema::Contributor->typeToRole($_) } @linkRoles;
 
 				$contributorSql = sprintf( qq{
 					SELECT contributor_album.role AS role, contributors.name AS name, contributors.id AS id

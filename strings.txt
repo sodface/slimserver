@@ -26635,21 +26635,21 @@ SETUP_YEARMENU_1
 	NL	Toon jaartal van album en nummer
 	PT	Mostrar o ano do album e de cada pista
 
-SETUP_ALBUMLINKROLES_DESC
-	DE	Die oben genannten Auswahlmöglichkeiten beeinflussen, welche Künstlerrollen in Albumlisten angezeigt werden. Sie können dies überschreiben, indem Sie hier Ihre eigenen Auswahlmöglichkeiten angeben,
-	EN	The choices above affect which artist roles are shown in album lists. You can override this by providing your own choices here,
-	ES	Las opciones anteriores afectan los roles de los artistas que se muestran en las listas de álbumes. Puedes anular esto proporcionando tus propias opciones aquí,
-	FR	Les choix ci-dessus affectent les rôles d'artiste affichés dans les listes d'albums. Vous pouvez contourner cela en fournissant vos propres choix ici,
-	HU	A fenti lehetőségek befolyásolják, hogy mely előadói szerepek jelenjenek meg az albumlistákon. Ezt felülírhatja, ha itt megadja saját választási lehetőségeit,
-	NL	De keuzes hierboven hebben invloed op welke artiestenrollen worden weergegeven in albumlijsten. U kunt dit overschrijven door hier uw eigen keuzes te geven,
-	PT	As escolhas acima referidas afetam os papéis dos artistas que são mostrados nas listas de álbuns. Pode substituir isso fornecendo as suas próprias escolhas aqui,
+SETUP_ALBUMLINKROLES
+	DE	Rollenlinks in Albumlisten anzeigen
+	EN	Show role links in album lists
+	ES	Mostrar enlaces de roles en listas de álbumes
+	FR	Afficher les liens de rôle dans les listes d'albums
+	HU	Szerepkörhivatkozások megjelenítése az albumlistákban
+	NL	Rolkoppelingen weergeven in albumlijsten
+	PT	Mostrar ligações de funções nas listas de álbuns
 
-SETUP_ALBUMLINKROLES_DESC2
-	DE	durch Kommas getrennt. Wählen Sie aus ARTIST, ALBUMARTIST, COMPOSER, CONDUCTOR, BAND and TRACKARTIST.
-	EN	separated by commas. Choose from ARTIST, ALBUMARTIST, COMPOSER, CONDUCTOR, BAND and TRACKARTIST.
-	ES	separados por comas. Elige entre ARTIST, ALBUMARTIST, COMPOSER, CONDUCTOR, BAND and TRACKARTIST.
-	FR	séparés par des virgules. Choisissez parmi ARTIST, ALBUMARTIST, COMPOSER, CONDUCTOR, BAND and TRACKARTIST.
-	HU	vesszővel elválasztva. Válasszon közülük ARTIST, ALBUMARTIST, COMPOSER, CONDUCTOR, BAND and TRACKARTIST.
-	NL	gescheiden door komma's. Kies uit ARTIST, ALBUMARTIST, COMPOSER, CONDUCTOR, BAND and TRACKARTIST.
-	PT	separados por vírgulas. Escolha entre ARTIST, ALBUMARTIST, COMPOSER, CONDUCTOR, BAND and TRACKARTIST.
+SETUP_ALBUMLINKROLES_DESC
+	DE	Sie können auswählen, welche Rollen als Links in Albumlisten angezeigt werden sollen. Der Hauptbeitragende des Albums, der vom Musikscanner identifiziert wurde, wird immer angezeigt.
+	EN	You can choose which roles to show as links in album listings. The main album contributor as identified by the music scanner will always be shown.
+	ES	Puedes elegir qué roles quieres que aparezcan como enlaces en las listas de álbumes. Siempre se mostrará el colaborador principal del álbum identificado por el escáner de música.
+	FR	Vous pouvez choisir les rôles à afficher sous forme de liens dans les listes d'albums. Le contributeur principal de l'album tel qu'identifié par le scanner de musique sera toujours affiché.
+	HU	Kiválaszthatja, hogy mely szerepek jelenjenek meg hivatkozásként az albumlistában. A zeneszkenner által azonosított album fő közreműködője mindig megjelenik.
+	NL	U kunt kiezen welke rollen u als links in albumlijsten wilt weergeven. De belangrijkste albumbijdrager zoals geïdentificeerd door de muziekscanner wordt altijd weergegeven.
+	PT	Pode escolher quais as funções que serão apresentadas como links nas listas de álbuns. O principal contribuidor do álbum identificado pelo scanner de música será sempre mostrado.
 
