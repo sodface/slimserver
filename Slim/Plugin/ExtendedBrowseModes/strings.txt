@@ -333,7 +333,7 @@ PLUGIN_EXTENDED_BROWSEMODES_TAGS_DESC
 
 PLUGIN_EXTENDED_BROWSEMODES_ROLE
 	EN	Role tag
-	DE	Rolle tag
+	DE	Rollen-Tag
 	FR	Tag Rôle
 	ES	Role tag
 	HU	Szerepcímke
