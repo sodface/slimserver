@@ -10,42 +10,69 @@
 		[% END %]
 	[% END %]
 
+	[% SET numberOfCols = 3 %]
+
 	[% IF prefs.pref_useUnifiedArtistsList; WRAPPER settingSection %]
 		[% WRAPPER settingGroup title="SETUP_COMPOSERINARTISTS" desc="SETUP_COMPOSERINARTISTS_DESC" %]
 			<table>
-			[% FOREACH row = menuDefaultRoles.keys.sort %]
 				<tr>
-				[% FOREACH role = menuDefaultRoles.$row %]
+				[% SET counter = 0 %]
+				[% FOREACH role = menuDefaultRoles %]
+					[% SET counter = counter + 1 %]
 					<td><input type="checkbox" [% IF role.selected %]checked="1" [% END %] class="stdedit" name="pref_[% role.name %]InArtists" id="[% role.name %]InArtists" value="1" />
 					<label for="[% role.name %]InArtists" class="stdlabel">[% role.name | string %]</label></td>
 					<td />
+					[% IF counter % numberOfCols == 0 %] </tr><tr> [% END %]
 				[% END %]
 				</tr>
-			[% END %]
 			</table>
 		[% END %]
 	[% END; ELSE %]
-		[% FOREACH row = menuDefaultRoles.keys.sort %]
-			[% FOREACH role = menuDefaultRoles.$row %]
-				<input type="hidden" name="pref_[% role.name %]InArtists" value="[% role.selected | html %]" />
-			[% END %]
+		[% FOREACH role = menuDefaultRoles %]
+			<input type="hidden" name="pref_[% role.name %]InArtists" value="[% role.selected | html %]" />
 		[% END %]
 		<input type="hidden" name="pref_variousArtistAutoIdentification" value="[% prefs.pref_variousArtistAutoIdentification | html %]" />
 	[% END %]
-
+	<script type="text/javascript">
+	function showUdrEditor(status, options) {
+		var options = document.getElementById(options);
+		options.style.display = options.style.display == 'block' ? 'none' : 'block';
+		status.textContent = options.style.display == 'block' ? 'Hide user-defined roles' : 'Edit user-defined roles';
+	}
+	</script>
 	[% WRAPPER settingSection %]
 		[% WRAPPER settingGroup title="SETUP_USERROLESINARTISTS" desc="SETUP_USERROLESINARTISTS_DESC" %]
 			<table>
-			[% FOREACH row = menuUserRoles.keys.sort %]
 				<tr>
-				[% FOREACH role = menuUserRoles.$row %]
+				[% SET counter = 0 %]
+				[% FOREACH role = menuUserRoles %]
+					[% SET counter = counter + 1 %]
 					<td><input type="checkbox" [% IF role.selected %]checked="1" [% END %] class="stdedit" name="pref_[% role.name %]InArtists" id="[% role.name %]InArtists" value="1" />
 					<label for="[% role.name %]InArtists" class="stdlabel">[% role.name | string %]</label></td>
 					<td />
+					[% IF counter % numberOfCols == 0 %] </tr><tr> [% END %]
 				[% END %]
 				</tr>
-			[% END %]
 			</table>
+			<button name="editudr" type="button" onclick="showUdrEditor(this,'udrEditor')" >[% IF !keepCustomRolesOpen && !doRescanNow %]Edit [% ELSE %]Hide [% END %]user-defined roles</button>
+			<div id="udrEditor" [% IF !keepCustomRolesOpen && !doRescanNow %]hidden[% END %]>
+				<table>
+					<tr>
+						<th>[% "PLUGIN_EXTENDED_BROWSEMODES_ROLE" | string %]</th>
+						<th>[% "PLUGIN_EXTENDED_BROWSEMODES_ROLE_TEXT" | string %]</th>
+					</tr>
+					[% FOREACH tag = customTags.keys.sort %]
+						<tr>
+							<td><input type="text" name="[% tag | html %]_tag" value="[% tag | html %]" class="stdedit"/></td>
+							<td><input type="text" name="[% tag | html %]_name" value="[% customTags.$tag.name | html %]" class="stdedit" style="width: 200px;"/></td>
+						</tr>
+					[% END %]
+					<tr>
+						<td><input type="text" name="new_tag" value="" class="stdedit"/></td>
+						<td><input type="text" name="new_name" value="" class="stdedit" style="width: 200px;"/></td>
+					</tr>
+				</table>
+			</div>
 		[% END %]
 	[% END %]
 
@@ -76,15 +103,16 @@
 	[% WRAPPER settingSection %]
 		[% WRAPPER settingGroup title="SETUP_ALBUMLINKROLES" desc="SETUP_ALBUMLINKROLES_DESC" %]
 			<table>
-			[% FOREACH row = linkRoles.keys.sort %]
 				<tr>
-				[% FOREACH role = linkRoles.$row %]
+				[% SET counter = 0 %]
+				[% FOREACH role = linkRoles %]
+					[% SET counter = counter + 1 %]
 					<td><input type="checkbox" [% IF role.selected %]checked="1" [% END %] class="stdedit" name="pref_[% role.name %]AlbumLink" id="[% role.name %]AlbumLink" value="1" />
 					<label for="[% role.name %]AlbumLink" class="stdlabel">[% role.name | string %]</label></td>
 					<td />
+					[% IF counter % numberOfCols == 0 %] </tr><tr> [% END %]
 				[% END %]
 				</tr>
-			[% END %]
 			</table>
 		[% END %]
 	[% END %]
