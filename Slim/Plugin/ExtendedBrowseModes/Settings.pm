@@ -67,14 +67,11 @@ sub handler {
 					$customTags->{$tag} = {
 						name => $params->{$key . '_name'} || $tag,
 						id => $currentRoles->{$tag} ? $currentRoles->{$tag}->{id} : $customRoleId++,
-						include => $params->{$key . '_include'},
-						albumLink => $params->{$key . '_albumLink'},
+						include => $currentRoles->{$tag}  ? $currentRoles->{$tag}->{include} : 1,
+						albumLink => $currentRoles->{$tag}  ? $currentRoles->{$tag}->{albumLink} : 1,
 					};
 
-					if ( !$currentRoles->{$tag} || $currentRoles->{$tag}->{name} ne $customTags->{$tag}->{name}
-						|| $currentRoles->{$tag}->{include} ne $customTags->{$tag}->{include}
-						|| $currentRoles->{$tag}->{albumLink} ne $customTags->{$tag}->{albumLink}
-					) {
+					if ( !$currentRoles->{$tag} || $currentRoles->{$tag}->{name} ne $customTags->{$tag}->{name} ) {
 						Slim::Utils::Strings::storeExtraStrings([{
 							strings => { EN => $customTags->{$tag}->{name}},
 							token   => $tag,

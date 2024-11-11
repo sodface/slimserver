@@ -268,13 +268,15 @@ sub init {
 		# Bug 5557, disable UPnP support by default
 		'noupnp'                => 1,
 		'onlyAlbumYears'        => 1,
-		'artistAlbumLink'	=> 1,
-		'albumartistAlbumLink'	=> 1,
-		'trackartistAlbumLink'	=> $prefs->get('useUnifiedArtistsList') && $prefs->get('trackartistInArtists'),
-		'composerAlbumLink'	=> $prefs->get('useUnifiedArtistsList') && $prefs->get('composerInArtists'),
-		'conductorAlbumLink'	=> $prefs->get('useUnifiedArtistsList') && $prefs->get('conductorInArtists'),
-		'bandAlbumLink'		=> $prefs->get('useUnifiedArtistsList') && $prefs->get('bandInArtists'),
 	);
+	if ($prefs->get('useUnifiedArtistsList')) {
+		$defaults{'artistAlbumLink'} = 1 if !$prefs->exists('artistAlbumLink');
+		$defaults{'albumartistAlbumLink'} = 1 if !$prefs->exists('albumartistAlbumLink');
+		$defaults{'trackartistAlbumLink'} = $prefs->get('trackartistInArtists') if !$prefs->exists('trackartistAlbumLink');
+		$defaults{'composerAlbumLink'} = $prefs->get('composerInArtists') if !$prefs->exists('composerAlbumLink');
+		$defaults{'conductorAlbumLink'} = $prefs->get('conductorInArtists') if !$prefs->exists('conductorAlbumLink');
+		$defaults{'bandAlbumLink'} = $prefs->get('bandInArtists') if !$prefs->exists('bandAlbumLink');
+	}
 
 	# we can have different defaults depending on the OS
 	$os->initPrefs(\%defaults);

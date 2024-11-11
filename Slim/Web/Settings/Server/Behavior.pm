@@ -13,6 +13,8 @@ use base qw(Slim::Web::Settings);
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string);
 
+use constant ROLES_PER_ROW => 3;
+
 my $prefs = preferences('server');
 
 sub name {
@@ -37,6 +39,8 @@ sub prefs {
 
 sub handler {
 	my ( $class, $client, $paramRef ) = @_;
+
+	my $userDefinedRoles = $prefs->get('userDefinedRoles');
 
 	Slim::Schema::Album->addReleaseTypeStrings();
 
@@ -83,9 +87,54 @@ sub handler {
 		}
 
 		$prefs->set('releaseTypesToIgnore', [ keys %releaseTypesToIgnore ]);
+
+		foreach my $role (Slim::Schema::Contributor::defaultContributorRoles()) {
+			$prefs->set(lc($role)."AlbumLink", $paramRef->{"pref_".lc($role)."AlbumLink"});
+			next if $role eq "ALBUMARTIST" || $role eq "ARTIST";
+			$prefs->set(lc($role)."InArtists", $paramRef->{"pref_".lc($role)."InArtists"});
+		}
+		foreach my $role (Slim::Schema::Contributor::userDefinedRoles()) {
+			$userDefinedRoles->{$role}->{albumLink} = $paramRef->{"pref_".lc($role)."AlbumLink"};
+			$userDefinedRoles->{$role}->{include} = $paramRef->{"pref_".lc($role)."InArtists"};
+		}
+		$prefs->set('userDefinedRoles', $userDefinedRoles);
+		$userDefinedRoles = $prefs->get('userDefinedRoles');
 	}
 
 	$paramRef->{usesFTS} = Slim::Schema->canFulltextSearch;
+
+	my $menuDefaultRoles = {};
+	my $j = 0;
+	my $i = 0;
+	foreach my $role (Slim::Schema::Contributor::defaultContributorRoles()) {
+		next if $role eq "ALBUMARTIST" || $role eq "ARTIST";
+		$j++ if !($i%ROLES_PER_ROW);
+		push @{$menuDefaultRoles->{$j}}, { name => lc($role), selected => $prefs->get(lc($role)."InArtists") };
+		$i++;
+	}
+	$paramRef->{menuDefaultRoles} = $menuDefaultRoles;
+
+	my $menuUserRoles = {};
+	my $j = 0;
+	my $i = 0;
+	foreach my $role (Slim::Schema::Contributor::userDefinedRoles()) {
+		$j++ if !($i%ROLES_PER_ROW);
+		push @{$menuUserRoles->{$j}}, { name => lc($role), selected => $userDefinedRoles->{$role}->{include} };
+		$i++;
+	}
+	$paramRef->{menuUserRoles} = $menuUserRoles;
+
+	my $linkRoles = {};
+	my $pref;
+	$j = 0;
+	$i = 0;
+	foreach my $role (Slim::Schema::Contributor::defaultContributorRoles(), Slim::Schema::Contributor::userDefinedRoles()) {
+		$j++ if !($i%ROLES_PER_ROW);
+		$pref = Slim::Schema::Contributor->isDefaultContributorRole($role) ? $prefs->get(lc($role)."AlbumLink") : $userDefinedRoles->{$role}->{albumLink};
+		push @{$linkRoles->{$j}}, { name => lc($role), selected => $pref };
+		$i++;
+	}
+	$paramRef->{linkRoles} = $linkRoles;
 
 	return $class->SUPER::handler( $client, $paramRef );
 }

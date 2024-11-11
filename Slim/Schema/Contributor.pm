@@ -90,7 +90,7 @@ sub initializeRoles {
 
 	# de-reference the pref so we don't accidentally change it below
 	my %udr = %{$prefs->get('userDefinedRoles')};
-	(@userDefinedRoles, @activeUserDefinedRoles, @albumLinkUserDefinedRoles, @activeAndAlbumLinkUserDefinedRoles) = undef;
+	(@userDefinedRoles, @activeUserDefinedRoles, @albumLinkUserDefinedRoles, @activeAndAlbumLinkUserDefinedRoles) = ();
 	foreach my $role ( @contributorRoles ) {
 		if ( __PACKAGE__->typeToRole($role) >= MIN_CUSTOM_ROLE_ID ) {
 			push @userDefinedRoles, $role;

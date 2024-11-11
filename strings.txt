@@ -26645,11 +26645,17 @@ SETUP_ALBUMLINKROLES
 	PT	Mostrar ligações de funções nas listas de álbuns
 
 SETUP_ALBUMLINKROLES_DESC
-	DE	Sie können auswählen, welche Rollen als Links in Albumlisten angezeigt werden sollen. Der Hauptbeitragende des Albums, der vom Musikscanner identifiziert wurde, wird immer angezeigt.
+	DE	Sie können auswählen, welche Rollen als Links in Albumlisten angezeigt werden sollen. Der Hauptkünstler des Albums wird immer angezeigt.
 	EN	You can choose which roles to show as links in album listings. The main album contributor as identified by the music scanner will always be shown.
 	ES	Puedes elegir qué roles quieres que aparezcan como enlaces en las listas de álbumes. Siempre se mostrará el colaborador principal del álbum identificado por el escáner de música.
 	FR	Vous pouvez choisir les rôles à afficher sous forme de liens dans les listes d'albums. Le contributeur principal de l'album tel qu'identifié par le scanner de musique sera toujours affiché.
 	HU	Kiválaszthatja, hogy mely szerepek jelenjenek meg hivatkozásként az albumlistában. A zeneszkenner által azonosított album fő közreműködője mindig megjelenik.
 	NL	U kunt kiezen welke rollen u als links in albumlijsten wilt weergeven. De belangrijkste albumbijdrager zoals geïdentificeerd door de muziekscanner wordt altijd weergegeven.
 	PT	Pode escolher quais as funções que serão apresentadas como links nas listas de álbuns. O principal contribuidor do álbum identificado pelo scanner de música será sempre mostrado.
+
+SETUP_USERROLESINARTISTS
+	EN	User-defined roles in All Artists/Combined lists
+
+SETUP_USERROLESINARTISTS_DESC
+	EN	Set up user-defined roles on the Advanced -- Additional Browse Modes settings page.
 
