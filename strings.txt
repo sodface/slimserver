@@ -26671,7 +26671,7 @@ SETUP_USERDEFINEDROLES_DESC
 
 SETUP_USERDEFINEDROLES_TAG
 	EN	Role tag
-	DE	Rolle tag
+	DE	Rollen-Tag
 	FR	Tag Rôle
 	ES	Role tag
 	HU	Szerepcímke

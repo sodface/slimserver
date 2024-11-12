@@ -1763,7 +1763,7 @@ sub playlistXtracksCommand {
 
 			# And set a callback so that we can
 			# update CURTRACK when the song changes.
-			Slim::Control::Request::subscribe(\&Slim::Player::Playlist::newSongPlaylistCallback, [['playlist'], ['newsong']]);
+			Slim::Control::Request::subscribe(\&Slim::Player::Playlist::newSongPlaylistCallback, [['playlist'], ['newsong', 'stop']]);
 		}
 		# bug 14662: Playing a specific track while track shuffle is enabled will play another track
 		elsif (defined $jumpToIndex && Slim::Player::Playlist::shuffle($client)) {
