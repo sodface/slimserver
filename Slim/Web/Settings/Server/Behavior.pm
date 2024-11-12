@@ -147,6 +147,7 @@ sub handler {
 		push @{$menuRoles}, { name => lc($role), selected => $userDefinedRoles->{$role}->{include} };
 	}
 	$paramRef->{menuRoles} = $menuRoles;
+	$paramRef->{userRoleCount} = scalar Slim::Schema::Contributor::userDefinedRoles();
 
 	my $linkRoles = ();
 	my $pref;

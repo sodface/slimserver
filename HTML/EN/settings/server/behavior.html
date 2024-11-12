@@ -13,24 +13,30 @@
 		[% END %]
 	[% END %]
 
-	[% WRAPPER settingSection %]
-		[% WRAPPER settingGroup title="SETUP_ROLESINARTISTS" desc="SETUP_ROLESINARTISTS_DESC" %]
-		<table>
-			<tr>
-			[% SET counter = 0 %]
-			[% FOREACH role = menuRoles %]
-				[% IF !role.hidden %]
-					[% SET counter = counter + 1 %]
-					<td><input type="checkbox" [% IF role.selected %]checked="1" [% END %] class="stdedit" name="pref_[% role.name %]InArtists" id="[% role.name %]InArtists" value="1" />
-					<label for="[% role.name %]InArtists" class="stdlabel">[% role.name | string %]</label></td>
-					<td />
-					[% IF counter % numberOfRoleCols == 0 %] </tr><tr> [% END %]
-				[% ELSE %]
-					<input type="hidden" name="pref_[% role.name %]InArtists" value="[% role.selected | html %]" />
+	[% IF prefs.pref_useUnifiedArtistsList || userRoleCount %]
+		[% WRAPPER settingSection %]
+			[% WRAPPER settingGroup title="SETUP_ROLESINARTISTS" desc="SETUP_ROLESINARTISTS_DESC" %]
+			<table>
+				<tr>
+				[% SET counter = 0 %]
+				[% FOREACH role = menuRoles %]
+					[% IF !role.hidden %]
+						[% SET counter = counter + 1 %]
+						<td><input type="checkbox" [% IF role.selected %]checked="1" [% END %] class="stdedit" name="pref_[% role.name %]InArtists" id="[% role.name %]InArtists" value="1" />
+						<label for="[% role.name %]InArtists" class="stdlabel">[% role.name | string %]</label></td>
+						<td />
+						[% IF counter % numberOfRoleCols == 0 %] </tr><tr> [% END %]
+					[% ELSE %]
+						<input type="hidden" name="pref_[% role.name %]InArtists" value="[% role.selected | html %]" />
+					[% END %]
 				[% END %]
+				</tr>
+			</table>
 			[% END %]
-			</tr>
-		</table>
+		[% END %]
+	[% ELSE %]
+		[% FOREACH role = menuRoles %]
+			<input type="hidden" name="pref_[% role.name %]InArtists" value="[% role.selected | html %]" />
 		[% END %]
 	[% END %]
 
