@@ -97,7 +97,6 @@ sub handler {
 		$prefs->set('userDefinedRoles', $userDefinedRoles);
 
 		# custom role handling
-		my $currentRoles = $prefs->get('userDefinedRoles');
 		my $customRoleId = Slim::Schema::Contributor->getMinCustomRoleId();
 
 		my $customTags = {};
@@ -111,12 +110,12 @@ sub handler {
 				if ( $tag ) {
 					$customTags->{$tag} = {
 						name => $paramRef->{$key . '_name'} || $tag,
-						id => $currentRoles->{$tag} ? $currentRoles->{$tag}->{id} : $customRoleId++,
-						include => $currentRoles->{$tag}  ? $currentRoles->{$tag}->{include} : 1,
-						albumLink => $currentRoles->{$tag}  ? $currentRoles->{$tag}->{albumLink} : 1,
+						id => $userDefinedRoles->{$tag} ? $userDefinedRoles->{$tag}->{id} : $customRoleId++,
+						include => $userDefinedRoles->{$tag}  ? $userDefinedRoles->{$tag}->{include} : 1,
+						albumLink => $userDefinedRoles->{$tag}  ? $userDefinedRoles->{$tag}->{albumLink} : 1,
 					};
 
-					if ( !$currentRoles->{$tag} || $currentRoles->{$tag}->{name} ne $customTags->{$tag}->{name} ) {
+					if ( !$userDefinedRoles->{$tag} || $userDefinedRoles->{$tag}->{name} ne $customTags->{$tag}->{name} ) {
 						Slim::Utils::Strings::storeExtraStrings([{
 							strings => { EN => $customTags->{$tag}->{name}},
 							token   => $tag,
@@ -128,32 +127,26 @@ sub handler {
 		}
 
 		# set changed flag if we removed an item from the list
-		$changed ||= grep { !$customTags->{$_} } keys %$currentRoles;
-
+		$changed ||= grep { !$customTags->{$_} } keys %$userDefinedRoles;
 		if ( $changed ) {
+			$userDefinedRoles = $customTags;
 			$prefs->set('userDefinedRoles', $customTags);
-			$paramRef->{keepCustomRolesOpen} = 1;
-		} else {
-			$paramRef->{keepCustomRolesOpen} = 0;
 		}
-
 	}
 
 	$paramRef->{usesFTS} = Slim::Schema->canFulltextSearch;
 	$paramRef->{customTags} = $prefs->get('userDefinedRoles');
 
-	my $menuDefaultRoles = ();
+	my $menuRoles = ();
+	my $hidden = exists $paramRef->{"pref_useUnifiedArtistsList"} ? !($paramRef->{"pref_useUnifiedArtistsList"}) : !($prefs->get('useUnifiedArtistsList'));
 	foreach my $role (Slim::Schema::Contributor::defaultContributorRoles()) {
 		next if $role eq "ALBUMARTIST" || $role eq "ARTIST";
-		push @{$menuDefaultRoles}, { name => lc($role), selected => $prefs->get(lc($role)."InArtists") };
+		push @{$menuRoles}, { name => lc($role), selected => $prefs->get(lc($role)."InArtists"), hidden => $hidden };
 	}
-	$paramRef->{menuDefaultRoles} = $menuDefaultRoles;
-
-	my $menuUserRoles = ();
 	foreach my $role (Slim::Schema::Contributor::userDefinedRoles()) {
-		push @{$menuUserRoles}, { name => lc($role), selected => $userDefinedRoles->{$role}->{include} };
+		push @{$menuRoles}, { name => lc($role), selected => $userDefinedRoles->{$role}->{include} };
 	}
-	$paramRef->{menuUserRoles} = $menuUserRoles;
+	$paramRef->{menuRoles} = $menuRoles;
 
 	my $linkRoles = ();
 	my $pref;
