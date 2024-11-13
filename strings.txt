@@ -8787,7 +8787,7 @@ SETUP_NOROLEFILTER_DESC
 SETUP_ROLESINARTISTS
 	CS	Interpret skladby, Skladatel, Skupina a Orchestr v Interpretech
 	DA	Nummerets kunstner, Komponist, band og orkester i Kunstnere
-	DE	Titelinterpret, Komponist, Gruppe und Orchester in Interpreten
+	DE	Zusätzliche Rollen in der Interpretenliste
 	EN	Select roles to include with Artists
 	ES	Artista de pista, Compositor, banda y orquesta en artistas
 	FI	Raidan artisti, Säveltäjä, yhtye ja orkesteri artisteissa
@@ -8807,7 +8807,7 @@ SETUP_ROLESINARTISTS
 SETUP_ROLESINARTISTS_DESC
 	CS	Informace o skladatelích, skupinách a orchestrech mohou být přidány do seznamu interpretů pro procházení a vyhledávání.
 	DA	Der kan vises oplysninger om hvem der har komponeret og hvem der spiller de forskellige numre, i listen med kunstnere når du gennemser eller søger i din musiksamling.
-	DE	Titelinformationen über Titelinterpret, Komponist, Gruppe und Orchester, usw, können in der Interpretenliste und beim Suchen aufgenommen werden.
+	DE	Informationen über Titelinterpret, Komponist, Gruppe, Orchester etc. können in der Interpretenliste und beim Suchen berücksichtigt werden.
 	EN	Song information about track artists, composers, bands and orchestras, etc, can be included in the artists list for browsing and search.
 	ES	La información de canción sobre artistas de pista, compositores, bandas y orquestas, etc, se puede incluir en la lista de artistas para examinar y buscar.
 	FI	Artistiluetteloon voidaan lisätä kappaletietoja säveltäjistä, yhtyeistä ja orkestereista selaamista ja hakuja varten.
@@ -26679,7 +26679,7 @@ SETUP_USERDEFINEDROLES_TAG
 
 SETUP_USERDEFINEDROLES_TEXT
 	EN	Display text
-	DE	Text Bezeichnung
+	DE	Bezeichnung
 	FR	Afficher le texte
 	ES	Mostrar texto
 	HU	Szöveg megjelenítése
