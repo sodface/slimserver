@@ -151,6 +151,7 @@ jobs:
 
   win32:
     name: Build LMS for Windows (Legacy 32-bit)
+    if: false
     runs-on: self-hosted
     timeout-minutes: 30
     env:
@@ -182,7 +183,7 @@ jobs:
       - mac
       - linux
       - win64
-      - win32
+      # - win32
     permissions:
       actions: write
     steps:
