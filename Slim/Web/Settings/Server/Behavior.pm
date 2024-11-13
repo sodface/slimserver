@@ -110,16 +110,24 @@ sub handler {
 				if ( $tag ) {
 					$customTags->{$tag} = {
 						name => $paramRef->{$key . '_name'} || $tag,
+						namePlural => $paramRef->{$key . '_namePlural'} || $paramRef->{$key . '_name'} || $tag,
 						id => $userDefinedRoles->{$tag} ? $userDefinedRoles->{$tag}->{id} : $customRoleId++,
 						include => $userDefinedRoles->{$tag}  ? $userDefinedRoles->{$tag}->{include} : 1,
 						albumLink => $userDefinedRoles->{$tag}  ? $userDefinedRoles->{$tag}->{albumLink} : 1,
 					};
 
-					if ( !$userDefinedRoles->{$tag} || $userDefinedRoles->{$tag}->{name} ne $customTags->{$tag}->{name} ) {
-						Slim::Utils::Strings::storeExtraStrings([{
+					if ( !$userDefinedRoles->{$tag} || $userDefinedRoles->{$tag}->{name} ne $customTags->{$tag}->{name}
+									|| $userDefinedRoles->{$tag}->{namePlural} ne $customTags->{$tag}->{namePlural} ) {
+						Slim::Utils::Strings::storeExtraStrings(
+							[{
 							strings => { EN => $customTags->{$tag}->{name}},
 							token   => $tag,
-						}]);
+							},
+							{
+							strings => { EN => $customTags->{$tag}->{namePlural}},
+							token   => $tag . "_PLURAL",
+							}
+							]);
 						$changed = 1;
 					}
 				}

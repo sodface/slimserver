@@ -26685,4 +26685,11 @@ SETUP_USERDEFINEDROLES_TEXT
 	HU	Szöveg megjelenítése
 	NL	Tekst weergeven
 
+SETUP_USERDEFINEDROLES_TEXT_PLURAL
+	EN	Display text (plural)
+	DE	Bezeichnung (Plural)
+	FR	Afficher le texte (pluriel)
+	ES	Mostrar texto (plural)
+	HU	Szöveg megjelenítése (többes számú)
+	NL	Tekst weergeven (meervoud)
 

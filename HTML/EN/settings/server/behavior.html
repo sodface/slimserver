@@ -63,16 +63,19 @@
 				<tr>
 					<th>[% "SETUP_USERDEFINEDROLES_TAG" | string %]</th>
 					<th>[% "SETUP_USERDEFINEDROLES_TEXT" | string %]</th>
+					<th>[% "SETUP_USERDEFINEDROLES_TEXT_PLURAL" | string %]</th>
 				</tr>
 				[% FOREACH tag = customTags.keys.sort %]
 					<tr>
 						<td><input type="text" name="[% tag | html %]_tag" value="[% tag | html %]" class="stdedit"/></td>
 						<td><input type="text" name="[% tag | html %]_name" value="[% customTags.$tag.name | html %]" class="stdedit" style="width: 200px;"/></td>
+						<td><input type="text" name="[% tag | html %]_namePlural" value="[% customTags.$tag.namePlural | html %]" class="stdedit" style="width: 200px;"/></td>
 					</tr>
 				[% END %]
 				<tr>
 					<td><input type="text" name="new_tag" value="" class="stdedit"/></td>
 					<td><input type="text" name="new_name" value="" class="stdedit" style="width: 200px;"/></td>
+					<td><input type="text" name="new_namePlural" value="" class="stdedit" style="width: 200px;"/></td>
 				</tr>
 			</table>
 		[% END %]
