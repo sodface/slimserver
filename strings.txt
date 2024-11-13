@@ -8784,11 +8784,11 @@ SETUP_NOROLEFILTER_DESC
 	PL	Filtrowanie może zostać włączone podczas przeglądania listy wykonawców, aby wyświetlić tylko te albumy i utwory, które są zgodne z wybraną rolą kontrybutora (np. ALBUMARTIST, COMPOSER itp.).
 	SV	När du bläddrar genom "Artister" kan du filtrera så att bara album och låtar som matchar den valda rollen ("ALBUMARTIST", "COMPOSER", etc.) visas.
 
-SETUP_COMPOSERINARTISTS
+SETUP_ROLESINARTISTS
 	CS	Interpret skladby, Skladatel, Skupina a Orchestr v Interpretech
 	DA	Nummerets kunstner, Komponist, band og orkester i Kunstnere
 	DE	Titelinterpret, Komponist, Gruppe und Orchester in Interpreten
-	EN	Track Artist, Composer, Band and Orchestra in Artists
+	EN	Select roles to include with Artists
 	ES	Artista de pista, Compositor, banda y orquesta en artistas
 	FI	Raidan artisti, Säveltäjä, yhtye ja orkesteri artisteissa
 	FR	Artiste du morceau, compositeur, groupe/orchestre dans les artistes
@@ -8804,19 +8804,19 @@ SETUP_COMPOSERINARTISTS
 	SV	Spårets artist, Kompositör, band och orkester i Artister
 	ZH_CN	音轨艺人有关艺人的作曲家及乐队信息
 
-SETUP_COMPOSERINARTISTS_DESC
+SETUP_ROLESINARTISTS_DESC
 	CS	Informace o skladatelích, skupinách a orchestrech mohou být přidány do seznamu interpretů pro procházení a vyhledávání.
 	DA	Der kan vises oplysninger om hvem der har komponeret og hvem der spiller de forskellige numre, i listen med kunstnere når du gennemser eller søger i din musiksamling.
-	DE	Titelinformationen über Nummerets kunstner, Komponist, Gruppe und Orchester können in der Interpretenliste und beim Suchen aufgenommen werden.
-	EN	Song information about track artists, composers, bands and orchestras can be included in the artists list for browsing and search.
-	ES	La información de canción sobre artistas de pista, compositores, bandas y orquestas se puede incluir en la lista de artistas para examinar y buscar.
+	DE	Titelinformationen über Titelinterpret, Komponist, Gruppe und Orchester, usw, können in der Interpretenliste und beim Suchen aufgenommen werden.
+	EN	Song information about track artists, composers, bands and orchestras, etc, can be included in the artists list for browsing and search.
+	ES	La información de canción sobre artistas de pista, compositores, bandas y orquestas, etc, se puede incluir en la lista de artistas para examinar y buscar.
 	FI	Artistiluetteloon voidaan lisätä kappaletietoja säveltäjistä, yhtyeistä ja orkestereista selaamista ja hakuja varten.
-	FR	Les informations relatives aux artistes des morceaux, compositeurs, groupes/orchestres peuvent être ajoutées à la liste des artistes pour le parcours de bibliothèque et les recherches.
+	FR	Les informations relatives aux artistes des morceaux, compositeurs, groupes/orchestres, etc, peuvent être ajoutées à la liste des artistes pour le parcours de bibliothèque et les recherches.
 	HE	ניתן לכלול פרטי שירים אודות מלחינים, להקות ותזמורות ברשימת המבצעים לצורך עיון וחיפוש.
 	HU	A zeneszerzőkről, együttesekről és zenekarokról szóló dalinformációk böngészéshez és kereséshez felvehetők az előadók listájába.
 	IT	Per ogni brano, nell'elenco degli artisti è possibile includere informazioni su compositore, gruppo e orchestra a fini di consultazione e ricerca.
 	JA	作曲家、バンド、オーケストラの情報は、ブラウズ・検索の時にアーチスト情報として認識させることができます。
-	NL	Je kunt informatie over artiest van nummer, componisten, dirigenten en bands in de lijst van artiesten opnemen, zodat je erin kunt bladeren en zoeken.
+	NL	Je kunt informatie over artiest van nummer, componisten, dirigenten en bands, enz, in de lijst van artiesten opnemen, zodat je erin kunt bladeren en zoeken.
 	NO	Sanginformasjon om komponist, gruppe og orkester kan inkluderes i artistlisten når du blar og søker.
 	PL	Wyświetlaj kompozytorów oraz nazwy zespołów i orkiestr na liście wykonawców.
 	PT	A informação relativa ao compositor, banda e orquestra poderá ser incluida na listas ou na procura.
@@ -26634,4 +26634,55 @@ SETUP_YEARMENU_1
 	HU	Az album és a zeneszám éveinek megjelenítése
 	NL	Toon jaartal van album en nummer
 	PT	Mostrar o ano do album e de cada pista
+
+SETUP_ALBUMLINKROLES
+	DE	Künstlerlinks in Albumlisten
+	EN	Artist links in album lists
+	ES	Enlaces de artistas en listas de álbumes
+	FR	Liens vers les artistes dans les listes d'albums
+	HU	Előadói linkek az albumlistákban
+	NL	Artiestenlinks in albumlijsten
+	PT	Links de artistas nas listas de álbuns
+
+SETUP_ALBUMLINKROLES_DESC
+	DE	Sie können auswählen, welche Rollen als Links in Albumlisten angezeigt werden sollen. Der Hauptkünstler des Albums wird immer angezeigt.
+	EN	You can choose which roles to show as links in album listings. The main album contributor as identified by the music scanner will always be shown.
+	ES	Puedes elegir qué roles quieres que aparezcan como enlaces en las listas de álbumes. Siempre se mostrará el colaborador principal del álbum identificado por el escáner de música.
+	FR	Vous pouvez choisir les rôles à afficher sous forme de liens dans les listes d'albums. Le contributeur principal de l'album tel qu'identifié par le scanner de musique sera toujours affiché.
+	HU	Kiválaszthatja, hogy mely szerepek jelenjenek meg hivatkozásként az albumlistában. A zeneszkenner által azonosított album fő közreműködője mindig megjelenik.
+	NL	U kunt kiezen welke rollen u als links in albumlijsten wilt weergeven. De belangrijkste albumbijdrager zoals geïdentificeerd door de muziekscanner wordt altijd weergegeven.
+	PT	Pode escolher quais as funções que serão apresentadas como links nas listas de álbuns. O principal contribuidor do álbum identificado pelo scanner de música será sempre mostrado.
+
+SETUP_USERDEFINEDROLES
+	EN	User Defined Roles
+	DE	Benutzerdefinierte Rollen
+	FR	Rôles définis par l'utilisateur
+	HU	Felhasználó által meghatározott szerepkörök
+	ES	Roles definidos por el usuario
+	NL	Door de gebruiker gedefinieerde rollen
+
+SETUP_USERDEFINEDROLES_DESC
+	EN	Tell LMS about any custom contributor role tags used in the music library. For example, SOLOIST, DRUMMER, PRODUCER, etc. Role tag changes will trigger a rescan of your music library.
+	DE	Definiere benutzerdefinierte Rollen-Tags, die in der Musikbibliothek verwendet werden. Zum Beispiel SOLOIST, DRUMMER, PRODUCER, usw. Änderungen am Rollentag lösen einen erneuten Scan Ihrer Musikbibliothek aus.
+	FR	Indiquez à LMS tous les tags de rôles (toutes les contributions) à utiliser dans la bibliothèque musicale. Par exemple, SOLOIST (soliste), DRUMMER (batteur), PRODUCER (producteur), etc. Les modifications de balise de rôle déclencheront une nouvelle analyse de votre bibliothèque musicale.
+	ES	Informe a LMS sobre cualquier etiqueta de rol de colaborador personalizada utilizada en la biblioteca musical. Por ejemplo, SOLISTA, BATERISTA, PRODUCTOR, etc. Los cambios de etiqueta de rol activarán un nuevo escaneo de tu biblioteca de música.
+	HU	Mondja el az LMS-nek a zenei könyvtárban használt egyéni közreműködői szerepcímkéket. Például SZÓLISTA, DOBOS, PRODUCER stb. A szerepcímke módosításai elindítják a zenei könyvtár újraellenőrzését.
+	NL	Vertel LMS over alle uitvoerende rollen die je hebt getagged in jouw muziekbibliotheek. Bijvoorbeeld SOLOIST, DRUMMER, PRODUCER, enz. Wijzigingen in de roltag zorgen ervoor dat uw muziekbibliotheek opnieuw wordt gescand.
+
+SETUP_USERDEFINEDROLES_TAG
+	EN	Role tag
+	DE	Rollen-Tag
+	FR	Tag Rôle
+	ES	Role tag
+	HU	Szerepcímke
+	NL	Rol tag
+
+SETUP_USERDEFINEDROLES_TEXT
+	EN	Display text
+	DE	Text Bezeichnung
+	FR	Afficher le texte
+	ES	Mostrar texto
+	HU	Szöveg megjelenítése
+	NL	Tekst weergeven
+
 

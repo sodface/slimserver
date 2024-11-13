@@ -268,6 +268,12 @@ sub init {
 		# Bug 5557, disable UPnP support by default
 		'noupnp'                => 1,
 		'onlyAlbumYears'        => 1,
+		'artistAlbumLink'       => 1,
+		'albumartistAlbumLink'  => 1,
+		'trackartistAlbumLink'  => $prefs->get('useUnifiedArtistsList') && $prefs->get('trackartistInArtists'),
+		'composerAlbumLink'     => $prefs->get('useUnifiedArtistsList') && $prefs->get('composerInArtists'),
+		'conductorAlbumLink'    => $prefs->get('useUnifiedArtistsList') && $prefs->get('conductorInArtists'),
+		'bandAlbumLink'         => $prefs->get('useUnifiedArtistsList') && $prefs->get('bandInArtists'),
 	);
 
 	# we can have different defaults depending on the OS
@@ -404,9 +410,11 @@ sub init {
 
 		if ( %$oldRoles - %$newRoles || (scalar grep {!exists $newRoles->{$_}} keys %$oldRoles) ) {
 			Slim::Control::Request::executeRequest(undef, ['wipecache', $prefs->get('dontTriggerScanOnPrefChange') ? 'queue' : undef]);
-			Slim::Schema::Contributor->initializeRoles()
 		}
+		Slim::Schema::Contributor->initializeRoles();
 	}, 'userDefinedRoles' );
+
+	$prefs->setChange( sub { Slim::Schema::Contributor->initializeRoles() }, 'composerInArtists', 'conductorInArtists', 'bandInArtists', 'trackartistInArtists', 'useUnifiedArtistsList', 'artistAlbumLink', 'albumartistAlbumLink', 'trackartistAlbumLink', 'composerAlbumLink', 'conductorAlbumLink', 'bandAlbumLink');
 
 	$prefs->setChange( sub { Slim::Utils::Misc::setPriority($_[1]) }, 'serverPriority');
 
@@ -546,7 +554,7 @@ sub init {
 		# Rebuild Jive cache if VA setting is changed
 		$prefs->setChange( sub {
 			Slim::Schema->wipeCaches();
-		}, 'variousArtistAutoIdentification', 'composerInArtists', 'conductorInArtists', 'bandInArtists', 'trackartistInArtists', 'useUnifiedArtistsList', 'userDefinedRoles');
+		}, 'variousArtistAutoIdentification', 'composerInArtists', 'conductorInArtists', 'bandInArtists', 'trackartistInArtists', 'useUnifiedArtistsList', 'userDefinedRoles', 'artistAlbumLink', 'albumartistAlbumLink', 'trackartistAlbumLink', 'composerAlbumLink', 'conductorAlbumLink', 'bandAlbumLink');
 
 		$prefs->setChange( sub {
 			Slim::Control::Queries->wipeCaches();
