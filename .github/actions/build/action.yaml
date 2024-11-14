@@ -1,5 +1,5 @@
-name: Build Logitech Media Server
-description: Build Logitech Media Server with the given parameters
+name: Build Lyrion Music Server
+description: Build Lyrion Music Server with the given parameters
 inputs:
   build-params:
     description: Parameters needed to run the `buildme.pl` script
@@ -33,7 +33,7 @@ runs:
     - name: Check out LMS platform code
       uses: actions/checkout@v4
       with:
-        repository: Logitech/slimserver-platforms
+        repository: ${{ github.repository_owner }}/slimserver-platforms
         path: platforms
         ref: ${{ steps.getversion.outputs.GIT_BRANCH }}
 
@@ -120,7 +120,7 @@ runs:
         fi
 
     - name: Upload artifacts to R2
-      if: ${{ !startsWith(inputs.build-params, 'docker') }}
+      if: ${{ !startsWith(inputs.build-params, 'docker') && github.repository_owner == 'LMS-Community' }}
       shell: bash
       run: |
         mkdir -p $HOME/.aws

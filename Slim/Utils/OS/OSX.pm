@@ -10,6 +10,7 @@ use strict;
 use base qw(Slim::Utils::OS);
 
 use Config;
+use File::Basename qw(dirname);
 use File::Path;
 use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
@@ -120,6 +121,7 @@ sub initSearchPath {
 
 	my @paths = ();
 
+	push @paths, dirname($^X);
 	push @paths, $ENV{'HOME'} ."/Library/iTunes/Scripts/iTunes-LAME.app/Contents/Resources/";
 	push @paths, (split(/:/, $ENV{'PATH'}), qw(/usr/bin /usr/local/bin /usr/libexec /sw/bin /usr/sbin /opt/local/bin));
 
@@ -382,8 +384,7 @@ sub initUpdate {
 		# don't nag too often...
 		$interval = 6*3600 if $interval < 6*3600;
 
-		require File::Basename;
-		my $folder = File::Basename::dirname($script);
+		my $folder = dirname($script);
 
 		my $envVariables;
 		if (IS_MENUBAR_ITEM) {
