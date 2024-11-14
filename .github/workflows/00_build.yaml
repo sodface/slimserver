@@ -21,31 +21,6 @@ on:
           - release
 
 jobs:
-  macLegacy:
-    name: Build LMS for Mac (Legacy)
-    # disable - no longer provided starting LMS9
-    if: false
-    runs-on: self-hosted
-    timeout-minutes: 20
-    env:
-      BASEDIR: gh-build
-    steps:
-      # we must check out here, as  otherwise the build action is not available
-      - name: Check out LMS code
-        uses: actions/checkout@v4
-        with:
-          path: server
-          ref: ${{ inputs.branch }}
-
-      - name: Launch build process
-        uses: ./server/.github/actions/build
-        with:
-          build-params: macosx
-          build-type: ${{ inputs.build_type }}
-          ssh-connect-string: ${{ secrets.MAC_CONNECT_STRING }}
-          AWS_KEY_ID: ${{ secrets.R2_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-
   mac:
     name: Build LMS for Mac (MenuBar Item)
     runs-on: macos-13
@@ -176,41 +151,15 @@ jobs:
           AWS_KEY_ID: ${{ secrets.R2_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
 
-  win32:
-    name: Build LMS for Windows (Legacy 32-bit)
-    if: false
-    runs-on: self-hosted
-    timeout-minutes: 30
-    env:
-      BASEDIR: gh-build
-    steps:
-      # we must check out here, as  otherwise the build action is not available
-      - name: Check out LMS code
-        uses: actions/checkout@v4
-        with:
-          path: server
-          ref: ${{ inputs.branch }}
-
-      - name: Launch build process
-        uses: ./server/.github/actions/build
-        with:
-          build-params: win32
-          build-type: ${{ inputs.build_type }}
-          ssh-connect-string: ${{ secrets.WIN_CONNECT_STRING }}
-          AWS_KEY_ID: ${{ secrets.R2_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-
   updateRepoFile:
     name: Trigger repository file update
     if: ${{ success() && inputs.build_type == 'nightly' && github.repository_owner == 'LMS-Community' }}
     runs-on: ubuntu-latest
     timeout-minutes: 2
     needs:
-      # - macLegacy
       - mac
       - linux
       - win64
-      # - win32
     permissions:
       actions: write
     steps:
