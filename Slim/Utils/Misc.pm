@@ -1436,21 +1436,6 @@ sub shouldCacheURL {
 	return 1;
 }
 
-=head2 runningAsService ( )
-
-Returns true if running as a Windows service.
-
-=cut
-
-sub runningAsService { if (main::ISACTIVEPERL) {
-
-	if (defined(&PerlSvc::RunningAsService) && PerlSvc::RunningAsService()) {
-		return 1;
-	}
-
-	return 0;
-} }
-
 =head2 validMacAddress ( )
 
 Returns true if string is in correct form of a mac address
