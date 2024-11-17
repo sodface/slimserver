@@ -6351,6 +6351,7 @@ sub _getTagDataForTracks {
 			utf8::decode( $c->{'contributors.name'} ) if exists $c->{'contributors.name'};
 			utf8::decode( $c->{'genres.name'} ) if exists $c->{'genres.name'};
 			utf8::decode( $c->{'comments.value'} ) if exists $c->{'comments.value'};
+			utf8::decode( $c->{'tracks.discsubtitle'}) if exists $c->{'tracks.discsubtitle'};
 		}
 
 		my $id = $c->{'tracks.id'};
