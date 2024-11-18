@@ -7429,8 +7429,8 @@ SETUP_EXTENSIONS_CATEGORY_ALL
 	ZH_CN	全部
 
 SETUP_EXTENSIONS_CATEGORY_TOP
-	DE	Populärste (nicht installierte)
 	DA	Mest populære (ikke installeret)
+	DE	Populärste (nicht installierte)
 	EN	Most Popular (not installed)
 	FR	Les plus populaires (non installés)
 	HU	Legnépszerűbb (nincs telepítve)
@@ -14683,7 +14683,7 @@ BROWSE_BY_ARTWORK
 	ZH_CN	浏览图象
 
 BROWSE_BY_ARTWORK_DBL
-	CS	Obaly alb		
+	CS	Obaly alb
 	ES	Examinar por Arte de Tapa
 	FR	Pochettes
 	PL	Okładka
