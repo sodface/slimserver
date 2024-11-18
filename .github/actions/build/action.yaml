@@ -98,7 +98,7 @@ runs:
       if: ${{ !startsWith(inputs.build-params, 'docker') }}
       shell: bash
       run: |
-        if [ ! -f publish/* ]; then
+        if [ ! "$(ls -A publish/)" ]; then
           exit 1;
         fi
 
