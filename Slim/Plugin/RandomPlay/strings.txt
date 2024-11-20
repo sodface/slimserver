@@ -314,7 +314,7 @@ PLUGIN_RANDOM_YEAR_DISABLE
 
 PLUGIN_RANDOM_WORK
 	CS	Mix děl
-	DA	Værkmix
+	DA	Værkmiks
 	EN	Work Mix
 	DE	Werkmix
 	ES	Mezcla de Composición
