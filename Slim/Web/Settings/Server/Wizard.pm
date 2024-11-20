@@ -42,6 +42,13 @@ sub handler {
 
 	$paramRef->{languageoptions} = Slim::Utils::Strings::languageOptions();
 
+	# redirect to the Default skin if another skin is set
+	if ($paramRef->{webroot} eq '/' && $paramRef->{skinOverride} ne 'Default' && $paramRef->{systemSkin} ne 'Default') {
+		$response->code(RC_MOVED_TEMPORARILY);
+		$response->header('Location' => '/Default/settings/server/wizard.html');
+		return Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);
+	}
+
 	# make sure we only enforce the wizard at the very first startup
 	if ($paramRef->{saveSettings}) {
 
