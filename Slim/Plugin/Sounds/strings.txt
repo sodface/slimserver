@@ -1232,6 +1232,7 @@ PLUGIN_SOUNDS_WIND_CHIME
 
 PLUGIN_SOUNDS_ALARM_BUZZER
 	CS	Bzučák budíku
+	DA	Væækeur summetone
 	DE	Weckersummton
 	EN	Alarm Buzzer
 	FR	Sonnerie d'alarme
