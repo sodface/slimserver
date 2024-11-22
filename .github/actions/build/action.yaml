@@ -23,8 +23,10 @@ runs:
       run: |
         MAJOR=$(grep "\$VERSION" server/slimserver.pl | head -n1 | cut -d"'" -f2 | cut -d. -f1)
         MINOR=$(grep "\$VERSION" server/slimserver.pl | head -n1 | cut -d"'" -f2 | cut -d. -f2)
+        PATCH=$(grep "\$VERSION" server/slimserver.pl | head -n1 | cut -d"'" -f2 | cut -d. -f3)
 
         echo "LMS_VERSION=$MAJOR.$MINOR" >> $GITHUB_OUTPUT
+        echo "LMS_FULL_VERSION=$MAJOR.$MINOR.$PATCH" >> $GITHUB_OUTPUT
         echo "GIT_BRANCH=public/$MAJOR.$MINOR" >> $GITHUB_OUTPUT
 
 
@@ -113,9 +115,15 @@ runs:
         echo "aws_access_key_id=${{ inputs.AWS_KEY_ID }}" >> $HOME/.aws/credentials
         echo "aws_secret_access_key=${{ inputs.AWS_SECRET_ACCESS_KEY }}" >> $HOME/.aws/credentials
 
+        TARGET_FOLDER="${{ inputs.build-type }}"
+
+        if [ "${{ inputs.build-type }}" = "release" ]; then
+          TARGET_FOLDER="LyrionMusicServer_v${{ steps.getversion.outputs.LMS_FULL_VERSION }}"
+        fi
+
         for f in publish/?yrion?usic?erver*;
         do
-          aws --profile downloads --endpoint-url https://e83bc03c881257fada7ca16c243e9298.eu.r2.cloudflarestorage.com s3 cp $f s3://downloads/${{ inputs.build-type }}/
+          aws --profile downloads --endpoint-url https://e83bc03c881257fada7ca16c243e9298.eu.r2.cloudflarestorage.com s3 cp $f s3://downloads/$TARGET_FOLDER/
         done
 
         rm -f $HOME/.aws/credentials
