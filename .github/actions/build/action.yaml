@@ -43,7 +43,7 @@ runs:
       # TODO - needs to be smarter!
       run: |
         if [ "${{ inputs.build-type }}" = "release" ]; then
-          echo "LMS_TAG=--tag=latest" >> $GITHUB_OUTPUT
+          echo "LMS_TAG=--tag=rc" >> $GITHUB_OUTPUT
         elif [ "${{ steps.getversion.outputs.LMS_VERSION }}" = "9.0" ]; then
           echo "LMS_TAG=--tag=dev" >> $GITHUB_OUTPUT
         elif [ "${{ steps.getversion.outputs.LMS_VERSION }}" = "8.5" ]; then
