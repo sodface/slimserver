@@ -658,7 +658,7 @@ sub init {
 
 	$inInit = 0;
 
-	main::INFOLOG && $log->info("Server done init...");
+	$log->error("Server done init: " . Slim::Utils::Network::serverURL);
 }
 
 sub main {
