@@ -144,6 +144,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLE_NO
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_TITLES
 	CS	Ignorované názvy
+	DA	Ignorér titler
 	DE	Titel ignorieren
 	EN	Ignore Titles
 	FR	Ignorer les titres
@@ -152,6 +153,7 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_TITLES
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_TITLES_DESC
 	CS	Definujte seznam názvů nebo jmen oddělených čárkou. Skladby, které odpovídají jednomu z těchto řetězců, nebudou scroblovány.
+	DA	Definér en kommasepareret liste af titler der skal ignoreres. Numre som matcher en af disse strenge rapporteres (scrobbles) ikke til Last.fm.
 	DE	Geben Sie eine Komma-separierte Liste von Titeln ein. Abgespielte Lieder, die einen dieser Begriffe enthalten, werden nicht an Last.fm gemeldet (gescrobbelt).
 	EN	Define a comma separated list of titles or names. Tracks which match one of these strings will not be scrobbled.
 	FR	Définissez une liste de titres séparés par des virgules. Les morceaux qui correspondent à l'un de ces titres ne seront pas envoyés (scrobblés).
@@ -160,6 +162,7 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_TITLES_DESC
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_ARTISTS
 	CS	Ignorovat interprety
+	DA	Ignorér kunstnere
 	DE	Interpreten ignorieren
 	EN	Ignore Artists
 	FR	Ignorer les artistes
@@ -168,6 +171,7 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_ARTISTS
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_ARTISTS_DESC
 	CS	Definujte seznam jmen interpretů oddělený čárkou. Skladby, které odpovídají jednomu z těchto řetězců, nebudou scroblovány.
+	DA	Definér en kommasepareret liste af kunstnere der skal ignoreres. Numre som matcher en af disse strenge rapporteres (scrobbles) ikke til Last.fm.
 	DE	Geben Sie eine Komma-separierte Liste von Interpreten ein. Abgespielte Lieder, die einen dieser Begriffe enthalten, werden nicht an Last.fm gemeldet (gescrobbelt).
 	EN	Define a comma separated list list of artist names. Tracks which match one of these strings will not be scrobbled.
 	FR	Définissez une liste de noms d'artistes séparés par des virgules. Les morceaux dont l'artiste correspond à l'un de ces noms ne seront pas envoyés (scrobblés).
@@ -176,6 +180,7 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_ARTISTS_DESC
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_ALBUMS
 	CS	Ignorovat názvy alb
+	DA	Ignorér albumtitler
 	DE	Albentitel ignorieren
 	EN	Ignore Album Titles
 	FR	Ignorer les titres des albums
@@ -184,6 +189,7 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_ALBUMS
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_ALBUMS_DESC
 	CS	Definujte seznam názvů alb oddělených čárkou. Skladby, které odpovídají jednomu z těchto řetězců, nebudou scroblovány.
+	DA	Definér en kommasepareret liste af albumtitler der skal ignoreres. Numre som matcher en af disse strenge rapporteres (scrobbles) ikke til Last.fm.
 	DE	Geben Sie eine Komma-separierte Liste von Albumtiteln ein. Abgespielte Lieder, die einen dieser Begriffe enthalten, werden nicht an Last.fm gemeldet (gescrobbelt).
 	EN	Define a comma separated list of album names. Tracks which match one of these strings will not be scrobbled.
 	FR	Définissez une liste de noms d'albums séparés par des virgules. Les morceaux dont l'album correspond à l'un de ces noms ne seront pas envoyés (scrobblés).
@@ -192,6 +198,7 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_ALBUMS_DESC
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_GENRES
 	CS	Ignorovat žánry
+	DA	Ignorér genrer
 	DE	Stilrichtungen ignorieren
 	EN	Ignore Genres
 	FR	Ignorer les genres
@@ -200,6 +207,7 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_GENRES
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_GENRES_DESC
 	CS	Definujte seznam žánrů oddělený čárkou. Skladby, které odpovídají jednomu z těchto řetězců, nebudou scroblovány.
+	DA	Definér en kommasepareret liste af genrer der skal ignoreres. Numre som matcher en af disse strenge rapporteres (scrobbles) ikke til Last.fm.
 	DE	Geben Sie eine Komma-separierte Liste von Stilrichtungen ein. Abgespielte Lieder, die einen dieser Begriffe enthalten, werden nicht an Last.fm gemeldet (gescrobbelt).
 	EN	Define a comma separated list list of genres. Tracks which match one of these strings will not be scrobbled.
 	FR	Définissez une liste de genres séparés par des virgules. Les morceaux dont le genre correspond à l'un de ces genres ne seront pas envoyés (scrobblés).
@@ -526,4 +534,3 @@ PLUGIN_AUDIOSCROBBLER_TRACK_LOVED
 	PL	Ten utwór otrzymał ocenę pozytywną.
 	RU	Эта дорожка понравилась.
 	SV	Spåret har registrerats som älskat.
-
