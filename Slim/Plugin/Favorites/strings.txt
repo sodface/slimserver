@@ -197,6 +197,7 @@ PLUGIN_FAVORITES_DESC
 
 PLUGIN_FAVORITES_USE_DSTM
 	CS	Nezastavuj přehrávání hudby
+	DA	Aldrig stop musikken
 	DE	Musikwiedergabe nie anhalten
 	EN	Don't Stop The Music
 	FR	N'arrêtez pas la musique
@@ -206,6 +207,7 @@ PLUGIN_FAVORITES_USE_DSTM
 
 PLUGIN_FAVORITES_USE_DSTM_DESC
 	CS	Zaregistrujte si oblíbené položky jako možnosti pro "Nezastavuj přehrávání hudby".
+	DA	Benyt favoritter som valg for "Don't Stop The Music".
 	DE	Favoriten als Option für "Musikwiedergabe nie anhalten" verwenden.
 	EN	Register favorites as options for "Don't Stop The Music".
 	EN_GB	Register favourites as options for "Don't Stop The Music".
@@ -281,7 +283,7 @@ PLUGIN_FAVORITES_ADD
 
 PLUGIN_FAVORITES_IMPORT
 	CS	Importovat
-	DA	Importer
+	DA	Importér
 	DE	Importieren
 	EN	Import
 	ES	Importar
@@ -297,7 +299,7 @@ PLUGIN_FAVORITES_IMPORT
 
 PLUGIN_FAVORITES_LOADFILE
 	CS	Adresa URL nebo název souboru
-	DA	Adresse eller filnavn
+	DA	URL adresse eller filnavn
 	DE	URL oder Dateiname
 	EN	URL or File Name
 	ES	URL o nombre de archivo
@@ -329,7 +331,7 @@ PLUGIN_FAVORITES_SAVEFILE
 
 PLUGIN_FAVORITES_IMPORTFILE
 	CS	Adresa URL nebo název souboru
-	DA	Adresse eller filnavn
+	DA	URL adresse eller filnavn
 	DE	URL oder Dateiname
 	EN	URL or File Name
 	ES	URL o nombre de archivo
@@ -361,7 +363,7 @@ PLUGIN_FAVORITES_NOFILE
 
 PLUGIN_FAVORITES_CANCEL
 	CS	Storno
-	DA	Annuller
+	DA	Annullér
 	DE	Abbrechen
 	EN	Cancel
 	ES	Cancelar
@@ -458,7 +460,7 @@ PLUGIN_FAVORITES_NEWFOLDER
 
 PLUGIN_FAVORITES_NEWENTRY
 	CS	Nová položka
-	DA	Ny
+	DA	Ny post
 	DE	Neuer Eintrag
 	EN	New Entry
 	ES	Entrada nueva
@@ -491,7 +493,7 @@ PLUGIN_FAVORITES_NEWFAVORITE
 
 PLUGIN_FAVORITES_NEWURL
 	CS	Nová adresa URL
-	DA	Ny adresse
+	DA	Ny URL adresse
 	DE	Neue URL
 	EN	New URL
 	ES	URL nueva
@@ -523,7 +525,7 @@ PLUGIN_FAVORITES_LOADERROR
 
 PLUGIN_FAVORITES_REMOTELOADERROR
 	CS	Chyba při načítání URL
-	DA	Fejl ved indlæsning af adresse
+	DA	Fejl ved indlæsning af URL adresse
 	DE	Fehler beim Lesen der URL
 	EN	Error Loading URL
 	ES	Error al cargar URL
@@ -571,7 +573,7 @@ PLUGIN_FAVORITES_IMPORTERROR
 
 PLUGIN_FAVORITES_NOTITLE
 	CS	Bez názvu
-	DA	Igen titel
+	DA	Ingen titel
 	DE	Kein Titel
 	EN	No Title
 	ES	Sin título
@@ -653,6 +655,7 @@ PLUGIN_FAVORITES_REMOVE
 
 PLUGIN_FAVORITES_DONT_BROWSEDB
 	CS	Chování místních hudebních položek
+	DA	Opførsel med lokal musikbibliotek
 	DE	Verhalten mit lokaler Musik
 	EN	Local music items behavior
 	HU	Helyi zenei tételek viselkedése
@@ -664,6 +667,7 @@ PLUGIN_FAVORITES_DONT_BROWSEDB
 
 PLUGIN_FAVORITES_DONT_BROWSEDB_ON
 	CS	Při výběru neprohlížet položky, ale pouze je přehrát (staré chování)
+	DA	Ikke bladre i numre når de er valgt, bare afspil dem (gammel adfærd)
 	DE	Beim Anwählen eines Eintrages Favoriten abspielen, nicht durchsuchen (altes Verhalten)
 	EN	Don't browse items when selected, just play them (old behavior)
 	EN_GB	Don't browse items when selected, just play them (old behaviour)
@@ -675,6 +679,7 @@ PLUGIN_FAVORITES_DONT_BROWSEDB_ON
 
 PLUGIN_FAVORITES_DONT_BROWSEDB_OFF
 	CS	Když vyberete oblíbeného přispěvatele, žánr nebo album, přejít k jeho obsahu.
+	DA	Når du vælger en favoritkunstner, -genre eller -album, vis detaljeret indhold.
 	DE	Beim Anwählen eines favorisierten Künstlers, Genres oder Album, dessen Details anzeigen
 	EN	When you select a favorite contributor, genre or album, drill down to its content
 	EN_GB	When you select a favourite contributor, genre or album, drill down to its content
