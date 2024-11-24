@@ -63,7 +63,6 @@ use Slim::Utils::Timers;
 use Slim::Utils::Versions;
 
 use constant BUFSIZE   => 16 * 1024;
-use constant MAX_REDIR => 7;
 
 my $prefs = preferences('server');
 
@@ -186,7 +185,7 @@ sub use_proxy {
 sub send_request {
 	my ( $self, $args, $redirect ) = @_;
 
-	$self->maxRedirect( $args->{maxRedirect} // MAX_REDIR );
+	$self->maxRedirect( $args->{maxRedirect} // $prefs->get('maxRedirects') );
 	$self->response( undef ) unless $redirect;
 
 	if ( $args->{Timeout} ) {

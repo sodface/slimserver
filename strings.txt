@@ -4346,7 +4346,7 @@ SETUP_GROUP_FORMATS_CONVERSION_DESC
 
 SETUP_FORMATS_PREFER_NATIVE
 	CS	Preferovat nativní formát (dekódování v přehrávači), kdykoli je to možné
-	DA	Benyt indbygget format til afkodning (undgå transkodning) når muligt 
+	DA	Benyt indbygget format til afkodning (undgå transkodning) når muligt
 	DE	Native Wiedergabe auf dem Player wenn immer möglich bevorzugen
 	EN	Prefer native format (decoding on the player) whenever possible
 	FR	Utiliser le format natif si possible (éviter le transcodage)
@@ -9794,6 +9794,20 @@ SETUP_UDPCHUNKSIZE
 	RU	Максимальный размер данных UDP
 	SV	Maximal UDP-datastorlek
 	ZH_CN	最大UDP数据大小
+
+SETUP_MAX_REDIRECTS
+	DE	Maximale Anzahl Weiterleitungen
+	DA	Maksimalt antal omdirigeringer
+	EN	Maximum number of redirects
+	FR	Nombre maximal de redirections
+	NL	Maximum aantal omleidingen
+
+SETUP_MAX_REDIRECTS_DESC
+	DE	Die maximale Anzahl von HTTP Weiterleitungen, die gefolgt werden soll. Werden weitere Weiterleitungen angefordert, so gilt die Anfrage als fehlgeschlagen.
+	DA	Det maksimale antal HTTP-omdirigeringer, der skal følges. Hvis der kræves flere omdirigeringer, betragtes anmodningen som mislykket.
+	EN	The maximum number of HTTP redirects to follow. Should more redirects be required, then the request is considered failure.
+	FR	Nombre maximal de redirections HTTP à suivre. Si plus de redirections sont nécessaires, la demande est considérée comme un échec.
+	NL	Het maximale aantal HTTP-omleidingen dat moet worden gevolgd. Als er meer omleidingen nodig zijn, wordt het verzoek als mislukt beschouwd.
 
 SETUP_WEBPROXY
 	CS	Webový proxy server

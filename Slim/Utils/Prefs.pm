@@ -210,6 +210,7 @@ sub init {
 		'maxWMArate'            => 9999,
 		'tcpConnectMaximum'     => 30,             # not on web page
 		'udpChunkSize'          => 1400,           # only used for Slimp3
+		'maxRedirects'          => 7,
 		# Server Settings - Performance
 		'disableStatistics'     => 0,
 		'serverPriority'        => '',
