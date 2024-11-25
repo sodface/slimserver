@@ -285,7 +285,7 @@ sub advancedSearch {
 	my $prefix = Slim::Music::Import->lastScanTime() . '_advSearch_';
 
 	if ( !($params->{'fileTypes'} = $cache->get($prefix . 'ctList')) ) {
-		foreach my $ct ( @{ $dbh->selectcol_arrayref('SELECT DISTINCT content_type FROM tracks WHERE audio = 1 AND tracks.content_type != "cpl" AND tracks.content_type != "src" AND tracks.content_type != "ssp" AND tracks.content_type != "dir"') } ) {
+		foreach my $ct ( @{ $dbh->selectcol_arrayref('SELECT DISTINCT content_type FROM tracks WHERE audio = 1 AND tracks.content_type NOT IN ("cpl", "src", "ssp", "dir")') } ) {
 			$params->{'fileTypes'} ||= {};
 			$params->{'fileTypes'}->{lc($ct)} = string(uc($ct));
 		}

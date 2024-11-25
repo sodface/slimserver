@@ -4535,7 +4535,7 @@ sub titlesQuery {
 	$tags = $tagsprm if defined $tagsprm;
 
 	my $collate  = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
-	my $where    = '(tracks.content_type != "cpl" AND tracks.content_type != "src" AND tracks.content_type != "ssp" AND tracks.content_type != "dir" ';
+	my $where    = '(tracks.audio = 1 AND tracks.content_type NOT IN ("cpl", "src", "ssp", "dir") ';
 	$where .= $ignoreWorkTracks ? 'AND tracks.work IS NULL)' : ')';
 	my $order_by = "tracks.titlesort $collate";
 
