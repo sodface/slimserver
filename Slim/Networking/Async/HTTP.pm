@@ -71,7 +71,7 @@ my $cookieJar;
 my $log = logger('network.asynchttp');
 
 __PACKAGE__->mk_accessor( rw => qw(
-	uri request response saveAs fh timeout maxRedirect socks options
+	uri request response saveAs fh timeout maxRedirect socks options insecureHTTPS
 ) );
 
 sub init {
@@ -96,6 +96,7 @@ sub new {
 	}
 
 	$self->options($args->{options});
+	$self->insecureHTTPS($prefs->get('insecureHTTPS') || $args->{insecureHTTPS});
 
 	return $self;
 }
@@ -134,7 +135,7 @@ sub new_socket {
 			my %args = @_;
 
 			$args{SSL_hostname} //= $args{Host};
-			$args{SSL_verify_mode} //= Net::SSLeay::VERIFY_NONE() if $prefs->get('insecureHTTPS');
+			$args{SSL_verify_mode} //= Net::SSLeay::VERIFY_NONE() if $self->insecureHTTPS;
 
 			if ($self->socks) {
 				return Slim::Networking::Async::Socket::HTTPSSocks->new( %{$self->socks}, %args );
