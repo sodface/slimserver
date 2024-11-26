@@ -230,7 +230,7 @@ sub init {
 		'authorize'             => 0,
 		'username'              => '',
 		'password'              => '',
-		'insecureHTTPS'         => main::ISWINDOWS ? 1 : 0,
+		'insecureHTTPS'         => 0,
 		# Server Settings - TextFormatting
 		'longdateFormat'        => q(%A, %B |%d, %Y),
 		'shortdateFormat'       => q(%m/%d/%Y),
