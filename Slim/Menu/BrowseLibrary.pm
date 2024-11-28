@@ -1440,7 +1440,7 @@ sub _albums {
 	my $search     = $pt->{'search'};
 	my $wantMeta   = $pt->{'wantMetadata'};
 	# aa & SS will get all contributors and IDs in addition to the main contributor (albums.contributor) - slower but more accurate
-	my $tags       = 'ljsaaSSKE';
+	my $tags       = 'ljsaaSSKEw';
 	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
 	my $remote_library = $args->{'remote_library'} ||= $pt->{'remote_library'};
 
