@@ -7,6 +7,7 @@ on:
 jobs:
   check:
     name: Check whether build is needed
+    if: ${{ github.repository_owner == 'LMS-Community' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/github-script@v7
