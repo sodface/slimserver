@@ -945,6 +945,7 @@ sub _createOrUpdateAlbum {
 
 	if ( !$create && $track ) {
 		$albumHash = Slim::Schema::Album->findhash( $track->album->id );
+		utf8::decode($albumHash->{title});
 		my $differentTitle = Slim::Utils::Unicode::utf8toLatin1Transliterate($title) ne Slim::Utils::Unicode::utf8toLatin1Transliterate($albumHash->{title});
 
 		# Bug: 4140
