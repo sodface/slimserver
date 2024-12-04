@@ -1470,12 +1470,13 @@ sub _createComments {
 }
 
 sub _createWork {
-	my ($self, $work, $workSort, $composerID, $create, $track, $album) = @_;
+	my ($self, $work, $workSort, $composerID, $create) = @_;
 
 	if ( $work && $composerID ) {
+
+		# MusicBrainz (or users!) may create multiple WORK tags, which we get as an array. Flatten it.
 		if (ref $work eq 'ARRAY') {
-			$log->error("-- Found mutiple work tags for album=$album, track=$track. Setting Work=@$work[0]");
-			$work = @$work[0];
+			$work = join(', ', @$work);
 		}
 		# Using native DBI here to improve performance during scanning
 		my $dbh = Slim::Schema->dbh;
@@ -1756,7 +1757,7 @@ sub _newTrack {
 	}
 
 	### Create Work rows
-	my $workID = $self->_createWork($deferredAttributes->{'WORK'}, $deferredAttributes->{'WORKSORT'}, $contributors->{'COMPOSER'}->[0], 1, $attributeHash->{'TITLE'}, $deferredAttributes->{'ALBUM'});
+	my $workID = $self->_createWork($deferredAttributes->{'WORK'}, $deferredAttributes->{'WORKSORT'}, $contributors->{'COMPOSER'}->[0], 1);
 
 	### Find artwork column values for the Track
 	if ( !$columnValueHash{cover} && $columnValueHash{audio} ) {
@@ -2958,8 +2959,8 @@ sub _postCheckAttributes {
 	# etc don't show up if you don't have any.
 	my %cols = $track->get_columns;
 
-	my ($trackId, $trackUrl, $trackType, $trackAudio, $trackRemote, $trackTitle) =
-		(@cols{qw/id url content_type audio remote title/});
+	my ($trackId, $trackUrl, $trackType, $trackAudio, $trackRemote) =
+		(@cols{qw/id url content_type audio remote/});
 
 	if (!defined $trackType || $trackType eq 'dir' || $trackType eq 'lnk') {
 		$track->update;
@@ -2997,7 +2998,7 @@ sub _postCheckAttributes {
 
 	#Work
 	if (defined $attributes->{'WORK'}) {
-		my $workID = $self->_createWork($attributes->{'WORK'}, $attributes->{'WORKSORT'}, $contributors->{'COMPOSER'}->[0], 1, $trackTitle, $attributes->{'ALBUM'});
+		my $workID = $self->_createWork($attributes->{'WORK'}, $attributes->{'WORKSORT'}, $contributors->{'COMPOSER'}->[0], 1);
 		if ($workID) {
 			$track->work($workID);
 		}
