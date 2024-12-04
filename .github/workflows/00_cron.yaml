@@ -68,6 +68,10 @@ jobs:
                   repo: context.repo.repo,
                   workflow_id: '00_build.yaml',
                   ref: 'public/' + candidates[i].v,
+                  inputs: {
+                    branch: 'public/' + candidates[i].v,
+                    build_type: 'nightly',
+                  },
                 });
 
                 if (workflowStatus.status < 200 || workflowStatus.status > 204) {
