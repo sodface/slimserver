@@ -52,6 +52,7 @@ $prefs->init({
 });
 
 $prefs->setChange( \&initMenus, 'additionalMenuItems' );
+Slim::Control::Request::subscribe( sub { initMenus(@_) }, [['client'], ['new', 'reconnect']] );
 Slim::Control::Request::subscribe( sub { initMenus(@_) }, [['library'], ['changed']] );
 Slim::Control::Request::subscribe( sub { initMenus(@_) }, [['rescan'], ['done']] );
 
@@ -306,6 +307,8 @@ sub registerBrowseMode {
 	Slim::Menu::BrowseLibrary->deregisterNode($item->{id});
 
 	foreach my $clientPref ( $serverPrefs->allClients ) {
+		next unless Slim::Player::Client::getClient($clientPref->{clientid});
+
 		$clientPref->init({
 			'disabled_' . $item->{id} => $item->{enabled} ? 0 : 1
 		});
