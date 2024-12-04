@@ -1473,6 +1473,11 @@ sub _createWork {
 	my ($self, $work, $workSort, $composerID, $create) = @_;
 
 	if ( $work && $composerID ) {
+
+		# MusicBrainz (or users!) may create multiple WORK tags, which we get as an array. Flatten it.
+		if (ref $work eq 'ARRAY') {
+			$work = join(', ', @$work);
+		}
 		# Using native DBI here to improve performance during scanning
 		my $dbh = Slim::Schema->dbh;
 
