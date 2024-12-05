@@ -18,6 +18,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string cstring);
 use Slim::Utils::Text;
+use Slim::Utils::Timers;
 
 my $prefs = preferences('plugin.extendedbrowsemodes');
 my $serverPrefs = preferences('server');
@@ -52,9 +53,10 @@ $prefs->init({
 });
 
 $prefs->setChange( \&initMenus, 'additionalMenuItems' );
-Slim::Control::Request::subscribe( sub { initMenus(@_) }, [['client'], ['new', 'reconnect']] );
-Slim::Control::Request::subscribe( sub { initMenus(@_) }, [['library'], ['changed']] );
-Slim::Control::Request::subscribe( sub { initMenus(@_) }, [['rescan'], ['done']] );
+# subs to subscribe must be unique - wrap the actual sub
+Slim::Control::Request::subscribe( sub { _delayedInitMenus(@_) }, [['client'], ['new', 'reconnect']] );
+Slim::Control::Request::subscribe( sub { _delayedInitMenus(@_) }, [['library'], ['changed']] );
+Slim::Control::Request::subscribe( sub { _delayedInitMenus(@_) }, [['rescan'], ['done']] );
 
 $prefs->setChange( sub {
 	__PACKAGE__->initLibraries($_[0], $_[1] || 0);
@@ -295,6 +297,12 @@ sub initMenus {
 	foreach (@{$prefs->get('additionalMenuItems') || []}, @additionalStaticMenuItems) {
 		__PACKAGE__->registerBrowseMode($_);
 	}
+}
+
+# sometimes events are triggered in quick succession - buffer execution for a few ms to not process all of them
+sub _delayedInitMenus {
+	Slim::Utils::Timers::killTimers(undef, \&initMenus);
+	Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + 0.250, \&initMenus);
 }
 
 sub registerBrowseMode {
