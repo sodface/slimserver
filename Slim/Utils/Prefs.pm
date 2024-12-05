@@ -275,6 +275,7 @@ sub init {
 		'composerAlbumLink'     => $prefs->get('useUnifiedArtistsList') && $prefs->get('composerInArtists'),
 		'conductorAlbumLink'    => $prefs->get('useUnifiedArtistsList') && $prefs->get('conductorInArtists'),
 		'bandAlbumLink'         => $prefs->get('useUnifiedArtistsList') && $prefs->get('bandInArtists'),
+		'worksScanOnlyClassical'=> 0,
 	);
 
 	# we can have different defaults depending on the OS
@@ -402,7 +403,7 @@ sub init {
 
 	$prefs->setChange(
 		sub { Slim::Control::Request::executeRequest(undef, ['wipecache', $prefs->get('dontTriggerScanOnPrefChange') ? 'queue' : undef]) },
-		qw(splitList groupdiscs useTPE2AsAlbumArtist cleanupReleaseTypes)
+		qw(splitList groupdiscs useTPE2AsAlbumArtist cleanupReleaseTypes worksScanOnlyClassical)
 	);
 
 	$prefs->setChange( sub {

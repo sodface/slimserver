@@ -26856,3 +26856,21 @@ SETUP_USERDEFINEDROLES_TEXT_PLURAL
 	HU	Szöveg megjelenítése (többes számú)
 	NL	Tekst weergeven (meervoud)
 
+SETUP_WORKSSCANONLYCLASSICAL
+	DE	Scannen klassischer Werke
+	EN	Classical Works Scanning
+	ES	Escaneo de Obras Clásicas
+	FR	Numérisation d'œuvres classiques
+
+SETUP_WORKSSCANONLYCLASSICAL_0
+	DE	Durchsuchen Sie die gesamte Bibliothek nach klassischen Werken
+	EN	Scan whole library for classical works
+	ES	Escanea toda la biblioteca en busca de obras clásicas
+	FR	Parcourez toute la bibliothèque à la recherche d'œuvres classiques
+
+SETUP_WORKSSCANONLYCLASSICAL_1
+	DE	Beschränken Sie den Scan klassischer Werke auf das "klassische" Genre
+	EN	Limit classical works scan to "classical" genre
+	ES	Limitar el escaneo de obras clásicas al género "clásico"
+	FR	Limiter la numérisation des œuvres classiques au genre « classique »
+

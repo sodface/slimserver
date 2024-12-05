@@ -1757,7 +1757,10 @@ sub _newTrack {
 	}
 
 	### Create Work rows
-	my $workID = $self->_createWork($deferredAttributes->{'WORK'}, $deferredAttributes->{'WORKSORT'}, $contributors->{'COMPOSER'}->[0], 1);
+	my $workID;
+	if ( lc($deferredAttributes->{'GENRE'}) =~ /classical/ || !$prefs->get('worksScanOnlyClassical') ) {
+		$workID = $self->_createWork($deferredAttributes->{'WORK'}, $deferredAttributes->{'WORKSORT'}, $contributors->{'COMPOSER'}->[0], 1);
+	}
 
 	### Find artwork column values for the Track
 	if ( !$columnValueHash{cover} && $columnValueHash{audio} ) {
@@ -2998,9 +3001,11 @@ sub _postCheckAttributes {
 
 	#Work
 	if (defined $attributes->{'WORK'}) {
-		my $workID = $self->_createWork($attributes->{'WORK'}, $attributes->{'WORKSORT'}, $contributors->{'COMPOSER'}->[0], 1);
-		if ($workID) {
-			$track->work($workID);
+		if ( lc($attributes->{'GENRE'}) =~ /classical/ || !$prefs->get('worksScanOnlyClassical') ) {
+			my $workID = $self->_createWork($attributes->{'WORK'}, $attributes->{'WORKSORT'}, $contributors->{'COMPOSER'}->[0], 1);
+			if ($workID) {
+				$track->work($workID);
+			}
 		}
 	}
 
