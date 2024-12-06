@@ -121,6 +121,11 @@ sub initSearchPath {
 
 	my @paths = ();
 
+	# The application bundle has moved binaries due to Apple's requirements for notarization
+	if ($Bin =~ m|(.*app/Contents/)Resources/server|) {
+		push @paths, catdir($1, 'MacOS');
+	}
+
 	push @paths, dirname($^X);
 	push @paths, $ENV{'HOME'} ."/Library/iTunes/Scripts/iTunes-LAME.app/Contents/Resources/";
 	push @paths, (split(/:/, $ENV{'PATH'}), qw(/usr/bin /usr/local/bin /usr/libexec /sw/bin /usr/sbin /opt/local/bin));
