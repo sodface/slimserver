@@ -1758,7 +1758,7 @@ sub _newTrack {
 
 	### Create Work rows
 	my $workID;
-	if ( lc($deferredAttributes->{'GENRE'}) =~ /classical/ || !$prefs->get('worksScanOnlyClassical') ) {
+	if ( _workRequired($deferredAttributes->{'GENRE'}) ) {
 		$workID = $self->_createWork($deferredAttributes->{'WORK'}, $deferredAttributes->{'WORKSORT'}, $contributors->{'COMPOSER'}->[0], 1);
 	}
 
@@ -3001,11 +3001,13 @@ sub _postCheckAttributes {
 
 	#Work
 	if (defined $attributes->{'WORK'}) {
-		if ( lc($attributes->{'GENRE'}) =~ /classical/ || !$prefs->get('worksScanOnlyClassical') ) {
+		if ( _workRequired($attributes->{'GENRE'}) ) {
 			my $workID = $self->_createWork($attributes->{'WORK'}, $attributes->{'WORKSORT'}, $contributors->{'COMPOSER'}->[0], 1);
 			if ($workID) {
 				$track->work($workID);
 			}
+		} else {
+			$track->work(undef);
 		}
 	}
 
@@ -3296,6 +3298,22 @@ sub canFulltextSearch {
 
 	$canFulltextSearch = Slim::Utils::PluginManager->isEnabled('Slim::Plugin::FullTextSearch::Plugin') && Slim::Plugin::FullTextSearch::Plugin->canFulltextSearch;
 	return $canFulltextSearch;
+}
+
+sub _workRequired {
+	my $genres = shift;
+	return 1 if !$prefs->get('worksScan');
+	return 0 if $prefs->get('worksScan') == 2;
+	my $genreMatch = 0;
+	my %scanGenres = map {$_ => 1} split(/,\s*/, uc($prefs->get('myClassicalGenres')));
+	my @trackGenres = Slim::Music::Info::splitTag($genres);
+	foreach (@trackGenres) {
+		if ( $scanGenres{uc($_)} ) {
+			$genreMatch = 1;
+			last;
+		}
+	}
+	return $genreMatch;
 }
 
 =head1 SEE ALSO

@@ -194,7 +194,7 @@ sub init {
 		'ignoreReleaseTypes'    => 0,
 		'groupArtistAlbumsByReleaseType' => 0,
 		'showComposerReleasesbyAlbum' => 2,
-		'showComposerReleasesbyAlbumGenres' => "Classical, Klassik, Classique, Klassiek",
+		'myClassicalGenres' => "Classical, Klassik, Classique, Klassiek",
 		'ratingImplementation'  => 'LOCAL_RATING_STORAGE',
 		# Server Settings - FileTypes
 		'disabledextensionsaudio'    => '',
@@ -275,7 +275,7 @@ sub init {
 		'composerAlbumLink'     => $prefs->get('useUnifiedArtistsList') && $prefs->get('composerInArtists'),
 		'conductorAlbumLink'    => $prefs->get('useUnifiedArtistsList') && $prefs->get('conductorInArtists'),
 		'bandAlbumLink'         => $prefs->get('useUnifiedArtistsList') && $prefs->get('bandInArtists'),
-		'worksScanOnlyClassical'=> 0,
+		'worksScan'=> 0,
 	);
 
 	# we can have different defaults depending on the OS
@@ -403,8 +403,14 @@ sub init {
 
 	$prefs->setChange(
 		sub { Slim::Control::Request::executeRequest(undef, ['wipecache', $prefs->get('dontTriggerScanOnPrefChange') ? 'queue' : undef]) },
-		qw(splitList groupdiscs useTPE2AsAlbumArtist cleanupReleaseTypes worksScanOnlyClassical)
+		qw(splitList groupdiscs useTPE2AsAlbumArtist cleanupReleaseTypes worksScan)
 	);
+
+	$prefs->setChange( sub {
+		if ( $prefs->get('worksScan') == 1 ) {
+			Slim::Control::Request::executeRequest(undef, ['wipecache', $prefs->get('dontTriggerScanOnPrefChange') ? 'queue' : undef]);
+		}
+	}, 'myClassicalGenres' );
 
 	$prefs->setChange( sub {
 		my $newRoles = $_[1];

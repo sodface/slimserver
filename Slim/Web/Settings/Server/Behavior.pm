@@ -30,8 +30,8 @@ sub prefs {
 				variousArtistAutoIdentification
 				ignoreReleaseTypes cleanupReleaseTypes groupArtistAlbumsByReleaseType
 				useTPE2AsAlbumArtist variousArtistsString ratingImplementation useUnifiedArtistsList
-				skipsentinel showComposerReleasesbyAlbum showComposerReleasesbyAlbumGenres onlyAlbumYears
-				worksScanOnlyClassical)
+				skipsentinel showComposerReleasesbyAlbum myClassicalGenres onlyAlbumYears
+				worksScan)
 		   );
 }
 

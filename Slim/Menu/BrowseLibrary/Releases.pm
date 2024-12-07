@@ -65,7 +65,7 @@ sub _releases {
 
 	my %composerGenres = map {
 		$_ => 1
-	} split(/,\s*/, uc($prefs->get('showComposerReleasesbyAlbumGenres')));
+	} split(/,\s*/, uc($prefs->get('myClassicalGenres')));
 
 	my $checkComposerGenres = !( $menuMode && $menuMode ne 'artists' && $menuRoles ) && $prefs->get('showComposerReleasesbyAlbum') == 2;
 	my $allComposers = ( $menuMode && $menuMode ne 'artists' && $menuRoles ) || $prefs->get('showComposerReleasesbyAlbum') == 1;
