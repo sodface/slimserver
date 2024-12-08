@@ -110,12 +110,12 @@
 		[% END %]
 
 		[% WRAPPER settingGroup title="SETUP_WORKSSCAN" desc="" %]
-			<input type="radio" name="pref_worksScan" id="pref_worksScan0" value="0" [% IF NOT prefs.pref_worksScan %]checked="checked"[% END %] />
-			<label for="pref_worksScan0" class="stdlabel">[% 'SETUP_WORKSSCAN_0' | getstring %]</label><br/>
-			<input type="radio" name="pref_worksScan" id="pref_worksScan1" value="1" [% IF prefs.pref_worksScan == 1 %]checked="checked"[% END %] />
-			<label for="pref_worksScan1" class="stdlabel">[% 'SETUP_WORKSSCAN_1' | getstring %]</label><br/>
-			<input type="radio" name="pref_worksScan" id="pref_worksScan2" value="2" [% IF prefs.pref_worksScan == 2 %]checked="checked"[% END %] />
-			<label for="pref_worksScan2" class="stdlabel">[% 'SETUP_WORKSSCAN_2' | getstring %]</label><br/>
+			<input type="radio" name="pref_worksScan" id="pref_worksScan1" value="1" [% IF prefs.pref_worksScan %]checked="checked"[% END %] />
+			<label for="pref_worksScan0" class="stdlabel">[% 'SETUP_WORKSSCAN_1' | getstring %]</label><br/>
+			<input type="radio" name="pref_worksScan" id="pref_worksScan1" value="2" [% IF prefs.pref_worksScan == 2 %]checked="checked"[% END %] />
+			<label for="pref_worksScan1" class="stdlabel">[% 'SETUP_WORKSSCAN_2' | getstring %]</label><br/>
+			<input type="radio" name="pref_worksScan" id="pref_worksScan2" value="0" [% IF prefs.pref_worksScan == 0 %]checked="checked"[% END %] />
+			<label for="pref_worksScan2" class="stdlabel">[% 'SETUP_WORKSSCAN_0' | getstring %]</label><br/>
 		[% END %]
 	[% END %]
 

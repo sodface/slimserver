@@ -10422,14 +10422,14 @@ SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_1
 	ES	Crear siempre un grupo de Álbum de compositor
 
 SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_2
-	CS	fix! Vytvořit pro tyto žánry skupinu Alba skladatele:
-	DA	fix! Opret en Composer Album gruppe for følgende genrer:
+	CS	Vytvoření skupiny Skladatelské album pro "Moje klasické žánry" (výše)
+	DA	Opret en komponistalbumgruppe for "Mine klassiske genrer" (ovenfor)
+	DE	Erstellen einer Komponistenalbengruppe für "Meine klassischen Genres" (oben)
 	EN	Create a Composer Album group for "My classical genres" (above)
-	FR	fix! Créer un groupe "Albums du compositeur" pour ces genres :
-	DE	fix! Komponistenalbengruppe für diese Stilrichtungen erstellen:
-	HU	fix! Hozzon létre egy zeneszerzői albumcsoportot a következő műfajokhoz:
-	NL	fix! Maak een groep van componistenalbums voor deze genres:
-	ES	fix! Crea un grupo de Álbum de compositor para estos géneros:
+	ES	Crear un grupo de álbumes de compositor para "Mis géneros clásicos" (arriba)
+	FR	Créer un groupe d'albums de compositeur pour « Mes genres classiques » (ci-dessus)
+	HU	Zeneszerzői albumcsoport létrehozása a "Klasszikus műfajaim" számára (fent)
+	NL	Maak een componistenalbumgroep voor 'Mijn klassieke genres' (hierboven)
 
 SETUP_IGNORE_RELEASE_TYPES_0
 	CS	Povolit podporu typu vydání pro alba
@@ -26863,21 +26863,21 @@ SETUP_WORKSSCAN
 	FR	Numérisation d'œuvres classiques
 	NL	Scannen van klassieke werken
 
-SETUP_WORKSSCAN_0
+SETUP_WORKSSCAN_1
 	DE	Durchsuchen Sie die gesamte Bibliothek nach klassischen Werken
 	EN	Scan whole library for classical works
 	ES	Escanea toda la biblioteca en busca de obras clásicas
 	FR	Parcourez toute la bibliothèque à la recherche d'œuvres classiques
 	NL	Scan de hele bibliotheek op klassieke werken
 
-SETUP_WORKSSCAN_1
+SETUP_WORKSSCAN_2
 	DE	Klassik-Scan auf "Meine klassischen Genres" beschränken (oben)
 	EN	Limit classical works scan to "My classical genres" (above)
 	ES	Limitar el escaneo de obras clásicas a "Mis géneros clásicos" (arriba)
 	FR	Limiter le balayage des œuvres classiques à « Mes genres classiques » (ci-dessus)
 	NL	Beperk de scan van klassieke werken tot "Mijn klassieke genres" (hierboven)
 
-SETUP_WORKSSCAN_2
+SETUP_WORKSSCAN_0
 	DE	Nicht nach Werken suchen
 	EN	Do not scan for Works
 	ES	No buscar obras

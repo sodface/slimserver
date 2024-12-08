@@ -54,9 +54,12 @@ use Slim::Schema::Debug;
 use Slim::Schema::RemoteTrack;
 use Slim::Schema::RemotePlaylist;
 
+use constant SCAN_WORKS_FOR_MY_CLASSICAL_GENRES => 2;
+
 my $log = logger('database.info');
 
 my $prefs = preferences('server');
+my $scanWorks = $prefs->get('worksScan');
 
 # Singleton objects for Unknowns
 our ($_unknownArtist, $_unknownGenre, $_unknownAlbumId) = ('', '', undef);
@@ -3301,19 +3304,14 @@ sub canFulltextSearch {
 }
 
 sub _workRequired {
-	my $genres = shift;
-	return 1 if !$prefs->get('worksScan');
-	return 0 if $prefs->get('worksScan') == 2;
-	my $genreMatch = 0;
-	my %scanGenres = map {$_ => 1} split(/,\s*/, uc($prefs->get('myClassicalGenres')));
-	my @trackGenres = Slim::Music::Info::splitTag($genres);
-	foreach (@trackGenres) {
-		if ( $scanGenres{uc($_)} ) {
-			$genreMatch = 1;
-			last;
-		}
+	if ( $scanWorks == SCAN_WORKS_FOR_MY_CLASSICAL_GENRES ) {
+		my $genres = shift;
+		# input will be an array if multiple genre tags
+		$genres = join(';', @$genres) if ref $genres eq 'ARRAY';
+		return Slim::Schema::Genre->isMyClassicalGenre($genres);
+	} else {
+		return $scanWorks;
 	}
-	return $genreMatch;
 }
 
 =head1 SEE ALSO

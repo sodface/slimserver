@@ -407,7 +407,8 @@ sub init {
 	);
 
 	$prefs->setChange( sub {
-		if ( $prefs->get('worksScan') == 1 ) {
+		Slim::Schema::Genre->loadMyClassicalGenreMap();
+		if ( $prefs->get('worksScan') == 2 ) {
 			Slim::Control::Request::executeRequest(undef, ['wipecache', $prefs->get('dontTriggerScanOnPrefChange') ? 'queue' : undef]);
 		}
 	}, 'myClassicalGenres' );

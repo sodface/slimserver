@@ -9,6 +9,11 @@ use Slim::Schema::ResultSet::Genre;
 
 use Slim::Utils::Misc;
 use Slim::Utils::Log;
+use Slim::Utils::Prefs;
+
+my %myClassicalGenreMap;
+my $myClassicalGenreIds;
+loadMyClassicalGenreMap();
 
 {
 	my $class = __PACKAGE__;
@@ -33,6 +38,35 @@ use Slim::Utils::Log;
 	}
 
 	$class->resultset_class('Slim::Schema::ResultSet::Genre');
+}
+
+sub loadMyClassicalGenreMap {
+	my $prefs = preferences('server');
+	%myClassicalGenreMap = map {$_ => 1} split(/,\s*/, uc($prefs->get('myClassicalGenres')));
+	$myClassicalGenreIds = undef;
+}
+
+sub isMyClassicalGenre {
+	my $class = shift;
+	my $genres = shift;
+	foreach (Slim::Music::Info::splitTag(uc($genres))) {
+		return 1 if $myClassicalGenreMap{$_}
+	}
+	return 0;
+}
+
+sub myClassicalGenreIds {
+	if ( !$myClassicalGenreIds ) {
+		my @genreNames = keys %myClassicalGenreMap;
+		my $dbh = Slim::Schema->dbh;
+		my $sql = 'SELECT GROUP_CONCAT(id) FROM genres WHERE UPPER(name) IN (' . join(', ', map {'?'} @genreNames) . ')';
+		my $sth = $dbh->prepare_cached($sql);
+		$sth->execute(@genreNames);
+		($myClassicalGenreIds) = $sth->fetchrow_array;
+		$sth->finish;
+	Slim::Utils::Log::logError("DK \$myClassicalGenreIds=" . Data::Dump::dump($myClassicalGenreIds));
+	}
+	return $myClassicalGenreIds;
 }
 
 sub url {
