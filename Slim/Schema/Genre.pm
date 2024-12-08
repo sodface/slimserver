@@ -64,7 +64,6 @@ sub myClassicalGenreIds {
 		$sth->execute(@genreNames);
 		($myClassicalGenreIds) = $sth->fetchrow_array;
 		$sth->finish;
-	Slim::Utils::Log::logError("DK \$myClassicalGenreIds=" . Data::Dump::dump($myClassicalGenreIds));
 	}
 	return $myClassicalGenreIds;
 }
