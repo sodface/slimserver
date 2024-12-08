@@ -10597,21 +10597,25 @@ SETUP_NO_JAVASCRIPT
 
 SETUP_WIZARD_WELCOME
 	DA	Velkommen til den indledende opsætning af Lyrion Music Server
-	DE	Willkommen zum Einrichtungsassisten für ihr neues Lyrion Music Server Setup
+	DE	Willkommen beim Einrichtungsassistenten für ihr neues Lyrion Music Server Setup
 	EN	Welcome to the initial Lyrion Music Server setup
 	FR	Bienvenue dans l'assistant de configuration initiale du Lyrion Music Server
+	NL	Welkom bij de eerste installatie van de Lyrion Music Server
 	HU	Üdvözöljük a Lyrion Music Server kezdő beállításokban
 
 SETUP_WIZARD_WELCOME_INTRO
 	DA	Denne assistent vil hjælpe dig igennem den indledende opsætning af din Lyrion Music Server.
+	DE	Dieser Assistent führt dich durch den initalen Setup deines Lyrion Music Servers.
 	EN	This assistant will guide you through the initial setup of your Lyrion Music Server.
 	FR	Cet assistant vous guidera dans la configuration initiale de votre Lyrion Music Server.
+	NL	Deze assistent begeleidt je bij de eerste installatie van je Lyrion Music Server.
 	HU	Ez az asszisztens végigvezeti Önt a Lyrion Music Server kezdeti beállításán.
 
 SETUP_WIZARD_PLUGINS_INTRO
 	DA	Vi anbefaler installation af følgende tredjeparts plugins. <a href="https://lyrion.org/plugins/directory/" target="lyrion">Mange andre plugins</a> kan installeres i Settings/Manage Plugins efter at installationen er afsluttet.
 	DE	Wir empfehlen die Installations folgender Drittanbietererweiterungen. <a href="https://lyrion.org/plugins/directory/" target="lyrion">Zahlreiche weitere Plugins</a> können später zu jeder Zeit hinzugefügt werden. Wählen Sie herfür später Einstellungen/Plugins verwalten.
 	EN	We recommend the installation of the following 3rd party plugins. <a href="https://lyrion.org/plugins/directory/" target="lyrion">Many other plugins</a> can be installed any time in Settings/Manage Plugins after the installation has completed.
+	NL	We raden aan de volgende plugins van derden te installeren. <a href="https://lyrion.org/plugins/directory/" target="lyrion">Veel andere plugins</a> kunnen op elk moment worden geïnstalleerd via Instellingen/Beheer Plug-ins nadat de installatie is voltooid.
 	FR	Nous recommandons l'installation des plugins tiers suivants. (<a href="https://lyrion.org/plugins/directory/" target="lyrion">De nombreux autres plugins</a> peuvent être installés à tout moment dans "Paramètres / Gérer les plugins" une fois l'installation initiale terminée.)
 	HU	Javasoljuk a következő külső beépülő modulok telepítését. <a href="https://lyrion.org/plugins/directory/" target="lyrion">Sok más beépülő modul</a> a telepítés befejezése után bármikor telepíthető a Beállítások/Beépülő modulok kezelése menüpontban.
 
