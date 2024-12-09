@@ -13,7 +13,6 @@ use Slim::Utils::Prefs;
 
 my %myClassicalGenreMap;
 my $myClassicalGenreIds;
-loadMyClassicalGenreMap();
 
 {
 	my $class = __PACKAGE__;
@@ -43,10 +42,18 @@ loadMyClassicalGenreMap();
 sub loadMyClassicalGenreMap {
 	my $prefs = preferences('server');
 	%myClassicalGenreMap = map {$_ => 1} split(/,\s*/, uc($prefs->get('myClassicalGenres')));
-	$myClassicalGenreIds = undef;
+	# also load genre ids from database
+	my @genreNames = keys %myClassicalGenreMap;
+	my $dbh = Slim::Schema->dbh;
+	my $sql = 'SELECT GROUP_CONCAT(id) FROM genres WHERE UPPER(name) IN (' . join(', ', map {'?'} @genreNames) . ')';
+	my $sth = $dbh->prepare_cached($sql);
+	$sth->execute(@genreNames);
+	($myClassicalGenreIds) = $sth->fetchrow_array;
+	$sth->finish;
 }
 
 sub isMyClassicalGenre {
+	loadMyClassicalGenreMap() if !%myClassicalGenreMap;
 	my $class = shift;
 	my $genres = shift;
 	foreach (Slim::Music::Info::splitTag(uc($genres))) {
@@ -56,15 +63,7 @@ sub isMyClassicalGenre {
 }
 
 sub myClassicalGenreIds {
-	if ( !$myClassicalGenreIds ) {
-		my @genreNames = keys %myClassicalGenreMap;
-		my $dbh = Slim::Schema->dbh;
-		my $sql = 'SELECT GROUP_CONCAT(id) FROM genres WHERE UPPER(name) IN (' . join(', ', map {'?'} @genreNames) . ')';
-		my $sth = $dbh->prepare_cached($sql);
-		$sth->execute(@genreNames);
-		($myClassicalGenreIds) = $sth->fetchrow_array;
-		$sth->finish;
-	}
+	loadMyClassicalGenreMap() if !$myClassicalGenreIds;
 	return $myClassicalGenreIds;
 }
 

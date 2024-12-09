@@ -194,7 +194,7 @@ sub init {
 		'ignoreReleaseTypes'    => 0,
 		'groupArtistAlbumsByReleaseType' => 0,
 		'showComposerReleasesbyAlbum' => 2,
-		'myClassicalGenres' => "Classical, Klassik, Classique, Klassiek",
+		'myClassicalGenres' => $prefs->get("showComposerReleasesbyAlbumGenres") || "Classical, Klassik, Classique, Klassiek",
 		'ratingImplementation'  => 'LOCAL_RATING_STORAGE',
 		# Server Settings - FileTypes
 		'disabledextensionsaudio'    => '',
@@ -275,7 +275,7 @@ sub init {
 		'composerAlbumLink'     => $prefs->get('useUnifiedArtistsList') && $prefs->get('composerInArtists'),
 		'conductorAlbumLink'    => $prefs->get('useUnifiedArtistsList') && $prefs->get('conductorInArtists'),
 		'bandAlbumLink'         => $prefs->get('useUnifiedArtistsList') && $prefs->get('bandInArtists'),
-		'worksScan'=> 0,
+		'worksScan'=> $prefs->get("showComposerReleasesbyAlbum") || 2,
 	);
 
 	# we can have different defaults depending on the OS

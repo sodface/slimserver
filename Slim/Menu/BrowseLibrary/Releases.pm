@@ -82,7 +82,7 @@ sub _releases {
 			}
 			else {
 				foreach my $genre (@{$request->getResult('genres_loop')}) {
-					last if $genreMatch = Slim::Schema::Genre->isMyClassicalGenre(uc($genre->{genre}));
+					last if $genreMatch = Slim::Schema::Genre->isMyClassicalGenre($genre->{genre});
 				}
 			}
 		}
