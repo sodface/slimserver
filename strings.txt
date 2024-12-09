@@ -22110,6 +22110,9 @@ DEBUG_NETWORK_ASYNCHTTP
 	RU	Сведения асинхронного удаленного HTTP-запроса
 	SV	Information om asynkron fjärr-HTTP-begäran
 
+DEBUG_NETWORK_ASYNCWS	
+	EN	Asynchronous Remote Web Sockets Information
+	
 DEBUG_NETWORK_ASYNCDNS
 	CS	Protokolování asynchronního DNS
 	DA	Asynkron DNS-logføring
