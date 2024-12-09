@@ -39,7 +39,12 @@ jobs:
               }
             });
 
+            const sleep = (s) => {
+                return new Promise(resolve => setTimeout(resolve, s * 1000));
+            }
+
             // for each version see whether there's a more recent commit than the revision of the previous build
+            let buildsRunning = 0;
             for (let i = 0; i < candidates.length; i++) {
               const latestBuildTimestamp = candidates[i].r * 1000;
 
@@ -63,6 +68,12 @@ jobs:
               if (needsBuild) {
                 console.log(`${candidates[i].v}: needs a build (${new Date(needsBuild.commit.committer.date).getTime()} > ${latestBuildTimestamp})`);
 
+                if (buildsRunning > 0) {
+                  console.log('Delaying build as there is already a build running');
+                  // wait about 30s per build
+                  await sleep(buildsRunning * 30);
+                }
+
                 const workflowStatus = await github.rest.actions.createWorkflowDispatch({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
@@ -77,6 +88,8 @@ jobs:
                 if (workflowStatus.status < 200 || workflowStatus.status > 204) {
                   console.log(workflowStatus);
                 }
+
+                buildsRunning++;
               }
               else {
                 console.log(`${candidates[i].v}: is up to date (${candidates[i].r})`);
