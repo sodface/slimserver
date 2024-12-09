@@ -70,8 +70,8 @@ jobs:
 
                 if (buildsRunning > 0) {
                   console.log('Delaying build as there is already a build running');
-                  // wait about 30s per build
-                  await sleep(buildsRunning * 30);
+                  // wait about Xs per build
+                  await sleep(buildsRunning * 90);
                 }
 
                 const workflowStatus = await github.rest.actions.createWorkflowDispatch({
