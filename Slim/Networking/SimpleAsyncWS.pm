@@ -368,7 +368,7 @@ sub exampleCallback {
 }
 
 my $ws = Slim::Networking::SimpleAsyncHTTP->new(
-	'wss://ws.sample.com/whats-occurring'
+	'wss://ws.sample.com/whats-occurring',
 	\&exampleWeAreConnected,
 	\&exampleErrorCallback
 );
@@ -381,7 +381,7 @@ $ws->listenAsync(
 );
 
 #We can send something to the server
-$ws->send("subcribe!");
+$ws->send("[subscribe]");
 
 #......Some time later close the web socket when you have finished listening
 $ws->close();
