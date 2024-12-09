@@ -127,8 +127,7 @@ sub _getClients {
 
 			my $ts = 0;
 			foreach (keys %{ $clientPrefs->{prefs} }) {
-				next unless /^_ts_/;
-				next if /^_ts_apps$/;
+				next unless /^_ts_(?:currentSong|power|playingAtPowerOff|mute|volume|repeat|shuffle|positionAtDisconnect|maxBitrate)/;
 				$ts = max($ts, $clientPrefs->{prefs}->{$_});
 			}
 

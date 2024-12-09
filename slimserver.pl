@@ -15,28 +15,6 @@
 require 5.010;
 use strict;
 
-# Bug 7491 - bug in PerlSvc: ARGV is not populated when executable is run in service mode.
-# Try to work around this limitation by reading the command line from the registry. Ugh...
-BEGIN {
-	if ($PerlSvc::VERSION && $^O =~ /^m?s?win/i && !@ARGV) {
-		eval {
-			require Win32::TieRegistry;
-			my $swKey = $Win32::TieRegistry::Registry->Open(
-				'LMachine/System/ControlSet001/services/squeezesvc',
-				{
-					Access => Win32::TieRegistry::KEY_READ(),
-					Delimiter =>'/'
-				}
-			);
-
-			if ($swKey) {
-				push @ARGV, split(" ", $swKey->{ImagePath});
-				shift @ARGV;	# remove script name
-			}
-		};
-	}
-}
-
 use constant SCANNER      => 0;
 use constant RESIZER      => 0;
 use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
@@ -55,95 +33,12 @@ use constant NOBROWSECACHE=> ( grep { /--nobrowsecache/ } @ARGV ) ? 1 : 0;
 # leaving some legacy flags for the moment - unlikely but possibly some 3rd party plugin is referring to it
 use constant SLIM_SERVICE => 0;
 use constant NOUPNP       => 0;
+use constant ISACTIVEPERL => 0;
 
 use Config;
 
-use constant ISACTIVEPERL => ( $Config{cf_email} =~ /ActiveState/i ) ? 1 : 0;
-
 my %check_inc;
 $ENV{PERL5LIB} = join $Config{path_sep}, grep { !$check_inc{$_}++ } @INC;
-
-# This package section is used for the windows service version of the application,
-# as built with ActiveState's PerlSvc
-if (ISACTIVEPERL && $PerlSvc::VERSION) {
-	package PerlSvc;
-
-	our %Config = (
-		DisplayName => 'Lyrion Music Server',
-		Description => "Lyrion Music Server - streaming media server",
-		ServiceName => "squeezesvc",
-		StartNow    => 0,
-	);
-
-	sub Startup {
-		# Tell PerlSvc to bundle these modules
-		if (0) {
-			require 'auto/Compress/Raw/Zlib/autosplit.ix';
-			require Cache::FileCache;
-		}
-
-		# added to workaround a problem with 5.8 and perlsvc.
-		# $SIG{BREAK} = sub {} if RunningAsService();
-		main::initOptions();
-		main::init();
-
-		# here's where your startup code will go
-		while (ContinueRun() && !main::idle()) { }
-
-		main::stopServer();
-	}
-
-	sub Install {
-
-		my($Username,$Password);
-
-		use Getopt::Long;
-
-		Getopt::Long::GetOptions(
-			'username=s' => \$Username,
-			'password=s' => \$Password,
-		);
-
-		main::initLogging();
-
-		if ((defined $Username) && ((defined $Password) && length($Password) != 0)) {
-			my @infos;
-			my ($host, $user);
-
-			# use the localhost '.' by default, unless user has defined "domain\username"
-			if ($Username =~ /(.+)\\(.+)/) {
-				$host = $1;
-				$user = $2;
-			}
-			else {
-				$host = '.';
-				$user = $Username;
-			}
-
-			# configure user to be used to run the server
-			my $grant = PerlSvc::extract_bound_file('grant.exe');
-			if ($host && $user && $grant && !`$grant add SeServiceLogonRight $user`) {
-				$Config{UserName} = "$host\\$user";
-				$Config{Password} = $Password;
-			}
-		}
-	}
-
-	sub Interactive {
-		main::main();
-	}
-
-	sub Remove {
-		# add your additional remove messages or functions here
-		main::initLogging();
-	}
-
-	sub Help {
-		main::showUsage();
-		main::initLogging();
-	}
-}
-
 
 package main;
 
@@ -157,7 +52,7 @@ our $BUILDDATE   = undef;
 
 BEGIN {
 	# hack a Strawberry Perl specific path into the environment variable - XML::Parser::Expat needs it!
-	if (ISWINDOWS && !ISACTIVEPERL) {
+	if (ISWINDOWS) {
 		my $path = File::Basename::dirname($^X);
 		$path =~ s/perl(?=.bin)/c/i;
 		$ENV{PATH} = "$path;" . $ENV{PATH} if -d $path;
@@ -420,12 +315,7 @@ sub init {
 		$SIG{'HUP'} = \&initSettings;
 	}
 
-	if (Slim::Utils::Misc::runningAsService()) {
-		$SIG{'QUIT'} = \&Slim::bootstrap::ignoresigquit;
-	} else {
-		$SIG{'QUIT'} = \&Slim::bootstrap::sigquit;
-	}
-
+	$SIG{'QUIT'} = \&Slim::bootstrap::sigquit;
 	$SIG{__WARN__} = sub { msg($_[0]) };
 
 	# Uncomment to enable crash debugging.
@@ -669,7 +559,7 @@ sub main {
 	# all other initialization
 	init();
 
-	if ( ISWINDOWS && !ISACTIVEPERL && $daemon ) {
+	if ( ISWINDOWS && $daemon ) {
 		Slim::Utils::OSDetect->getOS()->runService();
 	}
 	else {
@@ -1205,15 +1095,12 @@ sub remove_pid_file {
 sub END {
 	Slim::bootstrap::theEND();
 
-	# tell Windows Service manager to resart
-	if (ISWINDOWS && !ISACTIVEPERL && $? == Slim::Utils::OS::Win64::RESTART_STATUS) {
+	# tell Windows Service manager to restart
+	if (ISWINDOWS && $? == Slim::Utils::OS::Win64::RESTART_STATUS) {
 		POSIX::_exit($?);
 	}
 }
 
-# start up the server if we're not running as a service.
-if (!defined($PerlSvc::VERSION)) {
-	main()
-}
+main()
 
 __END__

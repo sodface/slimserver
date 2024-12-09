@@ -25,7 +25,7 @@ use constant RESIZER      => 0;
 use constant TRANSCODING  => 0;
 use constant PERFMON      => 0;
 use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
-use constant ISACTIVEPERL => ( $Config{cf_email} =~ /ActiveState/i ) ? 1 : 0;
+use constant ISACTIVEPERL => 0;
 use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
 use constant DEBUGLOG     => ( grep { /--nodebuglog/ } @ARGV ) ? 0 : 1;
 use constant INFOLOG      => ( grep { /--noinfolog/ } @ARGV ) ? 0 : 1;
@@ -36,18 +36,12 @@ use constant HAS_AIO      => 0;
 use constant LOCALFILE    => 0;
 use constant NOMYSB       => 1;
 
-# Tell PerlApp to bundle these modules
-if (0) {
-	require 'auto/Compress/Raw/Zlib/autosplit.ix';
-	require Cache::FileCache;
-}
-
 our $REVISION    = undef;
 our $BUILDDATE   = undef;
 
 BEGIN {
 	# hack a Strawberry Perl specific path into the environment variable - XML::Parser::Expat needs it!
-	if (ISWINDOWS && !ISACTIVEPERL) {
+	if (ISWINDOWS) {
 		my $path = File::Basename::dirname($^X);
 		$path =~ s/perl(?=.bin)/c/i;
 		$ENV{PATH} = "$path;" . $ENV{PATH} if -d $path;

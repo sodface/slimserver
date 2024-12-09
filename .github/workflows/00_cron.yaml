@@ -2,7 +2,7 @@ name: Build LMS Scheduler
 on:
   workflow_dispatch:
   schedule:
-    - cron:  '40 2 * * *'
+    - cron:  '40 2,3,4 * * *'
 
 jobs:
   check:
@@ -77,6 +77,9 @@ jobs:
                 if (workflowStatus.status < 200 || workflowStatus.status > 204) {
                   console.log(workflowStatus);
                 }
+
+                # we only want to run one build at a time - we'll re run the check in a bit
+                last;
               }
               else {
                 console.log(`${candidates[i].v}: is up to date (${candidates[i].r})`);

@@ -264,10 +264,6 @@ sub scanner {
 	return "$Bin/scanner.pl";
 }
 
-sub gdresize {
-	return "$Bin/gdresize.pl";
-}
-
 sub gdresized {
 	return "$Bin/gdresized.pl";
 }
