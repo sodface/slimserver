@@ -2,7 +2,7 @@ name: Build LMS Scheduler
 on:
   workflow_dispatch:
   schedule:
-    - cron:  '40 2 * * *'
+    - cron:  '40 2,3,4 * * *'
 
 jobs:
   check:
@@ -39,12 +39,7 @@ jobs:
               }
             });
 
-            const sleep = (s) => {
-                return new Promise(resolve => setTimeout(resolve, s * 1000));
-            }
-
             // for each version see whether there's a more recent commit than the revision of the previous build
-            let buildsRunning = 0;
             for (let i = 0; i < candidates.length; i++) {
               const latestBuildTimestamp = candidates[i].r * 1000;
 
@@ -68,12 +63,6 @@ jobs:
               if (needsBuild) {
                 console.log(`${candidates[i].v}: needs a build (${new Date(needsBuild.commit.committer.date).getTime()} > ${latestBuildTimestamp})`);
 
-                if (buildsRunning > 0) {
-                  console.log('Delaying build as there is already a build running');
-                  // wait about Xs per build
-                  await sleep(buildsRunning * 90);
-                }
-
                 const workflowStatus = await github.rest.actions.createWorkflowDispatch({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
@@ -89,7 +78,8 @@ jobs:
                   console.log(workflowStatus);
                 }
 
-                buildsRunning++;
+                # we only want to run one build at a time - we'll re run the check in a bit
+                last;
               }
               else {
                 console.log(`${candidates[i].v}: is up to date (${candidates[i].r})`);
