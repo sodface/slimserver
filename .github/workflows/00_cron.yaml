@@ -78,7 +78,7 @@ jobs:
                   console.log(workflowStatus);
                 }
 
-                # we only want to run one build at a time - we'll re run the check in a bit
+                // we only want to run one build at a time - we'll re run the check in a bit
                 break;
               }
               else {
