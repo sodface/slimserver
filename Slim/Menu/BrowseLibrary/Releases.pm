@@ -63,10 +63,6 @@ sub _releases {
 	my %isPrimaryArtist;
 	my %albumList;
 
-	my %composerGenres = map {
-		$_ => 1
-	} split(/,\s*/, uc($prefs->get('showComposerReleasesbyAlbumGenres')));
-
 	my $checkComposerGenres = !( $menuMode && $menuMode ne 'artists' && $menuRoles ) && $prefs->get('showComposerReleasesbyAlbum') == 2;
 	my $allComposers = ( $menuMode && $menuMode ne 'artists' && $menuRoles ) || $prefs->get('showComposerReleasesbyAlbum') == 1;
 
@@ -86,7 +82,7 @@ sub _releases {
 			}
 			else {
 				foreach my $genre (@{$request->getResult('genres_loop')}) {
-					last if $genreMatch = $composerGenres{uc($genre->{genre})};
+					last if $genreMatch = Slim::Schema::Genre->isMyClassicalGenre($genre->{genre});
 				}
 			}
 		}
@@ -207,6 +203,7 @@ sub _releases {
 
 	# Add item for Classical Works if the artist has any.
 	push @searchTags, "role_id:$menuRoles" if $menuRoles && $menuMode && $menuMode ne 'artists';
+	push @searchTags, "genre_id:" . Slim::Schema::Genre->myClassicalGenreIds() if $checkComposerGenres;
 	main::INFOLOG && $log->is_info && $log->info("works ($index, $quantity): tags ->", join(', ', @searchTags));
 	my $requestRef = [ 'works', 0, MAX_ALBUMS, @searchTags ];
 	my $request = Slim::Control::Request->new( $client ? $client->id() : undef, $requestRef );
