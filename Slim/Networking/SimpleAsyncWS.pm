@@ -20,8 +20,6 @@ use IO::Socket::SSL;
 use IO::Select;
 use Protocol::WebSocket::Client;
 
-use Data::Dumper;
-
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
@@ -298,7 +296,7 @@ sub _receive {
 
 			} else {
 
-				main::DEBUGLOG && $log->is_debug && $log->debug("Received data : " . Dumper($recv_data));
+				main::DEBUGLOG && $log->is_debug && $log->debug("Received data : $recv_data ");
 				$self->{client}->read($recv_data);
 
 				# if Async, poll immediately so that we pull everything off the socket if something is there.
