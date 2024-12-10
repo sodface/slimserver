@@ -13,6 +13,8 @@ use Slim::Utils::Prefs;
 
 my $myClassicalGenreMap;
 my $myClassicalGenreIds;
+my $tagSeparator;
+my $tagSeparatorLoaded;
 
 {
 	my $class = __PACKAGE__;
@@ -41,7 +43,7 @@ my $myClassicalGenreIds;
 
 sub loadMyClassicalGenreMap {
 	my $prefs = preferences('server');
-	%$myClassicalGenreMap = map {$_ => 1} split(/,\s*/, uc($prefs->get('myClassicalGenres')));
+	%$myClassicalGenreMap = map {$_ => 1} split(/\s*,\s*/, uc($prefs->get('myClassicalGenres')));
 	if ( !%$myClassicalGenreMap ) {
 		$myClassicalGenreIds = undef;
 		return;
@@ -61,8 +63,9 @@ sub isMyClassicalGenre {
 	loadMyClassicalGenreMap() if !$myClassicalGenreMap;
 	my $class = shift;
 	my $genres = shift;
-	foreach (Slim::Music::Info::splitTag(uc($genres))) {
-		return 1 if %$myClassicalGenreMap{$_}
+	my $sep = shift;
+	foreach ( Slim::Music::Info::splitTag($genres, $sep) ) {
+		return 1 if %$myClassicalGenreMap{uc($_)}
 	}
 	return 0;
 }

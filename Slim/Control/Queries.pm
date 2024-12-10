@@ -5527,8 +5527,11 @@ sub _songDataFromHash {
 
 		# Special case for G (genres name) - include isClassical as well
 		elsif ( $tag eq 'G' ) {
-				$returnHash{'genres'} = $res->{'genres'} if $res->{'genres'};
-				$returnHash{'isClassical'} = $res->{'isClassical'};
+			if ( $res->{'genres'} ) {
+				$returnHash{'genres'} = $res->{'genres'};
+				my $isClassical = Slim::Schema::Genre->isMyClassicalGenre($res->{'genres'}, ',');
+				$returnHash{'isClassical'} = $isClassical if $isClassical;
+			}
 		}
 
 		# eg. the web UI is requesting some tags which are only available for remote tracks,
@@ -6436,14 +6439,12 @@ sub _getTagDataForTracks {
 		$genre_sth->execute;
 
 		my %values;
-		my $isMyClassical = 0;
 		while ( my ($id, $name, $track) = $genre_sth->fetchrow_array ) {
 			my $genre_info = $values{$track} ||= {};
 
 			utf8::decode($name);
 			$genre_info->{ids}   .= $genre_info->{ids} ? ',' . $id : $id;
 			$genre_info->{names} .= $genre_info->{names} ? ', ' . $name : $name;
-			$isMyClassical ||= Slim::Schema::Genre->isMyClassicalGenre($name);
 		}
 
 		my $want_names = $tags =~ /G/;
@@ -6453,7 +6454,6 @@ sub _getTagDataForTracks {
 			my $track = $results{$id};
 			$track->{genre_ids} = $genre_info->{ids}   if $want_ids;
 			$track->{genres}    = $genre_info->{names} if $want_names;
-			$track->{isClassical} = $isMyClassical if $want_names;
 		}
 	}
 

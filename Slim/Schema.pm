@@ -1764,6 +1764,8 @@ sub _newTrack {
 	if ( _workRequired($deferredAttributes->{'GENRE'}) ) {
 		$workID = $self->_createWork($deferredAttributes->{'WORK'}, $deferredAttributes->{'WORKSORT'}, $contributors->{'COMPOSER'}->[0], 1);
 	}
+	else {
+	}
 
 	### Find artwork column values for the Track
 	if ( !$columnValueHash{cover} && $columnValueHash{audio} ) {
@@ -3306,8 +3308,6 @@ sub canFulltextSearch {
 sub _workRequired {
 	if ( (defined $scanWorks ? $scanWorks : $prefs->get('worksScan')) == SCAN_WORKS_FOR_MY_CLASSICAL_GENRES ) {
 		my $genres = shift;
-		# input will be an array if multiple genre tags
-		$genres = join(';', @$genres) if ref $genres eq 'ARRAY';
 		return Slim::Schema::Genre->isMyClassicalGenre($genres);
 	} else {
 		return defined $scanWorks ? $scanWorks : $prefs->get('worksScan');
