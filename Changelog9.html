@@ -47,7 +47,7 @@
 
 	<li>Server Changes:</li>
 	<ul>
-		<li>Analytics: only check asmall, well defined list of pref changes to decide whether a disconnected player had been active recently.</li>
+		<li>Analytics: only check a small, well defined list of pref changes to decide whether a disconnected player had been active recently.</li>
 	</ul>
 	<br />
 
@@ -55,12 +55,15 @@
 	<ul>
 		<li>Fix helper search path initialisation on older macOS using Perl 5.18.</li>
 		<li><a href="https://github.com/LMS-Community/slimserver-platforms/issues/74">#74</a> - Speed up Perl installation during an initial installation on Windows.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver-platforms/issues/75">#75</a> - Make sure newly installed LMS on Windows is running before sending the user to the web page.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver-platforms/issues/78">#78</a> - Fix crypto library linking issues in the Docker image.</li>
 	</ul>
 	<br />
 
 	<li>Bug Fixes:</li>
 	<ul>
 		<li>Only re-initialize menu settings for connected players - otherwise Analytics considers them "active" due to a prefs change.</li>
+		<li>Fix display of final "Scan done" message in Material skin.</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1235">#1235</a> - Need to utf8Decode album title for new &amp; changed (thanks @darrel-k!)</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1237">#1237</a> - Fix create table syntax for MySQL (MariaDB) (thanks @JKDingwall!)</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1238">#1238</a> - Merge multiple works per track into one single work (thanks @darrel-k!)</li>
