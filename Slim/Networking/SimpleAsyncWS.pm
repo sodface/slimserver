@@ -330,7 +330,7 @@ sub _continueListen {
 sub send {
 	my ($self, $buf) = @_;
 
-	main::INFOLOG && $log->is_info && $log->info("Sending on web socket : " . Dumper($buf));
+	main::INFOLOG && $log->is_info && $log->info("Sending on web socket : $buf ");
 	$self->{client}->write($buf);
 
 	return;
