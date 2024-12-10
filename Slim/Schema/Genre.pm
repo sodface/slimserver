@@ -13,8 +13,6 @@ use Slim::Utils::Prefs;
 
 my $myClassicalGenreMap;
 my $myClassicalGenreIds;
-my $tagSeparator;
-my $tagSeparatorLoaded;
 
 {
 	my $class = __PACKAGE__;
@@ -97,7 +95,7 @@ sub add {
 	my $class = shift;
 	my $genre = shift;
 	my $trackId = shift;
-	
+
 	# Using native DBI here to improve performance during scanning
 	# and because DBIC objects are not needed here
 	# This is around 20x faster than using DBIC
@@ -110,12 +108,12 @@ sub add {
 
 		# So that ucfirst() works properly.
 		use locale;
-		
+
 		my $sth = $dbh->prepare_cached( 'SELECT id FROM genres WHERE name = ?' );
 		$sth->execute( ucfirst($genreSub) );
 		my ($id) = $sth->fetchrow_array;
 		$sth->finish;
-		
+
 		if ( !$id ) {
 			$sth = $dbh->prepare_cached( qq{
 				INSERT INTO genres
@@ -126,7 +124,7 @@ sub add {
 			$sth->execute( $namesort, ucfirst($genreSub), $namesearch );
 			$id = $dbh->last_insert_id(undef, undef, undef, undef);
 		}
-		
+
 		$sth = $dbh->prepare_cached( qq{
 			REPLACE INTO genre_track
 			(genre, track)
@@ -135,17 +133,17 @@ sub add {
 		} );
 		$sth->execute( $id, $trackId );
 	}
-	
+
 	return;
 }
 
 sub rescan {
 	my ( $class, @ids ) = @_;
-	
+
 	my $dbh = Slim::Schema->dbh;
-	
+
 	my $log = logger('scan.scanner');
-	
+
 	for my $id ( @ids ) {
 		my $sth = $dbh->prepare_cached( qq{
 			SELECT COUNT(*) FROM genre_track WHERE genre = ?
@@ -153,10 +151,10 @@ sub rescan {
 		$sth->execute($id);
 		my ($count) = $sth->fetchrow_array;
 		$sth->finish;
-				
+
 		if ( !$count ) {
 			main::DEBUGLOG && $log->is_debug && $log->debug("Removing unused genre: $id");
-			
+
 			$dbh->do( "DELETE FROM genres WHERE id = ?", undef, $id );
 		}
 	}

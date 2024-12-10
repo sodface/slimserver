@@ -3306,12 +3306,12 @@ sub canFulltextSearch {
 }
 
 sub _workRequired {
-	if ( (defined $scanWorks ? $scanWorks : $prefs->get('worksScan')) == SCAN_WORKS_FOR_MY_CLASSICAL_GENRES ) {
-		my $genres = shift;
-		return Slim::Schema::Genre->isMyClassicalGenre($genres);
-	} else {
-		return defined $scanWorks ? $scanWorks : $prefs->get('worksScan');
-	}
+	my $genres = shift;
+	my $wantWorks = defined $scanWorks ? $scanWorks : $prefs->get('worksScan');
+
+	return $wantWorks == SCAN_WORKS_FOR_MY_CLASSICAL_GENRES
+		? Slim::Schema::Genre->isMyClassicalGenre($genres)
+		: $scanWorks;
 }
 
 =head1 SEE ALSO
