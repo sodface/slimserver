@@ -34,7 +34,6 @@ sub new {
 		client     => 0,
 		tcp_socket   => 0,
 		socket_open  => 0,
-		pong_count   => 0,
 		continue_listening => 0,
 		cb_Read  => 0,
 		cb_Read_Failed => 0,
@@ -175,7 +174,7 @@ sub _connect {
 	main::INFOLOG && $log->is_info && $log->info("connecting to client");
 	$self->{client}->connect;
 
-	# read until handshake is complete.
+	# read until handshake is complete.  This is blocking but should be over quickly.
 	while (!$self->{client}->{hs}->is_done){
 		my $recv_data;
 
@@ -226,7 +225,7 @@ sub listenAsync {
 sub endListenAsync {
 	my ($self) = @_;
 
-	main::INFOLOG && $log->is_info && $log->info("Ending To Listen Async");
+	main::INFOLOG && $log->is_info && $log->info("Ending Listen Async");
 
 	$self->{continue_listening} = 0;
 
@@ -295,13 +294,14 @@ sub _receive {
 				$self->{cb_Read_Failed}->();
 
 				# We will not continue (if ASync)
+				$self->{continue_listening} = 0;
 
 			} else {
 
 				main::DEBUGLOG && $log->is_debug && $log->debug("Received data : " . Dumper($recv_data));
 				$self->{client}->read($recv_data);
 
-				# if Async poll immediately so that we pull everything off the socket if something is there.
+				# if Async, poll immediately so that we pull everything off the socket if something is there.
 				$self->_continueListen(0) if $isAsync;
 
 			}
