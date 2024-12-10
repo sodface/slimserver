@@ -1,4 +1,4 @@
-package Slim::Networking::simpleAsyncWS;
+package Slim::Networking::SimpleAsyncWS;
 
 # Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
