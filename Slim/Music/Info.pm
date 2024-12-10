@@ -1004,6 +1004,7 @@ $prefs->setChange(
 
 sub splitTag {
 	my $tag = shift;
+	my $customSeparator = shift;
 
 	# Handle Vorbis comments where the tag can be an array.
 	if (ref($tag) eq 'ARRAY') {
@@ -1018,15 +1019,17 @@ sub splitTag {
 
 	my @splitTags = ();
 
-	if (!$_gotSplitList) {
+	if (!$_gotSplitList && !$customSeparator) {
 		$_splitList = $prefs->get('splitList');
 		$_gotSplitList = 1;
 	}
 
-	# only bother if there are some characters in the pref
-	if ($_splitList) {
+	my $separator = $customSeparator || $_splitList;
 
-		for my $splitOn (split(/\s+/, $_splitList),'\x00') {
+	# only bother if there are some characters in the pref
+	if ($separator) {
+
+		for my $splitOn (split(/\s+/, $separator),'\x00') {
 
 			my @temp = ();
 
