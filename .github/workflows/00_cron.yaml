@@ -79,7 +79,7 @@ jobs:
                 }
 
                 # we only want to run one build at a time - we'll re run the check in a bit
-                last;
+                break;
               }
               else {
                 console.log(`${candidates[i].v}: is up to date (${candidates[i].r})`);
