@@ -76,7 +76,7 @@ sub _connect {
 		$cbConnectFailed->("Failed to parse Host/Port for ws URL from $url");
 		return;
 	} elsif ($port == 433 ) {
-			$proto = 'wss';
+		$proto = 'wss';
 	}
 
 	main::INFOLOG && $log->is_info && $log->info("Attempting to open socket to $proto://$host:$port...");
