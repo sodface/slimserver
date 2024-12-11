@@ -19,6 +19,7 @@ use IO::Socket;
 use IO::Socket::SSL;
 use IO::Select;
 use Protocol::WebSocket::Client;
+use URI;
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
@@ -64,28 +65,18 @@ sub _connect {
 
 	main::DEBUGLOG && $log->is_debug && $log->debug("Connecting to webSocket $url");
 
-	my ($proto, $host, $port, $path);
-	if ($url =~ m/^(?:(?<proto>ws|wss):\/\/)?(?<host>[^\/:]+)(?::(?<port>\d+))?(?<path>\/.*)?$/){
-		$host = $+{host};
-		$path = $+{path};
-		if (defined $+{proto} && defined $+{port}) {
-			$proto = $+{proto};
-			$port = $+{port};
-		} elsif (defined $+{port}) {
-			$port = $+{port};
-			if ($port == 443) { $proto = 'wss' }
-			else { $proto = 'ws' }
-		} elsif (defined $+{proto}) {
-			$proto = $+{proto};
-			if ($proto eq 'wss') { $port = 443 }
-			else { $port = 80 }
-		} else {
-			$proto = 'ws';
-			$port = 80;
-		}
-	} else {
+	my $uri = URI->new($url);
+	my $proto = $uri->scheme;
+	my $host = $uri->host;
+	my $path = $uri->path;
+	my $port = $uri->port;
+
+	if (! (($proto =~ /ws|wss/) && $host) ) {
 		$log->warn("Failed to parse $url");
-		$cbConnectFailed->("Failed to parse Host/Port from URL $url");
+		$cbConnectFailed->("Failed to parse Host/Port for ws URL from $url");
+		return;
+	} elsif ($port == 433 ) {
+			$proto = 'wss';
 	}
 
 	main::INFOLOG && $log->is_info && $log->info("Attempting to open socket to $proto://$host:$port...");
