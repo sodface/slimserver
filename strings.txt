@@ -10422,14 +10422,14 @@ SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_1
 	ES	Crear siempre un grupo de Álbum de compositor
 
 SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_2
-	CS	Vytvoření skupiny Skladatelské album pro "Moje klasické žánry" (výše)
-	DA	Opret en komponistalbumgruppe for "Mine klassiske genrer" (ovenfor)
-	DE	Erstellen einer Komponistenalbengruppe für "Meine klassischen Genres" (oben)
-	EN	Create a Composer Album group for "My classical genres" (above)
-	ES	Crear un grupo de álbumes de compositor para "Mis géneros clásicos" (arriba)
-	FR	Créer un groupe d'albums de compositeur pour « Mes genres classiques » (ci-dessus)
-	HU	Zeneszerzői albumcsoport létrehozása a "Klasszikus műfajaim" számára (fent)
-	NL	Maak een componistenalbumgroep voor 'Mijn klassieke genres' (hierboven)
+	CS	Vytvoření skupiny Skladatelské album pro "Moje žánry pro díla a skladatelská alba" (výše)
+	DA	Opret en komponistalbumgruppe for "Mine genrer til værker og komponistalbums" (ovenfor)
+	DE	Erstellen einer Komponistenalbengruppe für "Meine Genres für Werke und Komponistenalben" (oben)
+	EN	Create a Composer Album group for "My work and composer album genres" (above)
+	ES	Crear un grupo de álbumes de compositor para "Mis géneros para las obras y álbumes de compositores" (arriba)
+	FR	Créer un groupe d'albums de compositeur pour « Mes genres d'œuvres et albums de compositeurs » (ci-dessus)
+	HU	Zeneszerzői albumcsoport létrehozása a "Műfajaim művekhez és zeneszerzői albumokhoz" számára (fent)
+	NL	Maak een componistenalbumgroep voor 'Mijn genres voor werken en albums van componisten' (hierboven)
 
 SETUP_IGNORE_RELEASE_TYPES_0
 	CS	Povolit podporu typu vydání pro alba
@@ -26861,25 +26861,25 @@ SETUP_USERDEFINEDROLES_TEXT_PLURAL
 	NL	Tekst weergeven (meervoud)
 
 SETUP_WORKSSCAN
-	DE	Scannen klassischer Werke
-	EN	Classical works scanning
-	ES	Escaneo de obras clásicas
-	FR	Numérisation d'œuvres classiques
-	NL	Scannen van klassieke werken
+	DE	Scannen Werke
+	EN	Works scanning
+	ES	Escaneo de obras
+	FR	Numérisation d'œuvres
+	NL	Scannen van werken
 
 SETUP_WORKSSCAN_1
-	DE	Durchsuchen Sie die gesamte Bibliothek nach klassischen Werken
-	EN	Scan whole library for classical works
-	ES	Escanea toda la biblioteca en busca de obras clásicas
-	FR	Parcourez toute la bibliothèque à la recherche d'œuvres classiques
-	NL	Scan de hele bibliotheek op klassieke werken
+	DE	Durchsuchen Sie die gesamte Bibliothek nach Werken
+	EN	Scan whole library for works
+	ES	Escanea toda la biblioteca en busca de obras
+	FR	Parcourez toute la bibliothèque à la recherche d'œuvres
+	NL	Scan de hele bibliotheek op werken
 
 SETUP_WORKSSCAN_2
-	DE	Klassik-Scan auf "Meine klassischen Genres" beschränken (oben)
-	EN	Limit classical works scan to "My classical genres" (above)
-	ES	Limitar el escaneo de obras clásicas a "Mis géneros clásicos" (arriba)
-	FR	Limiter le balayage des œuvres classiques à « Mes genres classiques » (ci-dessus)
-	NL	Beperk de scan van klassieke werken tot "Mijn klassieke genres" (hierboven)
+	DE	Werkscan auf "Meine Genres für Werke und Komponistenalben" beschränken (oben)
+	EN	Limit works scan to "My work and composer album genres" (above)
+	ES	Limitar el escaneo de obras a "Mis géneros para las obras y álbumes de compositores" (arriba)
+	FR	Limiter le scan des œuvres à « Mes genres d'œuvres et albums de compositeurs » (ci-dessus)
+	NL	Beperk de werkscan tot "Mijn genres voor werken en albums van componisten" (hierboven)
 
 SETUP_WORKSSCAN_0
 	DE	Nicht nach Werken suchen
@@ -26889,16 +26889,19 @@ SETUP_WORKSSCAN_0
 	NL	Niet scannen op werken
 
 SETUP_MYCLASSICALGENRES
-	DE	Meine klassischen Genres
-	EN	My classical genres
-	ES	Mis géneros clásicos
-	FR	Mes genres classiques
-	NL	Mijn klassieke genres
+	CS	Moje žánry pro díla a skladatelská alba
+	DA	Mine genrer til værker og komponistalbums
+	DE	Meine Genres für Werke und Komponistenalben
+	EN	My work and composer album genres
+	ES	Mis géneros para las obras y álbumes de compositores
+	FR	Mes genres d'œuvres et albums de compositeurs
+	HU	Műfajaim művekhez és zeneszerzői albumokhoz
+	NL	Mijn genres voor werken en albums van componisten
 
 SETUP_MYCLASSICALGENRES_DESC
-	DE	Verwenden Sie diese Genres, um klassische Musik zu identifizieren
-	EN	Use these genres to identify classical music
-	ES	Utiliza estos géneros para identificar la música clásica
-	FR	Utilisez ces genres pour identifier la musique classique
-	NL	Gebruik deze genres om klassieke muziek te identificeren
+	DE	Verwenden Sie diese Genres für Werke und Komponistenalben. Trennen Sie durch Kommas.
+	EN	Use these genres for works and composer albums. Separate with commas.
+	ES	Utiliza estos géneros para obras y álbumes de compositores. Separe con comas.
+	FR	Utilisez ces genres pour les œuvres et les albums de compositeurs. Séparez par des virgules.
+	NL	Gebruik deze genres voor werken en albums van componisten. Scheid met komma's.
 
