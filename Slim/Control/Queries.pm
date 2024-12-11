@@ -5525,6 +5525,15 @@ sub _songDataFromHash {
 				$returnHash{'discsubtitle'} = $res->{'tracks.discsubtitle'} if $res->{'tracks.discsubtitle'};
 		}
 
+		# Special case for G (genres name) - include isClassical as well
+		elsif ( $tag eq 'G' ) {
+			if ( $res->{'genres'} ) {
+				$returnHash{'genres'} = $res->{'genres'};
+				my $isClassical = Slim::Schema::Genre->isMyClassicalGenre($res->{'genres'}, ',');
+				$returnHash{'isClassical'} = $isClassical if $isClassical;
+			}
+		}
+
 		# eg. the web UI is requesting some tags which are only available for remote tracks,
 		# such as 'B' (custom button handler). They would return empty here - ignore them.
 		elsif ( my $map = $colMap{$tag} ) {

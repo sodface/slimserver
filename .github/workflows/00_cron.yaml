@@ -13,18 +13,21 @@ jobs:
       - uses: actions/github-script@v7
         with:
           script: |
-            const repoStatus = await github.request('GET https://lms-community.github.io/lms-server-repository/servers.json');
+            const repoStatus = await github.request('GET https://raw.githubusercontent.com/LMS-Community/lms-server-repository/refs/heads/master/servers.json');
 
             if (repoStatus.status !== 200) {
+              console.error("Fetching repo file failed?" + JSON.stringify(repoStatus, null, 2));
               return false;
             }
 
             // get the oldest timestamp for each version from previous builds
             const candidates = [];
-            Object.keys(repoStatus.data).forEach(version => {
+            const repoData = JSON.parse(repoStatus.data);
+
+            Object.keys(repoData).forEach(version => {
               const matches = version.match(/(\d+\.\d+)\.\d+/);
               if (matches && matches.length == 2) {
-                const versionBuilds = repoStatus.data[version];
+                const versionBuilds = repoData[version];
                 candidates.push({
                   v: matches[1],
                   r: Object.keys(versionBuilds).reduce((accumulator, build) => {
@@ -35,7 +38,7 @@ jobs:
                 })
               }
               else {
-                delete repoStatus.data[version];
+                delete repoData[version];
               }
             });
 
@@ -78,8 +81,8 @@ jobs:
                   console.log(workflowStatus);
                 }
 
-                # we only want to run one build at a time - we'll re run the check in a bit
-                last;
+                // we only want to run one build at a time - we'll re run the check in a bit
+                break;
               }
               else {
                 console.log(`${candidates[i].v}: is up to date (${candidates[i].r})`);
