@@ -777,6 +777,8 @@ sub albumsQuery {
 
 		my $vaObjId = Slim::Schema->variousArtistsObject->id;
 
+		my $groupsSth;
+
 		while ( $sth->fetch ) {
 
 			utf8::decode( $c->{'albums.title'} ) if exists $c->{'albums.title'};
@@ -893,6 +895,14 @@ sub albumsQuery {
 					my $roles = join(',', map { $_->[0] } @$rolesRef);
 					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'role_ids', $roles);
 				}
+			}
+
+			if ( $tags =~ /2/ ) {
+				$groupsSth ||= $dbh->prepare_cached("SELECT COUNT(DISTINCT COALESCE(work,1) || COALESCE(grouping,1) || COALESCE(performance,1)) FROM tracks WHERE tracks.album=?");
+				$groupsSth->execute($c->{'albums.id'});
+				my ($groupCount) = $groupsSth->fetchrow_array;
+				$request->addResultLoop($loopname, $chunkCount, 'group_count', $groupCount);
+				$groupsSth->finish;
 			}
 
 			$chunkCount++;
