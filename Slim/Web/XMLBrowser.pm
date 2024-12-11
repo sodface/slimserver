@@ -42,7 +42,7 @@ if ( !main::SCANNER ) {
 
 	$prefs->setChange( \&wipeCaches, qw(itemsPerPage thumbSize showArtist showYear additionalPlaylistButtons noGenreFilter noRoleFilter searchSubString browseagelimit
 		composerInArtists conductorInArtists bandInArtists trackartistInArtists variousArtistAutoIdentification titleFormat titleFormatWeb language useUnifiedArtistsList
-		groupArtistAlbumsByReleaseType ignoreReleaseTypes releaseTypesToIgnore showComposerReleasesbyAlbum showComposerReleasesbyAlbumGenres onlyAlbumYears userDefinedRoles
+		groupArtistAlbumsByReleaseType ignoreReleaseTypes releaseTypesToIgnore showComposerReleasesbyAlbum myClassicalGenres onlyAlbumYears userDefinedRoles
 		artistAlbumLink albumartistAlbumLink trackartistAlbumLink composerAlbumLink conductorAlbumLink bandAlbumLink) );
 }
 

@@ -54,9 +54,12 @@ use Slim::Schema::Debug;
 use Slim::Schema::RemoteTrack;
 use Slim::Schema::RemotePlaylist;
 
+use constant SCAN_WORKS_FOR_MY_CLASSICAL_GENRES => 2;
+
 my $log = logger('database.info');
 
 my $prefs = preferences('server');
+my $scanWorks = $prefs->get('worksScan') if main::SCANNER;
 
 # Singleton objects for Unknowns
 our ($_unknownArtist, $_unknownGenre, $_unknownAlbumId) = ('', '', undef);
@@ -1757,7 +1760,12 @@ sub _newTrack {
 	}
 
 	### Create Work rows
-	my $workID = $self->_createWork($deferredAttributes->{'WORK'}, $deferredAttributes->{'WORKSORT'}, $contributors->{'COMPOSER'}->[0], 1);
+	my $workID;
+	if ( _workRequired($deferredAttributes->{'GENRE'}) ) {
+		$workID = $self->_createWork($deferredAttributes->{'WORK'}, $deferredAttributes->{'WORKSORT'}, $contributors->{'COMPOSER'}->[0], 1);
+	}
+	else {
+	}
 
 	### Find artwork column values for the Track
 	if ( !$columnValueHash{cover} && $columnValueHash{audio} ) {
@@ -2998,9 +3006,13 @@ sub _postCheckAttributes {
 
 	#Work
 	if (defined $attributes->{'WORK'}) {
-		my $workID = $self->_createWork($attributes->{'WORK'}, $attributes->{'WORKSORT'}, $contributors->{'COMPOSER'}->[0], 1);
-		if ($workID) {
-			$track->work($workID);
+		if ( _workRequired($attributes->{'GENRE'}) ) {
+			my $workID = $self->_createWork($attributes->{'WORK'}, $attributes->{'WORKSORT'}, $contributors->{'COMPOSER'}->[0], 1);
+			if ($workID) {
+				$track->work($workID);
+			}
+		} else {
+			$track->work(undef);
 		}
 	}
 
@@ -3291,6 +3303,15 @@ sub canFulltextSearch {
 
 	$canFulltextSearch = Slim::Utils::PluginManager->isEnabled('Slim::Plugin::FullTextSearch::Plugin') && Slim::Plugin::FullTextSearch::Plugin->canFulltextSearch;
 	return $canFulltextSearch;
+}
+
+sub _workRequired {
+	my $genres = shift;
+	my $wantWorks = defined $scanWorks ? $scanWorks : $prefs->get('worksScan');
+
+	return $wantWorks == SCAN_WORKS_FOR_MY_CLASSICAL_GENRES
+		? Slim::Schema::Genre->isMyClassicalGenre($genres)
+		: $scanWorks;
 }
 
 =head1 SEE ALSO
