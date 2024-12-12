@@ -621,6 +621,10 @@ sub albumsQuery {
 		$c->{'albums.titlesort'} = 1;
 	}
 
+	if ( $tags =~ /2/ ) {
+		$c->{'(SELECT COUNT(1) FROM (SELECT 1 FROM tracks WHERE tracks.album=albums.id GROUP BY work,grouping,performance)) AS group_count'} = 1;
+	}
+
 	if ( @{$w} ) {
 		$sql .= 'WHERE ';
 		my $s .= join( ' AND ', @{$w} );
@@ -644,9 +648,9 @@ sub albumsQuery {
 	$sql .= "ORDER BY $order_by " unless $tags eq 'CC';
 
 	# Add selected columns
-	# Bug 15997, AS mapping needed for MySQL
+	# Bug 15997, AS mapping needed for MySQL ** But not if the column is a subselect that already has an 'AS' provided **
 	my @cols = sort keys %{$c};
-	$sql = sprintf $sql, join( ', ', map { $_ . " AS '" . $_ . "'" } @cols );
+	$sql = sprintf $sql, join( ', ', map { $_ . ($_ =~ /SELECT.*AS/ ? "" : " AS '" . $_ . "'") } @cols );
 
 	my $stillScanning = Slim::Music::Import->stillScanning();
 
@@ -724,6 +728,12 @@ sub albumsQuery {
 		# Bind selected columns in order
 		my $i = 1;
 		for my $col ( @cols ) {
+		# Adjust column names that are sub-queries to be stored using the AS value
+			if ( $col =~ /SELECT/ ) {
+				my ($newcol) = $col =~ /AS (\w+)/;
+				$c->{$newcol} = 1;
+				$col = $newcol;
+			}
 			$sth->bind_col( $i++, \$c->{$col} );
 		}
 
@@ -777,8 +787,6 @@ sub albumsQuery {
 
 		my $vaObjId = Slim::Schema->variousArtistsObject->id;
 
-		my $groupsSth;
-
 		while ( $sth->fetch ) {
 
 			utf8::decode( $c->{'albums.title'} ) if exists $c->{'albums.title'};
@@ -819,6 +827,7 @@ sub albumsQuery {
 			$tags =~ /W/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'release_type', $wantsReleaseTypes ? $c->{'albums.release_type'} : 'ALBUM');
 			$tags =~ /E/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'extid', $c->{'albums.extid'});
 			$tags =~ /X/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'album_replay_gain', $c->{'albums.replay_gain'});
+			$tags =~ /2/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'group_count', $c->{'group_count'});
 
 			#Don't use albums.contributor to set artist_id/artist for Works, it may well be completely wrong!
 			if ( !$work ) {
@@ -895,14 +904,6 @@ sub albumsQuery {
 					my $roles = join(',', map { $_->[0] } @$rolesRef);
 					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'role_ids', $roles);
 				}
-			}
-
-			if ( $tags =~ /2/ ) {
-				$groupsSth ||= $dbh->prepare_cached("SELECT COUNT(DISTINCT COALESCE(work,1) || COALESCE(grouping,1) || COALESCE(performance,1)) FROM tracks WHERE tracks.album=?");
-				$groupsSth->execute($c->{'albums.id'});
-				my ($groupCount) = $groupsSth->fetchrow_array;
-				$request->addResultLoop($loopname, $chunkCount, 'group_count', $groupCount);
-				$groupsSth->finish;
 			}
 
 			$chunkCount++;
@@ -6287,9 +6288,9 @@ sub _getTagDataForTracks {
 	$ids_only && do { $c->{'tracks.primary_artist'} = 1 };
 
 	# Add selected columns
-	# Bug 15997, AS mapping needed for MySQL
+	# Bug 15997, AS mapping needed for MySQL  ** But not if the column is a subselect that already has an 'AS' provided**
 	my @cols = sort keys %{$c};
-	$sql = sprintf $sql, join( ', ', map { $_ . " AS '" . $_ . "'" } @cols );
+	$sql = sprintf $sql, join( ', ', map { $_ . ($_ =~ /SELECT.*AS/ ? "" : " AS '" . $_ . "'") } @cols );
 
 	my $dbh = Slim::Schema->dbh;
 
