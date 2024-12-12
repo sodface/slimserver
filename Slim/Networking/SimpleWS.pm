@@ -1,4 +1,4 @@
-package Slim::Networking::SimpleAsyncWS;
+package Slim::Networking::SimpleWS;
 
 # Lyrion Music Server Copyright 2024 Lyrion Community.
 # This program is free software; you can redistribute it and/or
@@ -333,30 +333,30 @@ __END__
 
 =head1 NAME
 
-Slim::Networking::SimpleAsyncWS - Simple WS Client with asynchronous non-blocking socket listening
+Slim::Networking::SimpleWS - Simple WS Client with asynchronous non-blocking socket listening
 
 =head1 SYNOPSIS
 
-use Slim::Networking::SimpleAsyncWS
+use Slim::Networking::SimpleWS
 
-sub exampleErrorCallback {  
+sub exampleErrorCallback {
 
-    print("Oh no! An error!\n");
+	print("Oh no! An error!\n");
 }
 
-sub exampleWeAreConnected {  
+sub exampleWeAreConnected {
 
-    print("We are connected");
+	print("We are connected");
 }
 
 sub exampleCallback {
-    my $buf = shift;   
+	my $buf = shift;
 
-    print("Got the message.\n");
+	print("Got the message.\n");
 	print($buf);
 }
 
-my $ws = Slim::Networking::SimpleAsyncHTTP->new(
+my $ws = Slim::Networking::SimpleWS->new(
 	'wss://ws.sample.com/whats-occurring',
 	\&exampleWeAreConnected,
 	\&exampleErrorCallback
@@ -379,7 +379,7 @@ $ws->close();
 =head1 DESCRIPTION
 
 This class provides a way within the Lyrion Music Server to listen on a web socket
-in an asynchronous, non-blocking way.  
+in an asynchronous, non-blocking way.
 
 =cut
 
