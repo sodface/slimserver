@@ -22115,7 +22115,7 @@ DEBUG_NETWORK_ASYNCHTTP
 	SV	Information om asynkron fjärr-HTTP-begäran
 
 DEBUG_NETWORK_ASYNCWS
-	EN	Asynchronous Remote Web Sockets Information
+	EN	Web Sockets client information
 
 DEBUG_NETWORK_ASYNCDNS
 	CS	Protokolování asynchronního DNS
