@@ -1,3 +1,14 @@
+# This is Copyright (C) 2010-2018, Viacheslav Tykhanovskyi.
+# This forms part of Protocol::Websockets v 0.26
+#
+# This file has by modified by the Lyrion Community (2024)
+# It has been modified so that a ping message is not converted to UTF-8.
+# This enables a client to correctly format a corresponding 'pong' in raw bytes to keep a server connection alive.
+#
+# This program is free software, you can redistribute it and/or modify it under
+# the same terms as Perl 5.10.
+
+
 package Protocol::WebSocket::Frame;
 
 use strict;
