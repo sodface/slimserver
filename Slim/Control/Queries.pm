@@ -248,13 +248,15 @@ sub alarmsQuery {
 }
 
 sub _colNamesWithASMapping {
-	my ($c, $sql) = @_;
+	my ($c, $as, $sql) = @_;
 
 	# Add selected columns
 	# Bug 15997, AS mapping needed for MySQL
-	# ** use customised 'AS' if provided in $c->{<column>} **
+	# ** use customised 'AS' if provided in $as->{<column>} **
 	my @cols = sort keys %{$c};
-	$sql = sprintf $sql, join( ', ', map { $_ . " AS '" . (ref $c->{$_} eq 'ARRAY' ? $c->{$_}[1] : $_) . "'" } @cols );
+	$sql = sprintf $sql, join( ', ', map { $_ . " AS '" . ($as->{$_} || $_) . "'" } @cols );
+	@cols = map { $as->{$_} || $_ } @cols;
+	%{$c} = map { $as->{$_} ? ($as->{$_} => $c->{$_}) : ($_ => $c->{$_}) } keys %{$c};
 
 	return ($sql, @cols);
 }
@@ -308,6 +310,7 @@ sub albumsQuery {
 
 	my $sql      = 'SELECT %s FROM albums ';
 	my $c        = { 'albums.id' => 1, 'albums.titlesearch' => 1, 'albums.titlesort' => 1 };
+	my $as       = {};
 	my $w        = [];
 	my $p        = [];
 	my $order_by = "albums.titlesort $collate, albums.disc"; # XXX old code prepended 0 to titlesort, but not other titlesorts
@@ -634,7 +637,9 @@ sub albumsQuery {
 	}
 
 	if ( $tags =~ /2/ ) {
-		$c->{'(SELECT COUNT(1) FROM (SELECT 1 FROM tracks WHERE tracks.album=albums.id GROUP BY work,grouping,performance))'} = [1, 'group_count'];
+		my $col = '(SELECT COUNT(1) FROM (SELECT 1 FROM tracks WHERE tracks.album=albums.id GROUP BY work,grouping,performance))';
+		$c->{$col} = 1;
+		$as->{$col} = 'group_count';
 	}
 
 	if ( @{$w} ) {
@@ -659,7 +664,7 @@ sub albumsQuery {
 
 	$sql .= "ORDER BY $order_by " unless $tags eq 'CC';
 
-	($sql, my @cols) = _colNamesWithASMapping($c, $sql);
+	($sql, my @cols) = _colNamesWithASMapping($c, $as, $sql);
 
 	my $stillScanning = Slim::Music::Import->stillScanning();
 
@@ -737,14 +742,6 @@ sub albumsQuery {
 		# Bind selected columns in order
 		my $i = 1;
 		for my $col ( @cols ) {
-		# use custom column name id provided
-			if ( ref $c->{$col} eq 'ARRAY' ) {
-				my $oldcol = $col;
-				$col = $c->{$col}[1];
-				$c->{$col} = 1;
-				delete $c->{$oldcol};
-			}
-
 			$sth->bind_col( $i++, \$c->{$col} );
 		}
 
@@ -5971,6 +5968,7 @@ sub _getTagDataForTracks {
 
 	my $sql      = 'SELECT %s FROM tracks ';
 	my $c        = { 'tracks.id' => 1, 'tracks.title' => 1 };
+	my $as       = {};
 	my $w        = [];
 	my $p        = [];
 	my $total    = 0;
@@ -6298,7 +6296,7 @@ sub _getTagDataForTracks {
 
 	$ids_only && do { $c->{'tracks.primary_artist'} = 1 };
 
-	($sql, my @cols) = _colNamesWithASMapping($c, $sql);
+	($sql, my @cols) = _colNamesWithASMapping($c, $as, $sql);
 
 	my $dbh = Slim::Schema->dbh;
 
@@ -6350,14 +6348,6 @@ sub _getTagDataForTracks {
 	# Bind selected columns in order
 	my $i = 1;
 	for my $col ( @cols ) {
-		# use custom column name if provided
-		if ( ref $c->{$col} eq 'ARRAY' ) {
-			my $oldcol = $col;
-			$col = $c->{$col}[1];
-			$c->{$col} = 1;
-			delete $c->{$oldcol};
-		}
-
 		$sth->bind_col( $i++, \$c->{$col} );
 	}
 
