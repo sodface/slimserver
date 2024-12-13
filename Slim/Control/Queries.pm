@@ -247,6 +247,20 @@ sub alarmsQuery {
 	$request->setStatusDone();
 }
 
+sub _colNamesWithASMapping {
+	my ($c, $as, $sql) = @_;
+
+	# Add selected columns
+	# Bug 15997, AS mapping needed for MySQL
+	# ** use customised 'AS' if provided in $as->{<column>} **
+	my @cols = sort keys %{$c};
+	$sql = sprintf $sql, join( ', ', map { $_ . " AS '" . ($as->{$_} || $_) . "'" } @cols );
+	@cols = map { $as->{$_} || $_ } @cols;
+	%{$c} = map { $as->{$_} ? ($as->{$_} => $c->{$_}) : ($_ => $c->{$_}) } keys %{$c};
+
+	return ($sql, @cols);
+}
+
 sub albumsQuery {
 	my $request = shift;
 
@@ -296,6 +310,7 @@ sub albumsQuery {
 
 	my $sql      = 'SELECT %s FROM albums ';
 	my $c        = { 'albums.id' => 1, 'albums.titlesearch' => 1, 'albums.titlesort' => 1 };
+	my $as       = {};
 	my $w        = [];
 	my $p        = [];
 	my $order_by = "albums.titlesort $collate, albums.disc"; # XXX old code prepended 0 to titlesort, but not other titlesorts
@@ -621,6 +636,12 @@ sub albumsQuery {
 		$c->{'albums.titlesort'} = 1;
 	}
 
+	if ( $tags =~ /2/ ) {
+		my $col = '(SELECT COUNT(1) FROM (SELECT 1 FROM tracks WHERE tracks.album=albums.id GROUP BY work,grouping,performance))';
+		$c->{$col} = 1;
+		$as->{$col} = 'group_count';
+	}
+
 	if ( @{$w} ) {
 		$sql .= 'WHERE ';
 		my $s .= join( ' AND ', @{$w} );
@@ -643,10 +664,7 @@ sub albumsQuery {
 
 	$sql .= "ORDER BY $order_by " unless $tags eq 'CC';
 
-	# Add selected columns
-	# Bug 15997, AS mapping needed for MySQL
-	my @cols = sort keys %{$c};
-	$sql = sprintf $sql, join( ', ', map { $_ . " AS '" . $_ . "'" } @cols );
+	($sql, my @cols) = _colNamesWithASMapping($c, $as, $sql);
 
 	my $stillScanning = Slim::Music::Import->stillScanning();
 
@@ -817,6 +835,7 @@ sub albumsQuery {
 			$tags =~ /W/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'release_type', $wantsReleaseTypes ? $c->{'albums.release_type'} : 'ALBUM');
 			$tags =~ /E/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'extid', $c->{'albums.extid'});
 			$tags =~ /X/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'album_replay_gain', $c->{'albums.replay_gain'});
+			$tags =~ /2/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'group_count', $c->{'group_count'});
 
 			#Don't use albums.contributor to set artist_id/artist for Works, it may well be completely wrong!
 			if ( !$work ) {
@@ -5949,6 +5968,7 @@ sub _getTagDataForTracks {
 
 	my $sql      = 'SELECT %s FROM tracks ';
 	my $c        = { 'tracks.id' => 1, 'tracks.title' => 1 };
+	my $as       = {};
 	my $w        = [];
 	my $p        = [];
 	my $total    = 0;
@@ -6276,10 +6296,7 @@ sub _getTagDataForTracks {
 
 	$ids_only && do { $c->{'tracks.primary_artist'} = 1 };
 
-	# Add selected columns
-	# Bug 15997, AS mapping needed for MySQL
-	my @cols = sort keys %{$c};
-	$sql = sprintf $sql, join( ', ', map { $_ . " AS '" . $_ . "'" } @cols );
+	($sql, my @cols) = _colNamesWithASMapping($c, $as, $sql);
 
 	my $dbh = Slim::Schema->dbh;
 
@@ -6331,13 +6348,6 @@ sub _getTagDataForTracks {
 	# Bind selected columns in order
 	my $i = 1;
 	for my $col ( @cols ) {
-		# Adjust column names that are sub-queries to be stored using the AS value
-		if ( $col =~ /SELECT/ ) {
-			my ($newcol) = $col =~ /AS (\w+)/;
-			$c->{$newcol} = 1;
-			$col = $newcol;
-		}
-
 		$sth->bind_col( $i++, \$c->{$col} );
 	}
 
@@ -6361,6 +6371,7 @@ sub _getTagDataForTracks {
 			utf8::decode( $c->{'genres.name'} ) if exists $c->{'genres.name'};
 			utf8::decode( $c->{'comments.value'} ) if exists $c->{'comments.value'};
 			utf8::decode( $c->{'tracks.discsubtitle'}) if exists $c->{'tracks.discsubtitle'};
+			utf8::decode( $c->{'tracks.grouping'}) if exists $c->{'tracks.grouping'};
 		}
 
 		my $id = $c->{'tracks.id'};
