@@ -251,9 +251,10 @@ sub _colNamesWithASMapping {
 	my ($c, $sql) = @_;
 
 	# Add selected columns
-	# Bug 15997, AS mapping needed for MySQL ** But not if the column is a subselect that already has an 'AS' provided **
+	# Bug 15997, AS mapping needed for MySQL
+	# ** use customised 'AS' if provided in $c->{<column>} **
 	my @cols = sort keys %{$c};
-	$sql = sprintf($sql, join( ', ', map { $_ . ($_ =~ /SELECT.*AS/ ? "" : " AS '" . $_ . "'") } @cols ));
+	$sql = sprintf $sql, join( ', ', map { $_ . " AS '" . (ref $c->{$_} eq 'ARRAY' ? $c->{$_}[1] : $_) . "'" } @cols );
 
 	return ($sql, @cols);
 }
@@ -633,7 +634,7 @@ sub albumsQuery {
 	}
 
 	if ( $tags =~ /2/ ) {
-		$c->{'(SELECT COUNT(1) FROM (SELECT 1 FROM tracks WHERE tracks.album=albums.id GROUP BY work,grouping,performance)) AS group_count'} = 'group_count';
+		$c->{'(SELECT COUNT(1) FROM (SELECT 1 FROM tracks WHERE tracks.album=albums.id GROUP BY work,grouping,performance))'} = [1, 'group_count'];
 	}
 
 	if ( @{$w} ) {
@@ -736,12 +737,12 @@ sub albumsQuery {
 		# Bind selected columns in order
 		my $i = 1;
 		for my $col ( @cols ) {
-			# Adjust column names that are sub-queries to be stored using the AS value.
-			# The actual column name must be stored as the value to the query.
-			if ($col ne '1') {
-				my $newcol = $c->{$col};
-				$c->{$newcol} = 1;
-				$col = $newcol;
+		# use custom column name id provided
+			if ( ref $c->{$col} eq 'ARRAY' ) {
+				my $oldcol = $col;
+				$col = $c->{$col}[1];
+				$c->{$col} = 1;
+				delete $c->{$oldcol};
 			}
 
 			$sth->bind_col( $i++, \$c->{$col} );
@@ -6349,11 +6350,12 @@ sub _getTagDataForTracks {
 	# Bind selected columns in order
 	my $i = 1;
 	for my $col ( @cols ) {
-		# Adjust column names that are sub-queries to be stored using the AS value
-		if ( $col =~ /SELECT/ ) {
-			my ($newcol) = $col =~ /AS (\w+)/;
-			$c->{$newcol} = 1;
-			$col = $newcol;
+		# use custom column name if provided
+		if ( ref $c->{$col} eq 'ARRAY' ) {
+			my $oldcol = $col;
+			$col = $c->{$col}[1];
+			$c->{$col} = 1;
+			delete $c->{$oldcol};
 		}
 
 		$sth->bind_col( $i++, \$c->{$col} );
@@ -6379,6 +6381,7 @@ sub _getTagDataForTracks {
 			utf8::decode( $c->{'genres.name'} ) if exists $c->{'genres.name'};
 			utf8::decode( $c->{'comments.value'} ) if exists $c->{'comments.value'};
 			utf8::decode( $c->{'tracks.discsubtitle'}) if exists $c->{'tracks.discsubtitle'};
+			utf8::decode( $c->{'tracks.grouping'}) if exists $c->{'tracks.grouping'};
 		}
 
 		my $id = $c->{'tracks.id'};
