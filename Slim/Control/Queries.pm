@@ -247,6 +247,17 @@ sub alarmsQuery {
 	$request->setStatusDone();
 }
 
+sub _colNamesWithASMapping {
+	my ($c, $sql) = @_;
+
+	# Add selected columns
+	# Bug 15997, AS mapping needed for MySQL ** But not if the column is a subselect that already has an 'AS' provided **
+	my @cols = sort keys %{$c};
+	$sql = sprintf($sql, join( ', ', map { $_ . ($_ =~ /SELECT.*AS/ ? "" : " AS '" . $_ . "'") } @cols ));
+
+	return ($sql, @cols);
+}
+
 sub albumsQuery {
 	my $request = shift;
 
@@ -622,7 +633,7 @@ sub albumsQuery {
 	}
 
 	if ( $tags =~ /2/ ) {
-		$c->{'(SELECT COUNT(1) FROM (SELECT 1 FROM tracks WHERE tracks.album=albums.id GROUP BY work,grouping,performance)) AS group_count'} = 1;
+		$c->{'(SELECT COUNT(1) FROM (SELECT 1 FROM tracks WHERE tracks.album=albums.id GROUP BY work,grouping,performance)) AS group_count'} = 'group_count';
 	}
 
 	if ( @{$w} ) {
@@ -647,10 +658,7 @@ sub albumsQuery {
 
 	$sql .= "ORDER BY $order_by " unless $tags eq 'CC';
 
-	# Add selected columns
-	# Bug 15997, AS mapping needed for MySQL ** But not if the column is a subselect that already has an 'AS' provided **
-	my @cols = sort keys %{$c};
-	$sql = sprintf $sql, join( ', ', map { $_ . ($_ =~ /SELECT.*AS/ ? "" : " AS '" . $_ . "'") } @cols );
+	($sql, my @cols) = _colNamesWithASMapping($c, $sql);
 
 	my $stillScanning = Slim::Music::Import->stillScanning();
 
@@ -728,12 +736,14 @@ sub albumsQuery {
 		# Bind selected columns in order
 		my $i = 1;
 		for my $col ( @cols ) {
-		# Adjust column names that are sub-queries to be stored using the AS value
-			if ( $col =~ /SELECT/ ) {
-				my ($newcol) = $col =~ /AS (\w+)/;
+			# Adjust column names that are sub-queries to be stored using the AS value.
+			# The actual column name must be stored as the value to the query.
+			if ($col ne '1') {
+				my $newcol = $c->{$col};
 				$c->{$newcol} = 1;
 				$col = $newcol;
 			}
+
 			$sth->bind_col( $i++, \$c->{$col} );
 		}
 
@@ -6287,10 +6297,7 @@ sub _getTagDataForTracks {
 
 	$ids_only && do { $c->{'tracks.primary_artist'} = 1 };
 
-	# Add selected columns
-	# Bug 15997, AS mapping needed for MySQL  ** But not if the column is a subselect that already has an 'AS' provided**
-	my @cols = sort keys %{$c};
-	$sql = sprintf $sql, join( ', ', map { $_ . ($_ =~ /SELECT.*AS/ ? "" : " AS '" . $_ . "'") } @cols );
+	($sql, my @cols) = _colNamesWithASMapping($c, $sql);
 
 	my $dbh = Slim::Schema->dbh;
 
