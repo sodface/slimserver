@@ -893,7 +893,7 @@ sub logLevels {
 
 		'network.asyncdns'           => 'ERROR',
 		'network.asynchttp'          => 'ERROR',
-		'network.asyncws'            => 'ERROR',
+		'network.ws'                 => 'ERROR',
 		'network.http'               => 'ERROR',
 		'network.protocol'           => 'ERROR',
 		'network.protocol.slimproto' => 'ERROR',

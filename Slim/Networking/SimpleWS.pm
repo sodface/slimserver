@@ -24,7 +24,7 @@ use URI;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
-my $log = logger('network.asyncws');
+my $log = logger('network.ws');
 
 sub new {
 	my ( $class, $url, $cbConnected, $cbConnectFailed) = @_;
