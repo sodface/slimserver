@@ -413,6 +413,7 @@ sub initUpdate {
 	<string>$plistLabel</string>
 	<key>ProgramArguments</key>
 	<array>
+		<string>$^X</string>
 		<string>$script</string>
 	</array>
 	$envVariables
