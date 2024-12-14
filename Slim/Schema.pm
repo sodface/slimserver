@@ -1764,8 +1764,6 @@ sub _newTrack {
 	if ( _workRequired($deferredAttributes->{'GENRE'}) ) {
 		$workID = $self->_createWork($deferredAttributes->{'WORK'}, $deferredAttributes->{'WORKSORT'}, $contributors->{'COMPOSER'}->[0], 1);
 	}
-	else {
-	}
 
 	### Find artwork column values for the Track
 	if ( !$columnValueHash{cover} && $columnValueHash{audio} ) {
