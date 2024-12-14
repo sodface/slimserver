@@ -6,11 +6,11 @@ use strict;
 use FindBin qw($Bin);
 
 BEGIN {
-	my $libPath = "$Bin/../..";
-
-	# This works like 'use lib'
-	# prepend our directories to @INC so we look there first.
-	unshift @INC, $libPath, "$libPath/CPAN";
+	foreach my $libPath ("$Bin/../Resources/server", "$Bin/../..") {
+		# This works like 'use lib'
+		# prepend our directories to @INC so we look there first.
+		unshift @INC, $libPath, "$libPath/CPAN";
+	}
 }
 
 use constant RESIZER => 0;
