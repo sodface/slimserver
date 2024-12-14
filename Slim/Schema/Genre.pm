@@ -58,14 +58,13 @@ sub loadMyClassicalGenreMap {
 }
 
 sub isMyClassicalGenre {
+	my ($class, $genres, $sep) = @_;
+
 	loadMyClassicalGenreMap() if !$myClassicalGenreMap;
-	my $class = shift;
-	my $genres = shift;
-	my $sep = shift;
-	foreach ( Slim::Music::Info::splitTag($genres, $sep) ) {
-		return 1 if %$myClassicalGenreMap{uc($_)}
-	}
-	return 0;
+
+	return grep {
+		$myClassicalGenreMap->{uc($_)}
+	} Slim::Music::Info::splitTag($genres, $sep) ? 1 : 0;
 }
 
 sub myClassicalGenreIds {
