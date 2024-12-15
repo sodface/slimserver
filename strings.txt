@@ -10427,7 +10427,7 @@ SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_2
 	DE	Erstellen einer Komponistenalbengruppe für "Genres für Werke und Komponistenalben" (oben)
 	EN	Create a Composer Album group for "My work and composer album genres" (above)
 	ES	Crear un grupo de álbumes de compositor para "Mis géneros para las obras y álbumes de compositores" (arriba)
-	FR	Créer un groupe d'albums de compositeur pour « Mes genres d'œuvres et albums de compositeurs » (ci-dessus)
+	FR	Créer un groupe "Albums du compositeur" pour les "Genres en lien avec des œuvres et des compositeurs" (ci-dessus)
 	HU	Zeneszerzői albumcsoport létrehozása a "Műfajaim művekhez és zeneszerzői albumokhoz" számára (fent)
 	NL	Maak een componistenalbumgroep voor 'Mijn genres voor werken en albums van componisten' (hierboven)
 
@@ -26289,7 +26289,7 @@ SETUP_WORKSSCAN
 	DE	Werke suchen
 	EN	Works scanning
 	ES	Escaneo de obras
-	FR	Numérisation d'œuvres
+	FR	Recherche d'œuvres
 	NL	Scannen van werken
 
 SETUP_WORKSSCAN_1
@@ -26303,7 +26303,7 @@ SETUP_WORKSSCAN_2
 	DE	Werke auf "Genres für Werke und Komponistenalben" beschränken (oben)
 	EN	Limit works scan to "My work and composer album genres" (above)
 	ES	Limitar el escaneo de obras a "Mis géneros para las obras y álbumes de compositores" (arriba)
-	FR	Limiter le scan des œuvres à « Mes genres d'œuvres et albums de compositeurs » (ci-dessus)
+	FR	Limiter la recherche des œuvres aux "Genres en lien avec des œuvres et des compositeurs" (ci-dessus)
 	NL	Beperk de werkscan tot "Mijn genres voor werken en albums van componisten" (hierboven)
 
 SETUP_WORKSSCAN_0
@@ -26319,7 +26319,7 @@ SETUP_MYCLASSICALGENRES
 	DE	Genres für Werke und Komponistenalben
 	EN	My work and composer album genres
 	ES	Mis géneros para las obras y álbumes de compositores
-	FR	Mes genres d'œuvres et albums de compositeurs
+	FR	Genres en lien avec des œuvres et des compositeurs
 	HU	Műfajaim művekhez és zeneszerzői albumokhoz
 	NL	Mijn genres voor werken en albums van componisten
 
@@ -26327,6 +26327,6 @@ SETUP_MYCLASSICALGENRES_DESC
 	DE	Diese Genres für Werke und Komponistenalben verwenden (Komma getrennte Liste).
 	EN	Use these genres for works and composer albums. Separate with commas.
 	ES	Utiliza estos géneros para obras y álbumes de compositores. Separe con comas.
-	FR	Utilisez ces genres pour les œuvres et les albums de compositeurs. Séparez par des virgules.
+	FR	Précisez les genres concernés par les œuvres et les compositeurs. Séparez-les par des virgules.
 	NL	Gebruik deze genres voor werken en albums van componisten. Scheid met komma's.
 
