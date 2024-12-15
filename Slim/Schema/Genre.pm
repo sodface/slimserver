@@ -62,9 +62,9 @@ sub isMyClassicalGenre {
 
 	loadMyClassicalGenreMap() if !$myClassicalGenreMap;
 
-	return grep {
+	return (grep {
 		$myClassicalGenreMap->{uc($_)}
-	} Slim::Music::Info::splitTag($genres, $sep) ? 1 : 0;
+	} Slim::Music::Info::splitTag($genres, $sep)) ? 1 : 0;
 }
 
 sub myClassicalGenreIds {
