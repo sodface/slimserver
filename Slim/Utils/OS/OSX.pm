@@ -510,7 +510,7 @@ sub handleMenuBarItemActivity {
 
 	my $log = Slim::Utils::Log::logger('server');
 
-	my $proc = `ps -A | grep 'Lyrion Music Server.app/Contents/MacOS/Lyrion Music Server' | grep -v grep`;
+	my $proc = `ps -A | egrep 'Contents/MacOS/Lyrion Music Server$' | grep -v grep`;
 	if (!$proc) {
 		main::INFOLOG && $log->is_info && $log->info('The Menu Bar Item has quit - let\'s quit the service, too');
 		main::stopServer();
