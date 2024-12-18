@@ -1129,16 +1129,18 @@ sub canRestartServer {
 }
 
 sub restartServer {
+	my $log = logger('server');
+
 	if ( canRestartServer() ) {
 		cleanup();
-		logger('')->info( 'Lyrion Music Server restarting...' );
+		$log->info( 'Lyrion Music Server restarting...' );
 
 		if ( !Slim::Utils::OSDetect->getOS()->restartServer($0, \@argv) ) {
-			logger('')->error("Unable to restart Lyrion Music Server");
+			$log->error("Unable to restart Lyrion Music Server");
 		}
 	}
 	else {
-		logger('')->error("Unable to restart Lyrion Music Server - leaving it running.");
+		$log->error("Unable to restart Lyrion Music Server - leaving it running.");
 		return;
 	}
 
@@ -1149,13 +1151,14 @@ sub stopServer {
 
 	cleanup();
 
-	logger('')->info( 'Lyrion Music Server shutting down.' );
+	logger('server')->info( 'Lyrion Music Server shutting down.' );
 
 	exit();
 }
 
 sub cleanup {
-	logger('')->info("Lyrion Music Server cleaning up.");
+	my $log = logger('server');
+	$log->info("Lyrion Music Server cleaning up.");
 
 	$::stop = 1;
 
@@ -1163,24 +1166,32 @@ sub cleanup {
 	if ($INC{'Slim/Schema.pm'} && Slim::Schema->storage) {
 
 		if (Slim::Music::Import->stillScanning()) {
-			logger('')->info("Cancel running scanner.");
+			$log->info("Cancel running scanner.");
 			Slim::Music::Import->abortScan();
 		}
 
+		main::DEBUGLOG && $log->is_debug && $log->debug("Forcing commit of database changes.");
 		Slim::Schema->forceCommit;
+		main::DEBUGLOG && $log->is_debug && $log->debug("Disconnecting from database.");
 		Slim::Schema->disconnect;
 	}
 
+	main::DEBUGLOG && $log->is_debug && $log->debug("Shutting down plugins");
 	Slim::Utils::PluginManager->shutdownPlugins();
 
+	main::DEBUGLOG && $log->is_debug && $log->debug("Write out prefs changes.");
 	Slim::Utils::Prefs::writeAll();
+
+	main::DEBUGLOG && $log->is_debug && $log->debug("Stop image resizer daemon.");
 	Slim::Utils::ImageResizer->stopDaemon() if $INC{'Slim/Utils/ImageResizer.pm'};
 
 	if ($prefs->get('persistPlaylists')) {
+		main::DEBUGLOG && $log->is_debug && $log->debug("Persist playlists.");
 		Slim::Control::Request::unsubscribe(
 			\&Slim::Player::Playlist::modifyPlaylistCallback);
 	}
 
+	main::DEBUGLOG && $log->is_debug && $log->debug("SQL cleanup.");
 	$sqlHelperClass->cleanup;
 
 	remove_pid_file();
@@ -1189,7 +1200,7 @@ sub cleanup {
 sub save_pid_file {
 	my $process_id = shift || $$;
 
-	logger('')->info("Lyrion Music Server saving pid file.");
+	logger('server')->info("Lyrion Music Server saving pid file.");
 
 	if (defined $pidfile) {
 		File::Slurp::write_file($pidfile, $process_id);
