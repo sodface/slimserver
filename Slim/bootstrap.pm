@@ -405,9 +405,7 @@ sub sigint {
 
 	$sigINTcalled = 1;
 
-	if ( !$Slim::Web::HTTP::inChild ) {
-		main::cleanup() if defined &main::cleanup;
-	}
+	main::cleanup() if defined &main::cleanup;
 
 	exit();
 }

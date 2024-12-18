@@ -18,6 +18,7 @@ use POSIX qw(LC_CTYPE LC_TIME);
 
 # the new menubar item comes as an application in something like "Lyrion Music Server.app/Contents/Resources/server"
 use constant IS_MENUBAR_ITEM => $Bin =~ m|app/Contents/Resources/server| ? 1 : 0;
+use constant CHECK_MENUBAR_ITEM_DURATION => 30;
 
 my $canFollowAlias;
 
@@ -96,6 +97,13 @@ sub initPrefs {
 	# Replace fancy apostraphe (’) with ASCII
 	utf8::decode( $prefs->{libraryname} ) unless utf8::is_utf8($prefs->{libraryname});
 	$prefs->{libraryname} =~ s/\x{2019}/'/;
+}
+
+sub postInitPrefs {
+	my ($class, $prefs) = @_;
+	$prefs->setChange(sub {
+		handleMenuBarItemActivity();
+	}, 'macMenuItemActive');
 }
 
 sub canDBHighMem { 1 }
@@ -495,6 +503,29 @@ sub restartServer {
 	}
 
 	return 0;
+}
+
+sub handleMenuBarItemActivity {
+	Slim::Utils::Timers::killTimers(undef, \&handleMenuBarItemActivity);
+
+	my $log = Slim::Utils::Log::logger('server');
+
+	my $proc = `ps -A | grep 'Lyrion Music Server.app/Contents/MacOS/Lyrion Music Server' | grep -v grep`;
+	if (!$proc) {
+		main::INFOLOG && $log->is_info && $log->info('The Menu Bar Item has quit - let\'s quit the service, too');
+		main::stopServer();
+		return;
+	}
+
+	my $diff = time() - Slim::Utils::Prefs::preferences('server')->get('macMenuItemActive');
+	if ($diff < CHECK_MENUBAR_ITEM_DURATION) {
+		my $nextCheck = $diff * 0.25 + 1;
+		main::INFOLOG && $log->is_info && $log->info('Checking for Menu Bar Item status again in ' . $nextCheck);
+		Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + $nextCheck, \&handleMenuBarItemActivity);
+	}
+	elsif (main::INFOLOG && $log->is_info) {
+		$log->info('The Menu Bar Item is still running - let\'s keep the service running');
+	}
 }
 
 1;
