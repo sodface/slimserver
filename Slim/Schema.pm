@@ -87,6 +87,7 @@ my %tagMapping = (
 our $initialized         = 0;
 my $trackAttrs           = {};
 my $trackPersistentAttrs = {};
+my $firstScan;
 
 my %ratingImplementations = (
 	'LOCAL_RATING_STORAGE' => \&_defaultRatingImplementation,
@@ -1531,6 +1532,12 @@ sub _createTrack {
 	### Create TrackPersistent row
 
 	if ( main::STATISTICS && $columnValueHash->{'audio'} ) {
+		if (!defined $firstScan) {
+			# if no track has been played yet, we consider this a first scan
+			my $counts = $dbh->selectall_arrayref('SELECT count(1) FROM tracks_persistent WHERE lastPlayed IS NOT NULL OR playCount IS NOT NULL;');
+			$firstScan = $counts->[0]->[0] ? 0 : 1;
+		}
+
 		# Pull the track persistent data
 		my $trackPersistentHash = Slim::Schema::TrackPersistent->findhash(
 			$columnValueHash->{musicbrainz_id},
@@ -1538,10 +1545,14 @@ sub _createTrack {
 		);
 
 		my $externalTrack = $columnValueHash->{extid} && $columnValueHash->{url} eq $columnValueHash->{extid};
+		my $useTimestampAsAdded = $externalTrack || $firstScan;
 
 		# retrievePersistent will always return undef or a track metadata object
 		if ( !$trackPersistentHash ) {
-			$persistentColumnValueHash->{added}  = ($externalTrack && $columnValueHash->{timestamp}) || time();
+			# https://github.com/LMS-Community/slimserver/issues/1259
+			# when we are running the very first scan, we consider the file's timestamp the time added
+			# once we have seen some activity, use the actual time as the time added
+			$persistentColumnValueHash->{added}  = ($useTimestampAsAdded && $columnValueHash->{timestamp}) || time();
 			$persistentColumnValueHash->{url}    = $columnValueHash->{url};
 			$persistentColumnValueHash->{urlmd5} = $columnValueHash->{urlmd5};
 
