@@ -6360,6 +6360,14 @@ sub _getTagDataForTracks {
 
 	my $ignoreReleaseTypes = $tags =~ /W/ && $prefs->get('ignoreReleaseTypes');
 
+	my $nonContiguous = 0;
+	my $lastWork;
+	my $lastGrouping;
+	my $lastPerformance;
+	my $workSeen = {};
+	my $groupingSeen = {};
+	my $performanceSeen = {};
+
 	while ( $sth->fetch ) {
 		if (!$ids_only) {
 			utf8::decode( $c->{'tracks.title'} ) if exists $c->{'tracks.title'};
@@ -6372,6 +6380,21 @@ sub _getTagDataForTracks {
 			utf8::decode( $c->{'comments.value'} ) if exists $c->{'comments.value'};
 			utf8::decode( $c->{'tracks.discsubtitle'}) if exists $c->{'tracks.discsubtitle'};
 			utf8::decode( $c->{'tracks.grouping'}) if exists $c->{'tracks.grouping'};
+			if ( $c->{'works.id'} && $lastWork != $c->{'works.id'} ) {
+			$nonContiguous ||= $workSeen->{$c->{'works.id'}};
+				$workSeen->{$c->{'works.id'}} = 1;
+				$lastWork = $c->{'works.id'};
+			}
+			if ( $c->{'tracks.grouping'} && $lastGrouping != $c->{'tracks.grouping'} ) {
+				$nonContiguous ||= $groupingSeen->{$c->{'tracks.grouping'}};
+				$groupingSeen->{$c->{'tracks.grouping'}} = 1;
+				$lastGrouping = $c->{'tracks.grouping'};
+			}
+			if ( $c->{'tracks.performance'} && $lastPerformance != $c->{'tracks.performance'} ) {
+				$nonContiguous ||= $performanceSeen->{$c->{'tracks.performance'}};
+				$performanceSeen->{$c->{'tracks.performance'}} = 1;
+				$lastPerformance = $c->{'tracks.performance'};
+				}
 		}
 
 		my $id = $c->{'tracks.id'};
@@ -6384,6 +6407,14 @@ sub _getTagDataForTracks {
 		}
 
 		push @resultOrder, $id;
+	}
+	if ( $nonContiguous ) {
+		foreach my $key (keys %results) {
+			delete %results{$key}->{'works.id'};
+			delete %results{$key}->{'works.title'};
+			delete %results{$key}->{'tracks.grouping'};
+			delete %results{$key}->{'tracks.performance'};
+		}
 	}
 
 	# For tag A/S we have to run 1 additional query
