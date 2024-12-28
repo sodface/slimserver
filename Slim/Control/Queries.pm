@@ -6380,21 +6380,21 @@ sub _getTagDataForTracks {
 			utf8::decode( $c->{'comments.value'} ) if exists $c->{'comments.value'};
 			utf8::decode( $c->{'tracks.discsubtitle'}) if exists $c->{'tracks.discsubtitle'};
 			utf8::decode( $c->{'tracks.grouping'}) if exists $c->{'tracks.grouping'};
-			if ( $c->{'works.id'} && $lastWork != $c->{'works.id'} ) {
-			$nonContiguous ||= $workSeen->{$c->{'works.id'}};
+			if ( exists $c->{'works.id'} && $lastWork != $c->{'works.id'} ) {
+				$nonContiguous ||= $workSeen->{$c->{'works.id'}};
 				$workSeen->{$c->{'works.id'}} = 1;
 				$lastWork = $c->{'works.id'};
 			}
-			if ( $c->{'tracks.grouping'} && $lastGrouping != $c->{'tracks.grouping'} ) {
+			if ( exists $c->{'tracks.grouping'} && $lastGrouping != $c->{'tracks.grouping'} ) {
 				$nonContiguous ||= $groupingSeen->{$c->{'tracks.grouping'}};
 				$groupingSeen->{$c->{'tracks.grouping'}} = 1;
 				$lastGrouping = $c->{'tracks.grouping'};
 			}
-			if ( $c->{'tracks.performance'} && $lastPerformance != $c->{'tracks.performance'} ) {
+			if ( exists $c->{'tracks.performance'} && $lastPerformance != $c->{'tracks.performance'} ) {
 				$nonContiguous ||= $performanceSeen->{$c->{'tracks.performance'}};
 				$performanceSeen->{$c->{'tracks.performance'}} = 1;
 				$lastPerformance = $c->{'tracks.performance'};
-				}
+			}
 		}
 
 		my $id = $c->{'tracks.id'};
