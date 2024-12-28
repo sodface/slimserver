@@ -8472,6 +8472,25 @@ SETUP_SCREENSAVER_DESC
 	SV	Olika typer av information kan visas som skärmsläckare på spelarens skärm när inga kommandon har skickats från fjärrkontrollen under en viss tid. Du kan välja olika skärmsläckare beroende på om spelaren är påslagen eller avstängd, tyst eller spelar upp musik. Du kan också ange hur lång period av inaktivititet som ska passera innan respektive skärmsläckare börjar visas.
 	ZH_CN	您可以通过遥控器选择在播放机非活动状态时以屏幕保护程序来显示信息。您可以设定屏幕保护程序介入前的等候时间。并且设定播放机在不同状态下如播放时、停止播放时、或关机时应用不同屏幕保护程序。
 
+SETUP_NO_SCREENSAVERS
+	DA	Der ser ikke ud til at være installeret nogen pauseskærme. Vil du installere pauseskærmen Dato og tid?
+	DE	Es scheinen keine Bildschirmschoner installiert zu sein. Möchten Sie den Bildschirmschoner "Datum und Uhrzeit" installieren?
+	EN	There seem to be no screensavers installed. Do you want to install the Date and Time screensaver?
+	FR	Aucun écran de veille ne semble avoir été installé. Voulez-vous installer l'économiseur d'écran Date et heure ?
+	NL	Er lijken geen screensavers geïnstalleerd te zijn. Wil je de schermbeveiliging Datum en tijd installeren?
+
+SETUP_INSTALL
+	CS	Instalovat
+	DA	Installer
+	DE	Installieren
+	EN	Install
+	ES	Instalar
+	FR	Installer
+	NL	Installeren
+	NO	Installer
+	PL	Zainstaluj
+	SV	Installera
+
 SETUP_SCREENSAVERTIMEOUT
 	CS	Doba před spuštěním spořiče obrazovky, v sekundách
 	DA	Start pauseskærm efter dette antal sekunder
