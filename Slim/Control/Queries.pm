@@ -862,7 +862,7 @@ sub albumsQuery {
 					}
 				}
 				$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'group_count', $c->{'group_count'});
-				$request->addResultLoop($loopname, $chunkCount, 'contiguous_groups', !$nonContiguous);
+				$request->addResultLoop($loopname, $chunkCount, 'contiguous_groups', $nonContiguous ? 0 : 1);
 			}
 
 			#Don't use albums.contributor to set artist_id/artist for Works, it may well be completely wrong!
