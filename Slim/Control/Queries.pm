@@ -640,6 +640,9 @@ sub albumsQuery {
 		my $col = '(SELECT COUNT(1) FROM (SELECT 1 FROM tracks WHERE tracks.album=albums.id GROUP BY work,grouping,performance))';
 		$c->{$col} = 1;
 		$as->{$col} = 'group_count';
+		$col = "(SELECT GROUP_CONCAT(SUBSTR('00000'||tracknum,-5) || '->' || COALESCE(work,'') || '##' || COALESCE(performance,'') || '##' || COALESCE(grouping,''),',,') FROM tracks WHERE tracks.album = albums.id)";
+		$c->{$col} = 1;
+		$as->{$col} = 'group_structure';
 	}
 
 	if ( @{$w} ) {
@@ -835,7 +838,32 @@ sub albumsQuery {
 			$tags =~ /W/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'release_type', $wantsReleaseTypes ? $c->{'albums.release_type'} : 'ALBUM');
 			$tags =~ /E/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'extid', $c->{'albums.extid'});
 			$tags =~ /X/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'album_replay_gain', $c->{'albums.replay_gain'});
-			$tags =~ /2/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'group_count', $c->{'group_count'});
+
+			if ( $tags =~ /2/ ) {
+				my $nonContiguous;
+				if ( $c->{'group_count'} > 1 ) {
+					my $trackPosition=1;
+					my @groupStructure = sort split(',,',$c->{'group_structure'});
+					my $previousGroup;
+					my $previousGroupedTrackPosition;
+					foreach ( @groupStructure ) {
+						my $thisTrackGroup = (split('->',$_))[1];
+						$thisTrackGroup =~ s/^####$//;
+						if ( $thisTrackGroup ) {
+							if ( $previousGroup ne $thisTrackGroup ) {
+								$previousGroup = $thisTrackGroup;
+							} else {
+								$nonContiguous ||= $previousGroupedTrackPosition && $previousGroupedTrackPosition+1 != $trackPosition;
+							}
+							$previousGroupedTrackPosition = $trackPosition;
+						}
+						$trackPosition++;
+						last if $nonContiguous;
+					}
+				}
+				$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'group_count', $c->{'group_count'});
+				$request->addResultLoop($loopname, $chunkCount, 'contiguous_groups', !$nonContiguous);
+			}
 
 			#Don't use albums.contributor to set artist_id/artist for Works, it may well be completely wrong!
 			if ( !$work ) {
@@ -6360,14 +6388,6 @@ sub _getTagDataForTracks {
 
 	my $ignoreReleaseTypes = $tags =~ /W/ && $prefs->get('ignoreReleaseTypes');
 
-	my $nonContiguous = 0;
-	my $lastWork;
-	my $lastGrouping;
-	my $lastPerformance;
-	my $workSeen = {};
-	my $groupingSeen = {};
-	my $performanceSeen = {};
-
 	while ( $sth->fetch ) {
 		if (!$ids_only) {
 			utf8::decode( $c->{'tracks.title'} ) if exists $c->{'tracks.title'};
@@ -6380,24 +6400,6 @@ sub _getTagDataForTracks {
 			utf8::decode( $c->{'comments.value'} ) if exists $c->{'comments.value'};
 			utf8::decode( $c->{'tracks.discsubtitle'}) if exists $c->{'tracks.discsubtitle'};
 			utf8::decode( $c->{'tracks.grouping'}) if exists $c->{'tracks.grouping'};
-
-			# look at possible grouping fields (work/performance/grouping) so we can indicate to the client
-			# if the returned track list is non-contiguous with respect to those groups
-			if ( exists $c->{'works.id'} && $lastWork != $c->{'works.id'} ) {
-				$nonContiguous ||= $workSeen->{$c->{'works.id'}} && $c->{'works.id'};
-				$workSeen->{$c->{'works.id'}} = 1;
-				$lastWork = $c->{'works.id'};
-			}
-			if ( exists $c->{'tracks.grouping'} && $lastGrouping != $c->{'tracks.grouping'} ) {
-				$nonContiguous ||= $groupingSeen->{$c->{'tracks.grouping'}} && $c->{'tracks.grouping'};
-				$groupingSeen->{$c->{'tracks.grouping'}} = 1;
-				$lastGrouping = $c->{'tracks.grouping'};
-			}
-			if ( exists $c->{'tracks.performance'} && $lastPerformance != $c->{'tracks.performance'} ) {
-				$nonContiguous ||= $performanceSeen->{$c->{'tracks.performance'}} && $c->{'tracks.performance'};
-				$performanceSeen->{$c->{'tracks.performance'}} = 1;
-				$lastPerformance = $c->{'tracks.performance'};
-			}
 		}
 
 		my $id = $c->{'tracks.id'};
@@ -6410,14 +6412,6 @@ sub _getTagDataForTracks {
 		}
 
 		push @resultOrder, $id;
-	}
-	if ( $nonContiguous ) {
-		foreach my $key (keys %results) {
-			delete %results{$key}->{'works.id'};
-			delete %results{$key}->{'works.title'};
-			delete %results{$key}->{'tracks.grouping'};
-			delete %results{$key}->{'tracks.performance'};
-		}
 	}
 
 	# For tag A/S we have to run 1 additional query
