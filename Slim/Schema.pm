@@ -1982,8 +1982,8 @@ sub updateOrCreateBase {
 
 			$key = lc($key);
 
-			## Need to set performance to null if no value passed in (may have had a value before this scan)
-			if ( (defined $val && $val ne '' || $key eq "performance") && exists $trackAttrs->{$key} ) {
+			## Need to set performance/grouping/discsubtitle to null if no value passed in (may have had a value before this scan)
+			if ( (defined $val && $val ne '' || $key eq "performance" || $key eq "grouping" || $key eq "discsubtitle") && exists $trackAttrs->{$key} ) {
 
 				main::INFOLOG && $log->is_info && $log->info("Updating $url : $key to $val");
 
@@ -2828,11 +2828,15 @@ sub _preCheckAttributes {
 		# XXX maybe also want COMMENT & GENRE
 	}
 
-	# set Perfomance attribute to null if it doesn't exist or trimmed length is zero, otherwise trim leading/trailing spaces:
-	if ( !exists($attributes->{'PERFORMANCE'}) || length($attributes->{'PERFORMANCE'} =~ s/^\s+|\s+$//gr) == 0 ) {
-		$attributes->{'PERFORMANCE'} = undef;
-	} else {
-		$attributes->{'PERFORMANCE'} =~ s/^\s+|\s+$//g;
+	# set Perfomance/grouping/discsubtitle attribute to null if it doesn't exist or trimmed length is zero, otherwise trim leading/trailing spaces:
+	foreach (qw/PERFORMANCE GROUPING DISCSUBTITLE/) {
+		my $newAttribute = $attributes->{$_} || '';
+		$newAttribute =~ s/^\s+|\s+$//g;
+		if ( length($newAttribute) == 0 ) {
+			$attributes->{$_} = undef;
+		} else {
+			$attributes->{$_} = $newAttribute;
+		}
 	}
 
 	if (main::DEBUGLOG && $log->is_debug) {
