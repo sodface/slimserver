@@ -2829,20 +2829,12 @@ sub _preCheckAttributes {
 	}
 
 	# set Perfomance/grouping/discsubtitle attribute to null if it doesn't exist or trimmed length is zero, otherwise trim leading/trailing spaces:
-	if ( !exists($attributes->{'PERFORMANCE'}) || length($attributes->{'PERFORMANCE'} =~ s/^\s+|\s+$//gr) == 0 ) {
-		$attributes->{'PERFORMANCE'} = undef;
-	} else {
-		$attributes->{'PERFORMANCE'} =~ s/^\s+|\s+$//g;
-	}
-	if ( !exists($attributes->{'GROUPING'}) || length($attributes->{'GROUPING'} =~ s/^\s+|\s+$//gr) == 0 ) {
-		$attributes->{'GROUPING'} = undef;
-	} else {
-		$attributes->{'GROUPING'} =~ s/^\s+|\s+$//g;
-	}
-	if ( !exists($attributes->{'DISCSUBTITLE'}) || length($attributes->{'DISCSUBTITLE'} =~ s/^\s+|\s+$//gr) == 0 ) {
-		$attributes->{'DISCSUBTITLE'} = undef;
-	} else {
-		$attributes->{'DISCSUBTITLE'} =~ s/^\s+|\s+$//g;
+	foreach my  (qw/PERFORMANCE GROUPING DISCSUBTITLE/) {
+		if ( !exists($attributes->{$_}) || length($attributes->{$_} =~ s/^\s+|\s+$//gr) == 0 ) {
+			$attributes->{$_} = undef;
+		} else {
+			$attributes->{$_} =~ s/^\s+|\s+$//g;
+		}
 	}
 
 	if (main::DEBUGLOG && $log->is_debug) {
