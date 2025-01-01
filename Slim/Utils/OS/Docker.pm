@@ -21,7 +21,15 @@ sub initDetails {
 sub initPrefs {
 	my ($class, $prefs) = @_;
 
-	$prefs->{libraryname} = 'Lyrion Music Server (Docker)';
+	my $hostname = Slim::Utils::Network::hostName() || '';
+
+	# if the hostname is a 12 character hex string, it's probably a Docker container ID
+	if (!$hostname || $hostname =~ /^[a-f0-9]{12}$/) {
+		$prefs->{libraryname} = 'Lyrion Music Server (Docker)';
+	}
+	else {
+		$prefs->{libraryname} = $hostname;
+	}
 
 	if (-d MUSIC_DIR) {
 		$prefs->{mediadirs} = $prefs->{ignoreInImageScan} = $prefs->{ignoreInVideoScan} = [ MUSIC_DIR ];
