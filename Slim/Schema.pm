@@ -2829,7 +2829,7 @@ sub _preCheckAttributes {
 	}
 
 	# set Perfomance/grouping/discsubtitle attribute to null if it doesn't exist or trimmed length is zero, otherwise trim leading/trailing spaces:
-	foreach my  (qw/PERFORMANCE GROUPING DISCSUBTITLE/) {
+	foreach (qw/PERFORMANCE GROUPING DISCSUBTITLE/) {
 		if ( !exists($attributes->{$_}) || length($attributes->{$_} =~ s/^\s+|\s+$//gr) == 0 ) {
 			$attributes->{$_} = undef;
 		} else {
