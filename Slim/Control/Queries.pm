@@ -640,7 +640,7 @@ sub albumsQuery {
 		my $col = '(SELECT COUNT(1) FROM (SELECT 1 FROM tracks WHERE tracks.album=albums.id GROUP BY work,grouping,performance))';
 		$c->{$col} = 1;
 		$as->{$col} = 'group_count';
-		$col = "(SELECT GROUP_CONCAT(SUBSTR('00000'||tracknum,-5) || '->' || COALESCE(work,'') || '##' || COALESCE(performance,'') || '##' || COALESCE(grouping,''),',,') FROM tracks WHERE tracks.album = albums.id)";
+		$col = "(SELECT GROUP_CONCAT(SUBSTR('00000'||tracknum,-5) || COALESCE(work,'') || '##' || COALESCE(performance,'') || '##' || COALESCE(grouping,''),',,') FROM tracks WHERE tracks.album = albums.id)";
 		$c->{$col} = 1;
 		$as->{$col} = 'group_structure';
 	}
@@ -842,23 +842,19 @@ sub albumsQuery {
 			if ( $tags =~ /2/ ) {
 				my $nonContiguous;
 				if ( $c->{'group_count'} > 1 ) {
-					my $trackPosition=1;
-					my @groupStructure = sort split(',,',$c->{'group_structure'});
 					my $previousGroup;
-					my $previousGroupedTrackPosition;
-					foreach ( @groupStructure ) {
-						my $thisTrackGroup = (split('->',$_))[1];
-						$thisTrackGroup =~ s/^####$//;
-						if ( $thisTrackGroup ) {
-							if ( $previousGroup ne $thisTrackGroup ) {
-								$previousGroup = $thisTrackGroup;
-							} else {
-								$nonContiguous ||= $previousGroupedTrackPosition && $previousGroupedTrackPosition+1 != $trackPosition;
+					my $groupSeen = {};
+					foreach ( sort split(',,', $c->{'group_structure'}) ) {
+						my $thisTrackGroup = substr($_, 5);
+						if ( $previousGroup ne $thisTrackGroup ) {
+							if ( $nonContiguous = $groupSeen->{$thisTrackGroup} && $thisTrackGroup ne '####' ) {
+								last;
 							}
-							$previousGroupedTrackPosition = $trackPosition;
+							else {
+								$groupSeen->{$thisTrackGroup} = 1;
+								$previousGroup = $thisTrackGroup;
+							}
 						}
-						$trackPosition++;
-						last if $nonContiguous;
 					}
 				}
 				$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'group_count', $c->{'group_count'});
