@@ -640,6 +640,9 @@ sub albumsQuery {
 		my $col = '(SELECT COUNT(1) FROM (SELECT 1 FROM tracks WHERE tracks.album=albums.id GROUP BY work,grouping,performance))';
 		$c->{$col} = 1;
 		$as->{$col} = 'group_count';
+		$col = "(SELECT GROUP_CONCAT(SUBSTR('00000'||tracknum,-5) || COALESCE(work,'') || '##' || COALESCE(performance,'') || '##' || COALESCE(grouping,''),',,') FROM tracks WHERE tracks.album = albums.id)";
+		$c->{$col} = 1;
+		$as->{$col} = 'group_structure';
 	}
 
 	if ( @{$w} ) {
@@ -835,7 +838,28 @@ sub albumsQuery {
 			$tags =~ /W/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'release_type', $wantsReleaseTypes ? $c->{'albums.release_type'} : 'ALBUM');
 			$tags =~ /E/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'extid', $c->{'albums.extid'});
 			$tags =~ /X/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'album_replay_gain', $c->{'albums.replay_gain'});
-			$tags =~ /2/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'group_count', $c->{'group_count'});
+
+			if ( $tags =~ /2/ ) {
+				my $nonContiguous;
+				if ( $c->{'group_count'} > 1 ) {
+					my $previousGroup;
+					my $groupSeen = {};
+					foreach ( sort split(',,', $c->{'group_structure'}) ) {
+						my $thisTrackGroup = substr($_, 5);
+						if ( $previousGroup ne $thisTrackGroup ) {
+							if ( $nonContiguous = $groupSeen->{$thisTrackGroup} && $thisTrackGroup ne '####' ) {
+								last;
+							}
+							else {
+								$groupSeen->{$thisTrackGroup} = 1;
+								$previousGroup = $thisTrackGroup;
+							}
+						}
+					}
+				}
+				$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'group_count', $c->{'group_count'});
+				$request->addResultLoop($loopname, $chunkCount, 'contiguous_groups', $nonContiguous ? 0 : 1);
+			}
 
 			#Don't use albums.contributor to set artist_id/artist for Works, it may well be completely wrong!
 			if ( !$work ) {
