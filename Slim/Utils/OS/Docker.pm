@@ -21,6 +21,13 @@ sub initDetails {
 sub initPrefs {
 	my ($class, $prefs) = @_;
 
+	if (-d MUSIC_DIR) {
+		$prefs->{mediadirs} = $prefs->{ignoreInImageScan} = $prefs->{ignoreInVideoScan} = [ MUSIC_DIR ];
+	}
+
+	# we're read-only in the scanner - don't initialize the libraryname here
+	return if main::SCANNER || main::RESIZER;
+
 	my $hostname = Slim::Utils::Network::hostName() || '';
 
 	# if the hostname is a 12 character hex string, it's probably a Docker container ID
@@ -29,10 +36,6 @@ sub initPrefs {
 	}
 	else {
 		$prefs->{libraryname} = $hostname;
-	}
-
-	if (-d MUSIC_DIR) {
-		$prefs->{mediadirs} = $prefs->{ignoreInImageScan} = $prefs->{ignoreInVideoScan} = [ MUSIC_DIR ];
 	}
 }
 
