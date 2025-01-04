@@ -531,6 +531,10 @@ sub init {
 		Slim::Utils::PerfMon->init($perfwarn);
 	}
 
+
+	# Reset the update flag upon each start
+	$prefs->remove('serverUpdateAvailable');
+
 	if ( !$os->runningFromSource && $prefs->get('checkVersion') ) {
 		require Slim::Utils::Update;
 		Slim::Utils::Timers::setTimer(
@@ -1070,6 +1074,7 @@ sub cleanup {
 	Slim::Utils::PluginManager->shutdownPlugins();
 
 	main::DEBUGLOG && $log->is_debug && $log->debug("Write out prefs changes.");
+	$prefs->remove('serverUpdateAvailable');
 	Slim::Utils::Prefs::writeAll();
 
 	main::DEBUGLOG && $log->is_debug && $log->debug("Stop image resizer daemon.");
