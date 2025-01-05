@@ -16,8 +16,8 @@ use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
 use POSIX qw(LC_CTYPE LC_TIME);
 
-# the new menubar item comes as an application in something like "Lyrion Music Server.app/Contents/Resources/server"
-use constant IS_MENUBAR_ITEM => $Bin =~ m|app/Contents/Resources/server| ? 1 : 0;
+# the new menubar item comes as an application in something like "Lyrion Music Server.app/Contents/MacOS"
+use constant IS_MENUBAR_ITEM => $Bin =~ m|app/Contents/| ? 1 : 0;
 use constant CHECK_MENUBAR_ITEM_DURATION => 30;
 
 # Enable this for update checker testing/development
@@ -478,17 +478,9 @@ sub installerExtension {
 	my $updateFolder = $_[0]->dirsFor('updates');
 
 	# remove installer from old installation
-	Slim::Utils::Misc::deleteFiles($updateFolder, qr/^LogitechMediaServer.*\.pkg$/i);
+	Slim::Utils::Misc::deleteFiles($updateFolder, qr/^L.*M.*Server.*\.(pkg|zip)$/i);
 
-	if (IS_MENUBAR_ITEM) {
-		# remove pref pane installer
-		Slim::Utils::Misc::deleteFiles($updateFolder, qr/^LyrionMusicServer.*\.pkg$/i);
-		return 'dmg';
-	};
-
-	# remove menu bar item installer
-	Slim::Utils::Misc::deleteFiles($updateFolder, qr/^LyrionMusicServer.*\.zip$/i);
-	return 'pkg';
+	return 'dmg';
 };
 
 sub installerOS { IS_MENUBAR_ITEM ? 'macos' : 'osx' }
