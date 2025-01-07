@@ -299,6 +299,11 @@ sub getSystemLanguage {
 sub ignoredItems {
 	return (
 		# Items we should ignore on a mac volume
+		'Applications' => '/',
+		'Library'      => '/',
+		'System'       => '/',
+		'Macintosh HD' => 1,
+		'com.apple.TimeMachine.localsnapshots' => 1,
 		'Icon' => '/',
 		'TheVolumeSettingsFolder' => 1,
 		'TheFindByContentFolder' => 1,
